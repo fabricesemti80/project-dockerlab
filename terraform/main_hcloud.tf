@@ -42,43 +42,16 @@ module "dkr_srv_0" {
     }
   ]
 
-  # Do not innstall
-  user_data = ""
-}
-
-#   # User Data: Install Tailscale and connect
+#   # Optional simple user data (example)
 #   user_data = <<-EOF
-#     #!/bin/bash
-#     exec > /var/log/tailscale-install.log 2>&1
-#     set -e
+# #cloud-config
+# runcmd:
+#   - echo "Simple Hetzner initialization script"
+#   - apt-get update
+#   - echo "Hetzner initialization complete"
+# EOF
 
-#     echo "Starting Tailscale installation..."
-
-#     # Update package lists
-#     apt-get update
-
-#     # Install Tailscale and connect with Dokploy configuration
-#     echo "Installing Tailscale and configuring for Dokploy..."
-#     curl -fsSL https://tailscale.com/install.sh | sh && sudo tailscale up --authkey="${var.tailscale_auth_key}" --advertise-exit-node --advertise-routes=10.0.0.0/8,192.168.0.0/16 --accept-routes --ssh
-
-#     # Verify Tailscale installation
-#     echo "Verifying installation..."
-#     if ! command -v tailscale &> /dev/null; then
-#       echo "ERROR: Tailscale installation failed"
-#       exit 1
-#     fi
-#     echo "Tailscale installed successfully at $(which tailscale)"
-
-#     # Verify connection
-#     if tailscale status --json | jq -e '.Self.Online == true'; then
-#       echo "Tailscale connected successfully"
-#     else
-#       echo "WARNING: Tailscale connection status unclear"
-#     fi
-
-#     echo "Tailscale setup complete!"
-#   EOF
-# }
+}
 
 # Outputs
 output "dkr_srv_0_name" {

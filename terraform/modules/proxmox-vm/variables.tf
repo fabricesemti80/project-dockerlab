@@ -223,7 +223,18 @@ variable "initialization_user_data_file_id" {
 }
 
 variable "user_data" {
-  description = "Optional user data content for cloud-init (simple shell commands)"
+  description = <<-EOT
+    Optional user data content for cloud-init (simple shell commands).
+
+    Example usage:
+    user_data = <<EOF
+    #cloud-config
+    runcmd:
+      - echo "Simple initialization script"
+      - apt-get update
+      - echo "Initialization complete"
+    EOF
+    EOT
   type        = string
   default     = null
 }

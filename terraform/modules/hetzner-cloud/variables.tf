@@ -54,7 +54,18 @@ variable "enable_ipv6" {
 }
 
 variable "user_data" {
-  description = "User data script for server initialization"
+  description = <<-EOT
+    User data script for server initialization.
+
+    Example usage:
+    user_data = <<EOF
+    #cloud-config
+    runcmd:
+      - echo "Simple Hetzner initialization script"
+      - apt-get update
+      - echo "Hetzner initialization complete"
+    EOF
+    EOT
   type        = string
   default     = null
 }
