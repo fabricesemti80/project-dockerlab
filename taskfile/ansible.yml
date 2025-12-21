@@ -5,46 +5,58 @@ tasks:
     desc: "Apply the Proxmox template creation"
     dir: ansible
     cmds:
-      - ansible-playbook 00-proxmox-template-creation.yml -i inventory/proxmox
+      - doppler run -- ansible-playbook 00-proxmox-template-creation.yml -i inventory/proxmox
 
   template:plan:
     desc: "Plan the Proxmox template creation"
     dir: ansible
     cmds:
-      - ansible-playbook 00-proxmox-template-creation.yml --check --diff -i inventory/proxmox
+      - doppler run -- ansible-playbook 00-proxmox-template-creation.yml --check --diff -i inventory/proxmox
 
   vm:apply:
     desc: "Apply the Proxmox VM deployment"
     dir: ansible
     cmds:
-      - ansible-playbook 01-proxmox-vm-deployment.yml -i inventory/proxmox
+      - doppler run -- ansible-playbook 01-proxmox-vm-deployment.yml -i inventory/proxmox
 
   vm:plan:
     desc: "Plan the Proxmox VM deployment"
     dir: ansible
     cmds:
-      - ansible-playbook 01-proxmox-vm-deployment.yml --check --diff -i inventory/proxmox
+      - doppler run -- ansible-playbook 01-proxmox-vm-deployment.yml --check --diff -i inventory/proxmox
 
   hosts:ping:
     desc: "Ping all hosts in the main inventory"
-    dir: 10_host_provisioning
+    dir: ansible
     cmds:
-      - ansible all -m ping
+      - doppler run -- ansible all -m ping
 
   hosts:update:
     desc: "Update all hosts and reboot if necessary"
-    dir: 10_host_provisioning
+    dir: ansible
     cmds:
-      - ansible-playbook playbook-update.yaml
+      - doppler run -- ansible-playbook playbook-update.yaml
 
-  preflight:apply:
+  pre:apply:
     desc: "Apply the site preflight checks and updates"
     dir: ansible
     cmds:
-      - ansible-playbook 10-site-preflight.yml
+      - doppler run -- ansible-playbook 10-site-preflight.yml
 
-  preflight:plan:
+  pre:plan:
     desc: "Plan the site preflight checks and updates"
     dir: ansible
     cmds:
-      - ansible-playbook 10-site-preflight.yml --check --diff
+      - doppler run -- ansible-playbook 10-site-preflight.yml --check --diff
+
+  tail:apply:
+    desc: "Apply the tailscale configuration"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 20-site-tailscale.yml
+
+  tail:plan:
+    desc: "Plan the tailscale configuration"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 20-site-tailscale.yml --check --diff

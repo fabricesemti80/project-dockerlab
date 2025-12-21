@@ -2,12 +2,32 @@
 # Tailscale post-configuration tasks
 # Validates and captures Tailscale setup for later use in Swarm
 
+- name: "Wait for tailscale0 interface to be available"
+  ansible.builtin.wait_for:
+    path: /sys/class/net/tailscale0
+    state: present
+    timeout: 120
+  when:
+    - "'tailscale0' not in ansible_facts.interfaces"
+    - not ansible_check_mode
+
+- name: "Refresh network interface facts"
+  ansible.builtin.setup:
+    filter: ansible_interfaces
+  when: not ansible_check_mode
+
 - name: "Assert tailscale0 interface exists"
   ansible.builtin.assert:
     that:
       - "'tailscale0' in ansible_facts.interfaces"
-    fail_msg: "tailscale0 interface not found - Tailscale installation may have failed"
+    fail_msg: "tailscale0 interface not found after waiting - Tailscale installation may have failed"
     success_msg: "tailscale0 interface is present"
+  when: not ansible_check_mode
+
+- name: "Skip tailscale_post tasks in check mode"
+  ansible.builtin.debug:
+    msg: "Skipping tailscale_post validation in check mode - interface will be validated on actual run"
+  when: ansible_check_mode
 
 - name: "Capture Tailscale IP address"
   ansible.builtin.set_fact:

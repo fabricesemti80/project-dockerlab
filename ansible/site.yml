@@ -5,7 +5,7 @@
 #   import_playbook: 00-base.yml
 #
 # - name: "Dokploy Infrastructure Setup - Tailscale Fabric"
-#   import_playbook: 10-tailscale.yml
+#   import_playbook: 20-site-tailscale.yml
 #
 # - name: "Dokploy Infrastructure Setup - Docker Installation"
 #   import_playbook: 20-docker.yml
@@ -30,4 +30,3 @@
 
 - name: "Site Preflight"
   import_playbook: 10-site-preflight.yml
-
