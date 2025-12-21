@@ -1,0 +1,23 @@
+---
+# Main site playbook that orchestrates all deployment stages
+- name: "Dokploy Infrastructure Setup - Base Configuration"
+  import_playbook: 00-base.yml
+
+- name: "Dokploy Infrastructure Setup - Tailscale Fabric"
+  import_playbook: 10-tailscale.yml
+
+- name: "Dokploy Infrastructure Setup - Docker Installation"
+  import_playbook: 20-docker.yml
+
+- name: "Dokploy Infrastructure Setup - Docker Swarm Formation"
+  import_playbook: 30-swarm.yml
+
+# - name: "Dokploy Infrastructure Setup - Dokploy Installation"
+#   import_playbook: 40-dokploy.yml
+
+# - name: "Dokploy Infrastructure Setup - Sanity Check"
+#   import_playbook: 90-sanitycheck.yml
+
+# - name: "Dokploy Infrastructure Setup - Final Summary"
+#   import_playbook: 99-summary.yml
+

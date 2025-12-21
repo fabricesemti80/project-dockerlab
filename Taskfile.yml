@@ -1,0 +1,13 @@
+# https://taskfile.dev
+
+version: '3'
+
+includes:
+  ansible: ./taskfile/ansible.yml
+  tf: ./taskfile/terraform.yml
+
+tasks:
+  default:
+    cmds:
+      - task --list-all
+    silent: true

@@ -1,0 +1,36 @@
+version: '3'
+
+tasks:
+
+  fmt:
+    desc: "Format and validate"
+    dir: terraform
+    cmds:
+      - terraform fmt
+      - terraform validate
+
+  init:
+    desc: "Initialize Terraform"
+    dir: terraform
+    cmds:
+      - terraform init {{.CLI_ARGS}}
+
+  plan:
+    desc: "Create a Terraform execution plan and save it to a file"
+    dir: terraform
+    cmds:
+      - task: fmt
+      - terraform plan -out=tfplan
+
+  apply:
+    desc: "Apply the Terraform plan from the saved file"
+    dir: terraform
+    cmds:
+      - task: plan
+      - terraform apply tfplan
+
+  destroy:
+    desc: "Destroy the Terraform-managed infrastructure"
+    dir: terraform
+    cmds:
+      - terraform destroy -auto-approve

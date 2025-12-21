@@ -1,0 +1,50 @@
+---
+# Docker installation and configuration playbook
+- name: "Install and configure Docker"
+  hosts: all
+  become: true
+  tags: ["docker", "containers"]
+  pre_tasks:
+    - name: "Update package lists"
+      ansible.builtin.apt:
+        update_cache: true
+      when: ansible_os_family == 'Debian'
+
+    - name: "Create Docker systemd override directory"
+      ansible.builtin.file:
+        path: /etc/systemd/system/docker.service.d
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: "Configure Docker systemd override to remove CLI flags"
+      ansible.builtin.copy:
+        content: |
+          [Service]
+          ExecStart=
+          ExecStart=/usr/bin/dockerd
+        dest: /etc/systemd/system/docker.service.d/override.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: "Reload systemd"
+
+    - name: "Remove existing daemon.json to ensure clean start"
+      ansible.builtin.file:
+        path: /etc/docker/daemon.json
+        state: absent
+
+  handlers:
+    - name: "Reload systemd"
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+  roles:
+    - geerlingguy.docker
+    - docker_tuning
+  post_tasks:
+    - name: "Refresh package cache after Docker repository added"
+      ansible.builtin.apt:
+        update_cache: true
+      when: ansible_os_family == 'Debian'

@@ -1,0 +1,168 @@
+---
+# Sanity check playbook - verify all components are working correctly
+- name: "Dokploy Infrastructure Sanity Check"
+  hosts: all
+  become: true
+  tags: ["sanitycheck", "sc"]
+  tasks:
+    - name: "Verify Tailscale is running"
+      ansible.builtin.systemd:
+        name: tailscaled
+        state: started
+        enabled: true
+
+    - name: "Check Tailscale status"
+      ansible.builtin.command: tailscale status
+      register: tailscale_status
+      changed_when: false
+      check_mode: false
+
+    - name: "Display Tailscale status"
+      ansible.builtin.debug:
+        msg: "{{ tailscale_status.stdout_lines }}"
+
+    - name: "Get Tailscale IP"
+      ansible.builtin.command: tailscale ip -4
+      register: tailscale_ip
+      changed_when: false
+      check_mode: false
+
+    - name: "Display Tailscale IP"
+      ansible.builtin.debug:
+        msg: "Tailscale IP: {{ tailscale_ip.stdout }}"
+
+- name: "Docker and Swarm Sanity Check"
+  hosts: all
+  become: true
+  tags: ["sanitycheck", "sc"]
+  tasks:
+    - name: "Verify Docker is running"
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: "Check Docker version"
+      ansible.builtin.command: docker version
+      register: docker_version
+      changed_when: false
+      check_mode: false
+
+    - name: "Display Docker version"
+      ansible.builtin.debug:
+        msg: "Docker version output: {{ docker_version.stdout_lines }}"
+
+    - name: "Check Docker daemon configuration"
+      ansible.builtin.command: docker info
+      register: docker_info
+      changed_when: false
+      check_mode: false
+
+    - name: "Display Docker info"
+      ansible.builtin.debug:
+        msg: "Docker info: {{ docker_info.stdout_lines }}"
+
+    - name: "Check if node is part of swarm"
+      ansible.builtin.command: docker info
+      register: swarm_status
+      changed_when: false
+      check_mode: false
+
+    - name: "Display swarm status"
+      ansible.builtin.debug:
+        msg: "Swarm status: {{ swarm_status.stdout_lines }}"
+
+- name: "Swarm Manager Check"
+  hosts: swarm_managers
+  become: true
+  tags: ["sanitycheck", "sc"]
+  tasks:
+    - name: "List swarm nodes"
+      ansible.builtin.command: docker node ls
+      register: swarm_nodes
+      changed_when: false
+      check_mode: false
+
+    - name: "Display swarm nodes"
+      ansible.builtin.debug:
+        msg: "{{ swarm_nodes.stdout_lines }}"
+
+    - name: "Check node availability"
+      ansible.builtin.command: docker node inspect self --pretty
+      register: node_info
+      changed_when: false
+      check_mode: false
+
+    - name: "Display node information"
+      ansible.builtin.debug:
+        msg: "{{ node_info.stdout_lines }}"
+
+    - name: "List Docker networks"
+      ansible.builtin.command: docker network ls
+      register: docker_networks
+      changed_when: false
+      check_mode: false
+
+    - name: "Display Docker networks"
+      ansible.builtin.debug:
+        msg: "{{ docker_networks.stdout_lines }}"
+
+    - name: "Check overlay networks"
+      ansible.builtin.command: docker network ls
+      register: overlay_networks
+      changed_when: false
+      check_mode: false
+
+    - name: "Display overlay networks"
+      ansible.builtin.debug:
+        msg: "Network list: {{ overlay_networks.stdout_lines }}"
+
+    - name: "List active services"
+      ansible.builtin.command: docker service ls
+      register: active_services
+      changed_when: false
+      check_mode: false
+
+    - name: "Display active services"
+      ansible.builtin.debug:
+        msg: "{{ active_services.stdout_lines }}"
+
+    - name: "Check Docker listening ports"
+      ansible.builtin.command: ss -tlnp
+      register: docker_ports
+      changed_when: false
+      check_mode: false
+
+    - name: "Display Docker ports"
+      ansible.builtin.debug:
+        msg: "Docker ports: {{ docker_ports.stdout_lines }}"
+
+    - name: "Check Docker daemon MTU"
+      ansible.builtin.command: docker network inspect bridge
+      register: docker_mtu
+      changed_when: false
+      check_mode: false
+
+    - name: "Display Docker MTU"
+      ansible.builtin.debug:
+        msg: "Docker network bridge info: {{ docker_mtu.stdout_lines }}"
+
+    - name: "Check recent Docker errors"
+      ansible.builtin.command: journalctl -u docker.service --since "10 minutes ago" --priority err
+      register: docker_errors
+      changed_when: false
+      check_mode: false
+
+    - name: "Display Docker errors"
+      ansible.builtin.debug:
+        msg: "Docker errors: {{ docker_errors.stdout_lines }}"
+
+    - name: "Check system resources"
+      ansible.builtin.command: docker system df
+      register: system_df
+      changed_when: false
+      check_mode: false
+
+    - name: "Display system resources"
+      ansible.builtin.debug:
+        msg: "{{ system_df.stdout_lines }}"

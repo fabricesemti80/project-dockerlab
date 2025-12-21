@@ -1,0 +1,100 @@
+---
+# Common base role - initial system configuration tasks
+# This role sets up the foundation for all nodes in the Dokploy cluster
+
+# Pre-tasks for system updates
+- name: "Check apt cache age"
+  ansible.builtin.stat:
+    path: /var/cache/apt/pkgcache.bin
+  register: apt_cache_stat
+
+- name: "Refresh apt cache if older than 12 hours"
+  ansible.builtin.apt:
+    update_cache: true
+  when: apt_cache_stat.stat.exists is false or (ansible_date_time.epoch | int - apt_cache_stat.stat.mtime | int) > 43200
+
+- name: "Perform full apt update and upgrade"
+  ansible.builtin.apt:
+    upgrade: dist
+    update_cache: false
+  when: apt_cache_stat.stat.exists is false or (ansible_date_time.epoch | int - apt_cache_stat.stat.mtime | int) > 43200
+
+- name: "Set hostname from inventory"
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+  notify: "Restart SSH service"
+
+- name: "Ensure /etc/hosts consistency"
+  ansible.builtin.template:
+    src: hosts.j2
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: "Enable IP forwarding (required for Docker and networking)"
+  ansible.builtin.sysctl:
+    name: net.ipv4.ip_forward
+    value: 1
+    state: present
+    reload: true
+
+- name: "Disable swap (Docker requirement)"
+  ansible.builtin.command: swapoff -a
+  when: ansible_facts['swaptotal_mb'] > 0
+  notify: "Ensure swap is disabled in fstab"
+
+- name: "Install chrony for time synchronization"
+  ansible.builtin.apt:
+    name: chrony
+    state: present
+    update_cache: true
+
+- name: "Determine time sync service name"
+  ansible.builtin.set_fact:
+    timesync_service: "{{ 'chronyd' if ansible_facts['os_family'] == 'RedHat' else 'chrony' }}"
+
+- name: "Ensure chrony service is running and enabled"
+  ansible.builtin.systemd:
+    name: "{{ timesync_service }}"
+    state: started
+    enabled: true
+  register: timesync_result
+  failed_when: false
+
+- name: "Fallback: Check if chronyd service exists and start it"
+  ansible.builtin.systemd:
+    name: chronyd
+    state: started
+    enabled: true
+  when:
+    - timesync_service != 'chronyd'
+    - timesync_result.failed | default(false)
+  ignore_errors: true
+
+- name: "Verify time sync service is running"
+  ansible.builtin.systemd:
+    name: "{{ timesync_service }}"
+    state: started
+  when:
+    - ansible_facts.services is defined
+    - timesync_service in ansible_facts.services
+
+- name: "Optional: Disable IPv6 if configured"
+  ansible.builtin.sysctl:
+    name: "{{ item }}"
+    value: 1
+    state: present
+    reload: true
+  loop:
+    - net.ipv6.conf.all.disable_ipv6
+    - net.ipv6.conf.default.disable_ipv6
+    - net.ipv6.conf.lo.disable_ipv6
+  when: disable_ipv6 | default(false) | bool
+
+- name: "Install common packages"
+  ansible.builtin.apt:
+    name: "{{ install_packages }}"
+    state: present
+    update_cache: true
+  tags: packages

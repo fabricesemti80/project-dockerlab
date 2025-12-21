@@ -1,0 +1,111 @@
+version: '3'
+
+tasks:
+  ping:
+    desc: "Ping all hosts in the inventory"
+    dir: ansible
+    cmds:
+      - ansible all -m ping
+
+  apply:
+    desc: "Apply the site playbook to configure all hosts"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml
+
+  plan:
+    desc: "Plan mode - dry-run the site playbook with check and diff"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml --check --diff
+
+  init:
+    desc: "Install Ansible Galaxy roles and collections from requirements.yml"
+    dir: ansible
+    cmds:
+      - ansible-galaxy install -r requirements.yml
+      - ansible-galaxy collection install artis3n.tailscale
+
+  plan-base:
+    desc: "Plan mode - dry-run base configuration without packages"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml --check --diff --skip-tags packages
+
+  plan-tailscale:
+    desc: "Plan mode - dry-run Tailscale configuration only"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml --check --diff --tags tailscale
+
+  plan-docker:
+    desc: "Plan mode - dry-run Docker configuration only"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml --check --diff --tags docker
+
+  apply-base:
+    desc: "Apply base configuration only"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml --tags base
+
+  apply-tailscale:
+    desc: "Apply Tailscale configuration only"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml --tags tailscale
+
+  apply-docker:
+    desc: "Apply Docker configuration only"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml --tags docker
+
+  plan-swarm:
+    desc: "Plan mode - dry-run Docker Swarm configuration only"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml --check --diff --tags swarm
+
+  apply-swarm:
+    desc: "Apply Docker Swarm configuration only"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml --tags swarm
+
+  plan-sc:
+    desc: "Plan mode - dry-run sanity check only"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml --check --diff --tags sc
+
+  apply-sc:
+    desc: "Apply sanity check only"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml --tags sc
+
+  sanity-check:
+    desc: "Run comprehensive sanity check playbook"
+    dir: ansible
+    cmds:
+      - ansible-playbook 90-sanitycheck.yml
+
+  plan-dokploy:
+    desc: "Plan mode - dry-run Dokploy installation only"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml --check --diff --tags dokploy
+
+  apply-dokploy:
+    desc: "Apply Dokploy installation only"
+    dir: ansible
+    cmds:
+      - ansible-playbook site.yml --tags dokploy
+
+  reboot:
+    desc: "Perform an ordered reboot of all managers with health checks"
+    dir: ansible
+    cmds:
+      - ansible-playbook 98-reboot.yml

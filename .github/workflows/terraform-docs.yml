@@ -1,0 +1,39 @@
+name: Generate Terraform Docs
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'terraform/modules/**'
+  pull_request:
+    paths:
+      - 'terraform/modules/**'
+
+permissions:
+  contents: write
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Terraform docs (hetzner-cloud)
+        uses: terraform-docs/gh-actions@v1
+        with:
+          working-dir: terraform/modules/hetzner-cloud
+          output-file: README.md
+          output-method: inject
+          git-push: ${{ github.event_name == 'push' }}
+
+      - name: Terraform docs (proxmox-vm)
+        uses: terraform-docs/gh-actions@v1
+        with:
+          working-dir: terraform/modules/proxmox-vm
+          output-file: README.md
+          output-method: inject
+          git-push: ${{ github.event_name == 'push' }}

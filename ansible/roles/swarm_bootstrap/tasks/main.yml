@@ -1,0 +1,169 @@
+---
+# Docker Swarm bootstrap role - idempotent cluster formation
+# This role handles the critical logic of forming a 3-manager Docker Swarm
+
+- name: "Verify Tailscale is running on all nodes"
+  ansible.builtin.systemd:
+    name: tailscaled
+    state: started
+    enabled: true
+  tags: [swarm, tailscale]
+
+- name: "Get Tailscale interface information"
+  ansible.builtin.setup:
+    filter: ansible_tailscale0
+  tags: [swarm, tailscale]
+
+- name: "Fail if Tailscale interface not found"
+  ansible.builtin.fail:
+    msg: "Tailscale interface (tailscale0) not found on {{ inventory_hostname }}. Ensure Tailscale is properly configured."
+  when: ansible_facts['tailscale0'] is not defined
+  tags: [swarm, tailscale]
+
+- name: "Check if node is already part of a Docker Swarm"
+  ansible.builtin.command: docker info --format '{{ "{{" }}.Swarm.LocalNodeState{{ "}}" }}'
+  register: swarm_state
+  changed_when: false
+  check_mode: no
+  tags: [swarm]
+
+- name: "Debug current swarm state"
+  ansible.builtin.debug:
+    msg: "Node {{ inventory_hostname }} swarm state: {{ swarm_state.stdout }}"
+  tags: [swarm]
+
+# Bootstrap the first manager (dkr-srv-0)
+- name: "Bootstrap Docker Swarm on first manager"
+  ansible.builtin.command: |
+    docker swarm init \
+      --advertise-addr {{ ansible_facts['tailscale0'].ipv4.address }} \
+      --listen-addr {{ ansible_facts['tailscale0'].ipv4.address }}:2377
+  when:
+    - inventory_hostname == groups.swarm_managers[0]
+    - swarm_state.stdout != 'active'
+  register: swarm_init_result
+  tags: [swarm]
+
+- name: "Debug swarm init result"
+  ansible.builtin.debug:
+    msg: "Swarm init result: {{ swarm_init_result.stdout | default('Skipped in check mode') }}"
+  when:
+    - inventory_hostname == groups.swarm_managers[0]
+    - swarm_state.stdout != 'active'
+  tags: [swarm]
+
+# Get join tokens from the first manager
+- name: "Get manager join token from first manager"
+  ansible.builtin.command: docker swarm join-token -q manager
+  when:
+    - inventory_hostname == groups.swarm_managers[0]
+    - swarm_state.stdout == 'active' or (swarm_init_result is defined and swarm_init_result.changed)
+  register: manager_join_token
+  changed_when: false
+  check_mode: no
+  tags: [swarm]
+
+- name: "Get worker join token from first manager"
+  ansible.builtin.command: docker swarm join-token -q worker
+  when:
+    - inventory_hostname == groups.swarm_managers[0]
+    - swarm_state.stdout == 'active' or (swarm_init_result is defined and swarm_init_result.changed)
+  register: worker_join_token
+  changed_when: false
+  check_mode: no
+  tags: [swarm]
+
+- name: "Set join tokens as host facts on first manager"
+  ansible.builtin.set_fact:
+    swarm_manager_token: "{{ manager_join_token.stdout | default('PLACEHOLDER_TOKEN_FOR_CHECK_MODE') }}"
+    swarm_worker_token: "{{ worker_join_token.stdout | default('PLACEHOLDER_TOKEN_FOR_CHECK_MODE') }}"
+  when: inventory_hostname == groups.swarm_managers[0]
+  tags: [swarm]
+
+# Share join tokens across all manager nodes using set_stats
+- name: "Share join tokens across manager nodes"
+  ansible.builtin.set_stats:
+    data:
+      swarm_tokens:
+        manager_token: "{{ manager_join_token.stdout | default('PLACEHOLDER_TOKEN_FOR_CHECK_MODE') }}"
+        worker_token: "{{ worker_join_token.stdout | default('PLACEHOLDER_TOKEN_FOR_CHECK_MODE') }}"
+    per_host: true
+  when: inventory_hostname == groups.swarm_managers[0]
+  tags: [swarm]
+
+# Join other managers to the swarm
+- name: "Join other managers to the Docker Swarm"
+  ansible.builtin.command: |
+    docker swarm join \
+      --token {{ hostvars[groups.swarm_managers[0]].swarm_manager_token }} \
+      {{ hostvars[groups.swarm_managers[0]].ansible_facts['tailscale0'].ipv4.address }}:2377
+  when:
+    - inventory_hostname != groups.swarm_managers[0]
+    - swarm_state.stdout != 'active'
+    - hostvars[groups.swarm_managers[0]].swarm_manager_token is defined
+  register: swarm_join_result
+  tags: [swarm]
+
+- name: "Debug swarm join result"
+  ansible.builtin.debug:
+    msg: "Swarm join result on {{ inventory_hostname }}: {{ swarm_join_result.stdout | default('Skipped in check mode') }}"
+  when:
+    - inventory_hostname != groups.swarm_managers[0]
+    - swarm_state.stdout != 'active'
+  tags: [swarm]
+
+# Verify swarm membership
+- name: "Get docker format string"
+  ansible.builtin.template:
+    src: docker_format.j2
+    dest: /tmp/docker_format
+    mode: '0644'
+  tags: [swarm]
+
+- name: "Verify swarm membership"
+  ansible.builtin.shell: docker node ls --format "$(cat /tmp/docker_format)"
+  register: swarm_nodes
+  changed_when: false
+  check_mode: no
+  when:
+    - not ansible_check_mode or swarm_state.stdout == 'active'
+  tags: [swarm]
+
+- name: "Debug swarm nodes"
+  ansible.builtin.debug:
+    msg: "Swarm nodes: {{ swarm_nodes.stdout_lines | default([]) }}"
+  when:
+    - not ansible_check_mode or swarm_state.stdout == 'active'
+  tags: [swarm]
+
+# Validate exactly 3 managers and no workers
+- name: "Count manager nodes"
+  ansible.builtin.set_fact:
+    manager_count: "{{ swarm_nodes.stdout_lines | default([]) | select('search', 'Leader$|Reachable$') | list | length }}"
+  tags: [swarm]
+
+- name: "Count worker nodes"
+  ansible.builtin.set_fact:
+    worker_count: "{{ swarm_nodes.stdout_lines | default([]) | select('search', 'Ready$') | list | length }}"
+  tags: [swarm]
+
+- name: "Validate exactly 3 managers"
+  ansible.builtin.fail:
+    msg: "Expected exactly 3 managers, found {{ manager_count }}. Swarm formation failed."
+  when:
+    - not ansible_check_mode
+    - manager_count | int != 3
+  tags: [swarm]
+
+- name: "Validate no worker nodes"
+  ansible.builtin.fail:
+    msg: "Expected no worker nodes, found {{ worker_count }}. Swarm should be managers-only."
+  when:
+    - not ansible_check_mode
+    - worker_count | int > 0
+  tags: [swarm]
+
+- name: "Confirm successful swarm formation"
+  ansible.builtin.debug:
+    msg: "Docker Swarm successfully formed with 3 managers and 0 workers"
+  tags: [swarm]

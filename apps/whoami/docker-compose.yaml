@@ -1,0 +1,12 @@
+services:
+  whoami:
+    image: traefik/whoami
+    restart: unless-stopped
+    deploy:
+      replicas: 3
+      placement:
+        constraints:
+          - node.role == manager
+    # Domain configuration is handled through Dokploy UI, not in this file!
+    # When you deploy in Dokploy, you'll set your domain name in the web interface.
+    # Dokploy will automatically add the correct Traefik labels for routing and HTTPS.

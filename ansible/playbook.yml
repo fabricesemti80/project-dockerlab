@@ -1,0 +1,6 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Gather facts
+      ansible.builtin.gather_facts:

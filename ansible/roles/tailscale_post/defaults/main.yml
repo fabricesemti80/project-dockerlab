@@ -1,0 +1,8 @@
+---
+# Default variables for tailscale_post role
+
+# Tailscale ping timeout in seconds
+tailscale_ping_timeout: 3
+
+# Whether to fail on connectivity test failure
+tailscale_fail_on_connectivity_failure: true

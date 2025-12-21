@@ -1,0 +1,24 @@
+---
+# Dokploy role defaults
+# Default values for Dokploy configuration
+
+# Traefik configuration defaults
+traefik_acme_email: "emilfabrice@gmail.com"
+traefik_dashboard_password: "your-secure-traefik-dashboard-password-here"
+
+# Dokploy service configuration defaults
+dokploy_port: 3000
+traefik_ssl_port: 443
+traefik_port: 80
+dokploy_release_tag: "latest"
+dokploy_tz: "Europe/London"
+
+# Database configuration defaults
+dokploy_postgres_user: "dokploy"
+dokploy_postgres_db: "dokploy"
+dokploy_postgres_password: "your-secure-postgres-password-here"
+dokploy_redis_password: "your-secure-redis-password-here"
+
+# Application configuration defaults
+dokploy_app_secret: "your-secure-app-secret-here"
+dokploy_redis_host: "dokploy-redis:6379"

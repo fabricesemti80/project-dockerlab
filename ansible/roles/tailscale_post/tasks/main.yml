@@ -1,0 +1,52 @@
+---
+# Tailscale post-configuration tasks
+# Validates and captures Tailscale setup for later use in Swarm
+
+- name: "Assert tailscale0 interface exists"
+  ansible.builtin.assert:
+    that:
+      - "'tailscale0' in ansible_facts.interfaces"
+    fail_msg: "tailscale0 interface not found - Tailscale installation may have failed"
+    success_msg: "tailscale0 interface is present"
+
+- name: "Capture Tailscale IP address"
+  ansible.builtin.set_fact:
+    tailscale_ip: "{{ ansible_facts.interfaces['tailscale0'].ipv4.address }}"
+  when: 
+    - "'tailscale0' in ansible_facts.interfaces"
+    - ansible_facts.interfaces['tailscale0'].ipv4 is defined
+    - ansible_facts.interfaces['tailscale0'].ipv4.address is defined
+
+- name: "Debug: Display captured Tailscale IP"
+  ansible.builtin.debug:
+    msg: "Tailscale IP for {{ inventory_hostname }}: {{ tailscale_ip }}"
+  when: tailscale_ip is defined
+
+- name: "Write Tailscale IP to hostvars for later use"
+  ansible.builtin.set_stats:
+    data:
+      tailscale_ips:
+        "{{ inventory_hostname }}": "{{ tailscale_ip }}"
+    per_host: true
+  when: tailscale_ip is defined
+
+- name: "Validate Tailscale full mesh connectivity"
+  ansible.builtin.shell: |
+    for host in {{ groups['all'] | join(' ') }}; do
+      if [ "{{ host }}" != "{{ inventory_hostname }}" ]; then
+        echo "Testing connectivity to $host..."
+        ping -c 1 -W 3 {{ hostvars[host].tailscale_ip | default('') }} || exit 1
+      fi
+    done
+  args:
+    warn: false
+  environment:
+    ANSIBLE_HOST_KEY_CHECKING: "false"
+  when: tailscale_ip is defined
+  register: connectivity_test
+  failed_when: connectivity_test.rc != 0
+
+- name: "Debug: Full mesh connectivity successful"
+  ansible.builtin.debug:
+    msg: "Full mesh connectivity validated for {{ inventory_hostname }}"
+  when: tailscale_ip is defined and connectivity_test is succeeded

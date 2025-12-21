@@ -1,0 +1,16 @@
+# Main admin user
+admin_user: fs
+sudo_nopasswd: true
+
+# list of packages to be installed
+install_packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+  - htop
+  - neofetch
+  - unzip
+  - git
+  - dnsutils

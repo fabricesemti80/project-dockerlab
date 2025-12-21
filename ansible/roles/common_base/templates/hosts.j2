@@ -1,0 +1,15 @@
+# Ansible managed: /etc/hosts.j2 modified on {{ ansible_facts['date_time']['iso8601'] }}
+
+127.0.0.1       localhost
+::1             localhost ip6-localhost ip6-loopback
+ff02::1         ip6-allnodes
+ff02::2         ip6-allrouters
+
+# Static hostname resolution for cluster nodes
+{% for host in groups['all'] %}
+{% if hostvars[host].ansible_host is defined %}
+{{ hostvars[host].ansible_host }} {{ host }} {{ host }}.local
+{% else %}
+{{ host }} {{ host }}.local
+{% endif %}
+{% endfor %}

@@ -1,0 +1,26 @@
+---
+# Docker tuning role defaults
+# Default values for Docker tuning parameters
+
+# MTU setting for Docker networks
+docker_mtu: 1280
+
+# Docker API binding (will be set to Tailscale IP dynamically)
+docker_tcp_bind_ip: "{{ ansible_tailscale0.ipv4.address | default('127.0.0.1') }}"
+
+# Docker daemon configuration options
+docker_log_driver: "json-file"
+docker_log_max_size: "10m"
+docker_log_max_file: "3"
+# Storage driver (overlay2 is recommended)
+docker_storage_driver: "overlay2"
+
+# Live restore configuration (Must be false for Swarm)
+docker_live_restore: false
+
+# Userland proxy configuration
+docker_userland_proxy: false
+
+# Swarm-specific settings
+docker_swarm_subnet: "10.20.0.0/16"
+docker_swarm_subnet_size: 24

@@ -1,0 +1,18 @@
+---
+# Default variables for common_base role
+
+# Whether to disable IPv6 on all interfaces
+disable_ipv6: false
+
+# Common packages to install (can be overridden in group_vars/all.yml)
+install_packages:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
+  - lsb-release
+  - htop
+  - neofetch
+  - unzip
+  - git
+  - dnsutils

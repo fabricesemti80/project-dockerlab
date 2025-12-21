@@ -1,0 +1,39 @@
+---
+- name: "Final Deployment Summary"
+  hosts: swarm_managers
+  become: true
+  tags: ["always"]
+  vars:
+    dokploy_port: "{{ lookup('env', 'DOKPLOY_PORT') | default('3000', true) }}"
+  tasks:
+    - name: "Identify Swarm Leader"
+      ansible.builtin.shell: |
+        docker node ls --filter "role=manager" --format "{% raw %}{{.Hostname}} {{.ManagerStatus}}{% endraw %}" | grep "Leader" | awk '{print $1}'
+      register: swarm_leader_hostname
+      changed_when: false
+      check_mode: false
+      run_once: true
+
+    - name: "Identify Leader Tailscale IP"
+      ansible.builtin.set_fact:
+        dokploy_leader_ip: "{{ hostvars[swarm_leader_hostname.stdout].ansible_facts['tailscale0']['ipv4']['address'] }}"
+      when: swarm_leader_hostname.stdout in hostvars
+      run_once: true
+
+    - name: "Display Dokploy Access Info"
+      ansible.builtin.debug:
+        msg: |
+
+          ============================================================
+          DOKPLOY ACCESS INFORMATION
+          ============================================================
+
+          Dokploy Access:
+            http://{{ dokploy_leader_ip | default('UNKNOWN_IP') }}:{{ dokploy_port }} (Swarm Leader)
+
+          ------------------------------------------------------------
+
+          Swarm Leader Hostname: {{ swarm_leader_hostname.stdout }}
+
+          ============================================================
+      run_once: true

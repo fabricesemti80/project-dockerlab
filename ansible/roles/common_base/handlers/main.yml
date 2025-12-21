@@ -1,0 +1,15 @@
+---
+# Handlers for the common_base role
+
+- name: "Restart SSH service"
+  ansible.builtin.systemd:
+    name: ssh
+    state: restarted
+
+- name: "Ensure swap is disabled in fstab"
+  ansible.builtin.replace:
+    path: /etc/fstab
+    regexp: '^\s*[^#\s].*swap.*$'
+    replace: '# {{ item }} - disabled for Docker'
+  loop: "{{ ansible_mounts }}"
+  when: item.mount == 'swap'
