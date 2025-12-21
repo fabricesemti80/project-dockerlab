@@ -145,11 +145,11 @@ resource "proxmox_virtual_environment_vm" "vm" {
       }
     }
 
-    # Add SSH keys directly to cloud-init
+    # Add SSH keys directly to cloud-init (only if username block doesn't exist)
     dynamic "user_account" {
-      for_each = var.ssh_public_key_rsa != "" || var.ssh_public_key_ed25519 != "" ? [1] : []
+      for_each = var.username == null && (var.ssh_public_key_rsa != "" || var.ssh_public_key_ed25519 != "") ? [1] : []
       content {
-        username = var.username != null ? var.username : "root"
+        username = "root"
         keys     = compact([
           var.ssh_public_key_rsa,
           var.ssh_public_key_ed25519
@@ -163,17 +163,17 @@ resource "proxmox_virtual_environment_vm" "vm" {
   started             = var.started
   pool_id             = var.pool_id
 
-  lifecycle {
-    ignore_changes = [
-      tags,
-      description,
-      clone,
-      agent,
-      memory,
-      cpu,
-      disk,
-      network_device,
-      initialization,
-    ]
-  }
+  # lifecycle {
+  #   ignore_changes = [
+  #     tags,
+  #     description,
+  #     clone,
+  #     agent,
+  #     memory,
+  #     cpu,
+  #     disk,
+  #     network_device,
+  #     initialization,
+  #   ]
+  # }
 }

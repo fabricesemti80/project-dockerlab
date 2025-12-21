@@ -11,8 +11,8 @@ output "vm_name" {
 }
 
 output "vm_ipv4_address" {
-  description = "The IPv4 address of the VM (if agent is enabled)"
-  value       = var.agent_enabled ? proxmox_virtual_environment_vm.vm.ipv4_addresses[0][0] : var.ipv4_address
+  description = "The IPv4 address of the VM"
+  value       = var.agent_enabled && length(proxmox_virtual_environment_vm.vm.ipv4_addresses) > 0 ? proxmox_virtual_environment_vm.vm.ipv4_addresses[0][0] : var.ipv4_address
 }
 
 output "vm_node_name" {

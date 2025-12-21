@@ -12,11 +12,11 @@ The [`terraform/providers.tf`](../terraform/providers.tf:1) file defines the req
 
 ## Hetzner Cloud Setup
 
-The [`terraform/main_hcloud.tf`](../terraform/main_hcloud.tf:1) file is responsible for creating the infrastructure on Hetzner Cloud.
+The [`01_deploy_hetzner_instance/main_hcloud.tf`](../01_deploy_hetzner_instance/main_hcloud.tf:1) file is responsible for creating the infrastructure on Hetzner Cloud.
 
 ### Dokploy Server Module
 
-This module, sourced from [`./modules/hetzner-cloud`](../terraform/modules/hetzner-cloud:1), creates the main Dokploy server with the following configuration:
+This module, sourced from [`./modules/hetzner-cloud`](../01_deploy_hetzner_instance/modules/hetzner-cloud:1), creates the main Dokploy server with the following configuration:
 
 *   **Server Name:** `dkr-srv-0`
 *   **Image:** Ubuntu 22.04
@@ -58,7 +58,7 @@ The [`terraform/coolify_userdata.tftpl`](../terraform/coolify_userdata.tftpl:1) 
 
 ### Hetzner Cloud Module
 
-The [`terraform/modules/hetzner-cloud/`](../terraform/modules/hetzner-cloud:1) module is a reusable module to create a server in Hetzner Cloud. It defines the server resources, firewall, and outputs.
+The [`01_deploy_hetzner_instance/modules/hetzner-cloud/`](../01_deploy_hetzner_instance/modules/hetzner-cloud:1) module is a reusable module to create a server in Hetzner Cloud. It defines the server resources, firewall, and outputs.
 
 ### Proxmox VM Module
 

@@ -30,6 +30,14 @@ jobs:
           output-method: inject
           git-push: ${{ github.event_name == 'push' }}
 
+      - name: Terraform docs (hetzner-cloud - new location)
+        uses: terraform-docs/gh-actions@v1
+        with:
+          working-dir: 01_deploy_hetzner_instance/modules/hetzner-cloud
+          output-file: README.md
+          output-method: inject
+          git-push: ${{ github.event_name == 'push' }}
+
       - name: Terraform docs (proxmox-vm)
         uses: terraform-docs/gh-actions@v1
         with:
