@@ -15,30 +15,30 @@ terraform {
   }
 }
 
-variable "hcloud_token" { sensitive = true }
-variable "tailscale_auth_key" { sensitive = true }
+variable "HCLOUD_TOKEN" { sensitive = true }
+variable "TAILSCALE_AUTH_KEY" { sensitive = true }
 
-variable "proxmox_auth_token" {
+variable "PROXMOX_AUTH_TOKEN" {
   sensitive   = true
   description = "terraform@pve!provider=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 }
 
-variable "cloudflare_api_token" {
+variable "CLOUDFLARE_API_TOKEN" {
   description = "Cloudflare API Token"
   sensitive   = true
 }
 
-variable "cloudflare_account_id" {
+variable "CLOUDFLARE_ACCOUNT_ID" {
   description = "Cloudflare Account ID"
   sensitive   = true
 }
 
 provider "hcloud" {
-  token = var.hcloud_token
+  token = var.HCLOUD_TOKEN
 }
 
 provider "cloudflare" {
-  api_token = var.cloudflare_api_token
+  api_token = var.CLOUDFLARE_API_TOKEN
 }
 
 variable "proxmox_ssh_private_key_file" {
@@ -48,7 +48,7 @@ variable "proxmox_ssh_private_key_file" {
 
 provider "proxmox" {
   endpoint  = "https://10.0.40.10:8006/"
-  api_token = var.proxmox_auth_token
+  api_token = var.PROXMOX_AUTH_TOKEN
   insecure  = true
   ssh {
     username    = "root"

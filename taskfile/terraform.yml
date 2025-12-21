@@ -13,24 +13,24 @@ tasks:
     desc: "Initialize Hetzner Terraform"
     dir: terraform
     cmds:
-      - if [ -f .envrc ]; then . ./.envrc; fi; terraform init {{.CLI_ARGS}}
+      - terraform init {{.CLI_ARGS}}
 
   plan:
     desc: "Create a Hetzner Terraform execution plan"
     dir: terraform
     cmds:
       - task: fmt
-      - if [ -f .envrc ]; then . ./.envrc; fi; terraform plan -out=tfplan
+      - terraform plan -out=tfplan
 
   apply:
     desc: "Apply the Hetzner Terraform plan"
     dir: terraform
     cmds:
       - task: plan
-      - if [ -f .envrc ]; then . ./.envrc; fi; terraform apply tfplan
+      - terraform apply tfplan
 
   destroy:
     desc: "Destroy the Hetzner Terraform-managed infrastructure"
     dir: terraform
     cmds:
-      - if [ -f .envrc ]; then . ./.envrc; fi; terraform destroy -auto-approve
+      - terraform destroy -auto-approve

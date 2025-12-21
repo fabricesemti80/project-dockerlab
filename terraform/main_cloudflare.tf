@@ -1,10 +1,10 @@
-variable "cloudflare_zone_id" {
+variable "CLOUDFLARE_ZONE_ID" {
   description = "Cloudflare Zone ID for krapulax.dev"
   sensitive   = true
 }
 
 data "cloudflare_zone" "krapulax_dev" {
-  zone_id = var.cloudflare_zone_id
+  zone_id = var.CLOUDFLARE_ZONE_ID
 }
 
 # Creates a DNS A record for the Coolify server.
