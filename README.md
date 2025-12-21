@@ -1,61 +1,248 @@
-# Dokker homelab setup guide
+# Project DockerLab
 
-> reference for future-self mainly!
-
-This project provides a comprehensive setup for a hybrid homelab environment that combines cloud and on-premises infrastructure. The setup uses Proxmox for virtualization on-premises and VMs with Docker Swarm for container orchestration across both environments.
+> A comprehensive hybrid homelab setup combining cloud and on-premises infrastructure with Docker Swarm orchestration.
 
 ## 🏗️ Architecture Overview
 
-- **On-premises**: Proxmox VE for VM management and virtualization
-- **Cloud**: Hetzner Cloud instances for additional capacity
-- **Orchestration**: Docker Swarm for container management across environments
-- **Networking**: Tailscale for secure mesh networking
-- **Deployment**: Ansible for configuration management and automation
-- **Infrastructure**: Terraform for infrastructure as code
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           Tailscale Mesh Network                        │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  ┌─────────────────────┐              ┌─────────────────────────────┐  │
+│  │   Hetzner Cloud     │              │      Proxmox On-Premises    │  │
+│  │                     │              │                             │  │
+│  │  ┌───────────────┐  │              │  ┌───────────┐ ┌─────────┐  │  │
+│  │  │  dkr-srv-0    │  │◄────────────►│  │ dkr-srv-1 │ │dkr-srv-2│  │  │
+│  │  │  (Manager)    │  │              │  │ (Manager) │ │(Manager)│  │  │
+│  │  └───────────────┘  │              │  └───────────┘ └─────────┘  │  │
+│  │                     │              │                             │  │
+│  └─────────────────────┘              └─────────────────────────────┘  │
+│                                                                         │
+│                        Docker Swarm Cluster                            │
+└─────────────────────────────────────────────────────────────────────────┘
+```
 
-## 📋 Sections
+| Component | Technology |
+|-----------|------------|
+| **Virtualization** | Proxmox VE |
+| **Cloud Provider** | Hetzner Cloud |
+| **Container Orchestration** | Docker Swarm |
+| **Mesh Networking** | Tailscale |
+| **Configuration Management** | Ansible |
+| **Infrastructure as Code** | Terraform |
+| **Secrets Management** | Doppler |
+| **Task Runner** | Taskfile |
+| **DNS Management** | Cloudflare |
 
-### 00-base image creation 🖼️
+## 📁 Project Structure
 
-This section covers the initial setup of base VM templates using Proxmox VE and community scripts.
+```
+project-dockerlab/
+├── ansible/                  # Configuration management
+│   ├── group_vars/          # Variable definitions
+│   ├── inventory/           # Host inventory
+│   ├── roles/               # Ansible roles
+│   └── *.yml                # Playbooks
+├── terraform/               # Infrastructure as code
+│   ├── modules/             # Reusable modules
+│   │   ├── hetzner-cloud/   # Hetzner server module
+│   │   └── proxmox-vm/      # Proxmox VM module
+│   └── *.tf                 # Terraform configs
+├── apps/                    # Docker applications
+│   └── whoami/              # Example swarm service
+├── docs/                    # Detailed documentation
+│   ├── ansible.md           # Ansible documentation
+│   ├── terraform.md         # Terraform documentation
+│   ├── doppler.md           # Doppler documentation
+│   └── taskfile.md          # Taskfile documentation
+├── taskfile/                # Task definitions
+└── Taskfile.yml             # Main task runner config
+```
 
-#### 📥 Provisioning a Debian 13 VM
+## 🚀 Quick Start
 
-To create a base VM template for your homelab, follow these steps:
+### Prerequisites
+
+- [Doppler CLI](https://docs.doppler.com/docs/install-cli) - Secrets management
+- [Task](https://taskfile.dev/installation/) - Task runner
+- [Terraform](https://terraform.io) - Infrastructure provisioning
+- [Ansible](https://ansible.com) - Configuration management
+- SSH access to Proxmox and target nodes
+
+### 1. Configure Secrets
+
+```bash
+# Login to Doppler
+doppler login
+
+# Setup project
+doppler setup
+# Select: project-dockerlab / dev
+```
+
+### 2. Initialize Dependencies
+
+```bash
+# Initialize Terraform
+task tf:init
+
+# Install Ansible dependencies
+task ansible:init
+```
+
+### 3. Deploy Infrastructure
+
+```bash
+# Preview infrastructure changes
+task tf:plan
+
+# Apply infrastructure
+task tf:apply
+```
+
+### 4. Configure Systems
+
+```bash
+# Preview configuration changes
+task ansible:site:plan
+
+# Apply full configuration
+task ansible:site:apply
+```
+
+## 📋 Infrastructure
+
+### Nodes
+
+| Node | Location | IP Address | Role |
+|------|----------|------------|------|
+| dkr-srv-0 | Hetzner Helsinki | 157.180.84.140 | Swarm Manager |
+| dkr-srv-1 | On-premises | 10.0.30.11 | Swarm Manager |
+| dkr-srv-2 | On-premises | 10.0.30.12 | Swarm Manager |
+
+### Network Configuration
+
+- **VLAN 30**: Docker/Container network (10.0.30.0/24)
+- **VLAN 40**: Proxmox management (10.0.40.0/24)
+- **Tailscale**: Secure mesh overlay across all nodes
+
+## 🔧 Common Tasks
+
+```bash
+# List all available tasks
+task --list-all
+
+# Terraform
+task tf:plan            # Preview infrastructure changes
+task tf:apply           # Apply infrastructure
+task tf:destroy         # Destroy all infrastructure
+
+# Ansible
+task ansible:site:apply       # Full site deployment
+task ansible:preflight:apply  # System updates
+task ansible:docker:apply     # Docker installation only
+task ansible:tailscale:apply  # Tailscale setup only
+```
+
+## 📚 Documentation
+
+Detailed documentation for each component:
+
+| Document | Description |
+|----------|-------------|
+| [Ansible](docs/ansible.md) | Playbooks, roles, and configuration |
+| [Terraform](docs/terraform.md) | Infrastructure provisioning |
+| [Doppler](docs/doppler.md) | Secrets management |
+| [Taskfile](docs/taskfile.md) | Task runner commands |
+
+## 🖼️ Base Image Creation
+
+### Creating a Debian 13 VM Template
 
 1. **Access Proxmox Community Scripts**
-   - Visit: https://community-scripts.github.io/ProxmoxVE/scripts?id=debian-13-vm&category=Operating+Systems
-   - This script automates the creation of a Debian 13 VM with optimal settings for container workloads
+   - Visit: https://community-scripts.github.io/ProxmoxVE/scripts?id=debian-13-vm
 
-2. **Run the Community Script**
-   - In your Proxmox web interface, navigate to the Datacenter view
-   - Click on "Shell" in the top-right corner
-   - Copy and paste the script from the community page
-   - Execute the script to create your base VM
+2. **Run the Script**
+   - Open Proxmox Shell
+   - Copy and execute the community script
 
-3. **VM Configuration Details**
-   - **OS**: Debian 13 (Bookworm)
-   - **Storage**: Optimized for container workloads
-   - **Networking**: Bridge networking for Docker Swarm compatibility
-   - **Resources**: Configurable CPU and RAM allocation
+3. **Convert to Template**
+   - Right-click VM → "Convert to Template"
+   - Template ID: 9008 (used in Terraform)
 
-4. **Convert to Template**
-   - Once the VM is created and configured:
-     - Right-click on the VM in the Proxmox interface
-     - Select "Convert to Template"
-     - This creates a reusable template for quick deployment
+4. **Template Naming**
+   - Recommended: `debian13-docker-template`
 
-5. **Template Benefits**
-   - Fast VM deployment from template
-   - Consistent base configuration across all nodes
-   - Easy scaling by cloning from template
-   - Reduced setup time for new swarm nodes
+## 🔐 Secrets Management
 
-#### 🔄 Template Management
+All secrets are managed through [Doppler](https://doppler.com):
 
-- **Naming Convention**: Use descriptive names like `debian13-docker-template`
-- **Updates**: Regularly update the template with security patches
-- **Cloning**: Clone from template when adding new nodes to your swarm
-- **Backup**: Keep template backups for disaster recovery
+| Secret | Purpose |
+|--------|---------|
+| `HCLOUD_TOKEN` | Hetzner Cloud API |
+| `PROXMOX_AUTH_TOKEN` | Proxmox VE API |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare DNS |
+| `TAILSCALE_AUTH_KEY` | Tailscale network |
 
-This base template will serve as the foundation for all your Docker Swarm nodes, whether they're running on-premises or in the cloud.
+See [Doppler Documentation](docs/doppler.md) for setup details.
+
+## 🐳 Applications
+
+Example applications are in the `apps/` directory:
+
+### whoami
+
+A simple Traefik whoami service for testing Swarm deployments:
+
+```bash
+cd apps/whoami
+docker stack deploy -c docker-compose.yaml whoami
+```
+
+## 🔄 Deployment Workflow
+
+```mermaid
+graph LR
+    A[Terraform] -->|Provision VMs| B[Ansible Preflight]
+    B -->|System Updates| C[Base Config]
+    C -->|Hostname, Packages| D[Tailscale]
+    D -->|Mesh Network| E[Docker]
+    E -->|Install Docker| F[Swarm]
+    F -->|Form Cluster| G[Deploy Apps]
+```
+
+## 🛠️ Troubleshooting
+
+### SSH Connection Issues
+
+```bash
+# Test connectivity
+ansible -i ansible/inventory/hosts all -m ping
+```
+
+### Tailscale Issues
+
+```bash
+# Check Tailscale status on a node
+tailscale status
+tailscale ip -4
+```
+
+### Docker Swarm Issues
+
+```bash
+# Check swarm status
+docker node ls
+docker service ls
+```
+
+## 📝 License
+
+This project is for personal homelab use.
+
+## 🙏 Acknowledgments
+
+- [Proxmox Community Scripts](https://community-scripts.github.io/ProxmoxVE/)
+- [Geerlingguy Ansible Roles](https://github.com/geerlingguy)
+- [Tailscale](https://tailscale.com)
