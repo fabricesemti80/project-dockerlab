@@ -28,3 +28,6 @@
 - name: "Proxmox VM Deployment"
   import_playbook: 01-proxmox-vm-deployment.yml
 
+- name: "Site Preflight"
+  import_playbook: 10-site-preflight.yml
+

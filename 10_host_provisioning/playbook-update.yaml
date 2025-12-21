@@ -1,5 +1,0 @@
----
-- name: Update and reboot hosts
-  hosts: all
-  roles:
-    - system_update
