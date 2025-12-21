@@ -39,6 +39,12 @@ module "dkr_srv_0" {
       protocol   = "tcp"
       port       = "3000" # dokply UI default port
       source_ips = ["0.0.0.0/0", "::/0"]
+    },
+    {
+      direction  = "in"
+      protocol   = "tcp"
+      port       = "9120" # komodo
+      source_ips = ["0.0.0.0/0", "::/0"]
     }
   ]
 
