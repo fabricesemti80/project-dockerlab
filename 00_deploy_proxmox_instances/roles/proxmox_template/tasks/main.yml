@@ -53,6 +53,7 @@
             suffix: temp
           register: ssh_key_temp_file
           delegate_to: "{{ inventory_hostname }}"
+          check_mode: no
 
         - name: Add SSH public keys to the temporary file
           lineinfile:
@@ -60,6 +61,7 @@
             line: "{{ item }}"
           with_items: "{{ ssh_public_keys }}"
           delegate_to: "{{ inventory_hostname }}"
+          check_mode: no
 
         - name: Configure SSH keys from temporary file
           command: "qm set {{ vm_id }} --sshkeys {{ ssh_key_temp_file.path }}"

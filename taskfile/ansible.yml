@@ -7,17 +7,23 @@ tasks:
     cmds:
       - ansible all -m ping
 
-  template:
-    desc: "Create the Proxmox template"
+  apply:
+    desc: "Apply the entire Proxmox configuration"
     dir: 00_deploy_proxmox_instances
     cmds:
-      - ansible-playbook playbook-template.yaml
+      - ansible-playbook playbook-main.yaml
 
   plan:
-    desc: "Plan mode - dry-run the Proxmox template creation"
+    desc: "Plan mode - dry-run the entire Proxmox configuration"
     dir: 00_deploy_proxmox_instances
     cmds:
-      - ansible-playbook playbook-template.yaml --check --diff
+      - ansible-playbook playbook-main.yaml --check --diff
+
+  vm:
+    desc: "Deploy Proxmox VMs"
+    dir: 00_deploy_proxmox_instances
+    cmds:
+      - ansible-playbook playbook-vm.yaml
 
   init:
     desc: "Install Ansible Galaxy roles and collections from requirements.yml"
