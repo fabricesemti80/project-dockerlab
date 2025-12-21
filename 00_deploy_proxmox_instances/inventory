@@ -1,0 +1,2 @@
+[proxmox]
+pve-2 ansible_host=10.0.40.12
