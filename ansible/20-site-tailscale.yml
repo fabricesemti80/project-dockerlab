@@ -1,7 +1,7 @@
 ---
 # Tailscale configuration playbook - secure fabric setup
 - name: "Install and authenticate Tailscale"
-  hosts: all
+  hosts: vms
   become: true
   collections:
     - artis3n.tailscale

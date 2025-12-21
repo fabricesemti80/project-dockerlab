@@ -1,7 +1,7 @@
 ---
 # Docker installation and configuration playbook
 - name: "Install and configure Docker"
-  hosts: all
+  hosts: vms
   become: true
   tags: ["docker", "containers"]
   pre_tasks:

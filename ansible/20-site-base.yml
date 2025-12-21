@@ -1,7 +1,7 @@
 ---
 # Base configuration playbook - initial system setup
 - name: "Base System Configuration"
-  hosts: all
+  hosts: vms
   become: true
   gather_facts: true
   tags: ["base", "common"]

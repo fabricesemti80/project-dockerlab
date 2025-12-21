@@ -1,6 +1,7 @@
 ---
 - name: Site Preflight Check and Update
-  hosts: all
+  hosts: vms
+  become: true
   
   pre_tasks:
     - name: Ping all hosts

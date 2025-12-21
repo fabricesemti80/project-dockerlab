@@ -1,11 +1,21 @@
+[proxmox]
+pve-2 ansible_host=10.0.40.12 ansible_user=root ansible_ssh_private_key_file=~/.ssh/fs_home_rsa
+
 [proxmox_vms]
 dkr-srv-1 ansible_host=10.0.30.11
 dkr-srv-2 ansible_host=10.0.30.12
 
-
 [cloud_vms]
 dkr-srv-0 ansible_host=157.180.84.140
 
-[all:children]
+[vms:children]
 proxmox_vms
 cloud_vms
+
+[swarm_managers:children]
+proxmox_vms
+cloud_vms
+
+[all:children]
+proxmox
+vms
