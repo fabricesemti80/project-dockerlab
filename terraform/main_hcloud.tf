@@ -42,14 +42,14 @@ module "dkr_srv_0" {
     }
   ]
 
-#   # Optional simple user data (example)
-#   user_data = <<-EOF
-# #cloud-config
-# runcmd:
-#   - echo "Simple Hetzner initialization script"
-#   - apt-get update
-#   - echo "Hetzner initialization complete"
-# EOF
+  #   # Optional simple user data (example)
+  #   user_data = <<-EOF
+  # #cloud-config
+  # runcmd:
+  #   - echo "Simple Hetzner initialization script"
+  #   - apt-get update
+  #   - echo "Hetzner initialization complete"
+  # EOF
 
 }
 
