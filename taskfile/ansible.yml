@@ -5,65 +5,80 @@ tasks:
     desc: "Install Ansible Galaxy roles and collections"
     dir: ansible
     cmds:
-      - ansible-galaxy install -r requirements.yml
-      - ansible-galaxy collection install -r requirements.yml
+      - doppler run -- ansible-galaxy install -r requirements.yml
+      - doppler run -- ansible-galaxy collection install -r requirements.yml
+
+  site:apply:
+    desc: "Apply the entire site configuration"
+    dir: ansible
+      - doppler run -- ansible-playbook site.yml
+
+  site:plan:
+    desc: "Plan the entire site configuration"
+    dir: ansible
+      - doppler run -- ansible-playbook site.yml --check --diff
 
   template:apply:
     desc: "Apply the Proxmox template creation"
     dir: ansible
-    cmds:
       - doppler run -- ansible-playbook 00-proxmox-template-creation.yml -i inventory/proxmox
 
   template:plan:
     desc: "Plan the Proxmox template creation"
     dir: ansible
-    cmds:
       - doppler run -- ansible-playbook 00-proxmox-template-creation.yml --check --diff -i inventory/proxmox
 
   vm:apply:
-    desc: "Apply the Proxmox VM deployment"
+    desc: "Apply the Proxmox VM deployment (Optional)"
     dir: ansible
-    cmds:
       - doppler run -- ansible-playbook 01-proxmox-vm-deployment.yml -i inventory/proxmox
 
   vm:plan:
-    desc: "Plan the Proxmox VM deployment"
+    desc: "Plan the Proxmox VM deployment (Optional)"
     dir: ansible
-    cmds:
       - doppler run -- ansible-playbook 01-proxmox-vm-deployment.yml --check --diff -i inventory/proxmox
 
-  hosts:ping:
-    desc: "Ping all hosts in the main inventory"
+  preflight:apply:
+    desc: "Apply site preflight checks and updates"
     dir: ansible
-    cmds:
-      - doppler run -- ansible all -m ping
-
-  hosts:update:
-    desc: "Update all hosts and reboot if necessary"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbook-update.yaml
-
-  pre:apply:
-    desc: "Apply the site preflight checks and updates"
-    dir: ansible
-    cmds:
       - doppler run -- ansible-playbook 10-site-preflight.yml
 
-  pre:plan:
+  preflight:plan:
     desc: "Plan the site preflight checks and updates"
     dir: ansible
-    cmds:
       - doppler run -- ansible-playbook 10-site-preflight.yml --check --diff
 
-  tail:apply:
-    desc: "Apply the tailscale configuration"
+  tailscale:apply:
+    desc: "Apply the Tailscale configuration"
     dir: ansible
     cmds:
       - doppler run -- ansible-playbook 20-site-tailscale.yml
 
-  tail:plan:
-    desc: "Plan the tailscale configuration"
+  tailscale:plan:
+    desc: "Plan the Tailscale configuration"
+    dir: ansible
+      - doppler run -- ansible-playbook 20-site-tailscale.yml --check --diff
+
+  docker:apply:
+    desc: "Apply the Docker configuration"
     dir: ansible
     cmds:
-      - doppler run -- ansible-playbook 20-site-tailscale.yml --check --diff
+      - doppler run -- ansible-playbook 30-site-docker.yml
+
+  docker:plan:
+    desc: "Plan the Docker configuration"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 30-site-docker.yml --check --diff
+
+  base:apply:
+    desc: "Apply the Base configuration"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 20-site-base.yml
+
+  base:plan:
+    desc: "Plan the Base configuration"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 20-site-base.yml --check --diff

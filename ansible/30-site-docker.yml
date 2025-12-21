@@ -41,6 +41,7 @@
         daemon_reload: true
 
   roles:
+    - geerlingguy.pip
     - geerlingguy.docker
     - docker_tuning
   post_tasks:
