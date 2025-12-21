@@ -3,7 +3,7 @@
 - name: "Install and configure Docker"
   hosts: vms
   become: true
-  tags: ["docker", "containers"]
+  tags: ["docker", "docker"]
   pre_tasks:
     - name: "Update package lists"
       ansible.builtin.apt:
@@ -40,11 +40,19 @@
       ansible.builtin.systemd:
         daemon_reload: true
 
+  vars:
+    ansible_docker_user: "{{ ansible_user | default('root') }}"
   roles:
     - geerlingguy.pip
     - geerlingguy.docker
     - docker_tuning
   post_tasks:
+    - name: "Add ansible user to docker group"
+      user:
+        name: "{{ ansible_docker_user }}"
+        groups: docker
+        append: yes
+
     - name: "Refresh package cache after Docker repository added"
       ansible.builtin.apt:
         update_cache: true

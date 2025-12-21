@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  komodo:
+    image: komododocker/komodo:latest
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    environment:
+      - KOMODO_DB_HOST={{ komodo_db_host }}
+      - KOMODO_DB_PORT={{ komodo_db_port }}
+      - KOMODO_DB_NAME={{ komodo_db_name }}
+      {% if komodo_db_username %}
+      - KOMODO_DB_USERNAME={{ komodo_db_username }}
+      {% endif %}
+      {% if komodo_db_password %}
+      - KOMODO_DB_PASSWORD={{ komodo_db_password }}
+      {% endif %}
+      - KOMODO_PORT={{ komodo_port }}
+      - KOMODO_SECRET={{ komodo_secret }}
+      - KOMODO_LOG_LEVEL={{ komodo_log_level }}
+    ports:
+      - "{{ komodo_port }}:{{ komodo_port }}"
+    networks:
+      - komodo-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:{{ komodo_port }}/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  komodo-network:
+    driver: overlay
+    attachable: true

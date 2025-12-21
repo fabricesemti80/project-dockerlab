@@ -114,3 +114,15 @@ tasks:
     dir: ansible
     cmds:
       - doppler run -- ansible-playbook 90-sanitycheck.yml --check --diff
+
+  komodo:apply:
+    desc: "Apply the Komodo installation and configuration"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 50-site-komodo.yaml
+
+  komodo:plan:
+    desc: "Plan the Komodo installation and configuration"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 50-site-komodo.yaml --check --diff

@@ -6,31 +6,31 @@ tasks:
     desc: "Format and validate Hetzner Terraform"
     dir: terraform
     cmds:
-      - terraform fmt
-      - terraform validate
+      - doppler run -- terraform fmt
+      - doppler run -- terraform validate
 
   init:
     desc: "Initialize Hetzner Terraform"
     dir: terraform
     cmds:
-      - terraform init {{.CLI_ARGS}}
+      - doppler run -- terraform init {{.CLI_ARGS}}
 
   plan:
     desc: "Create a Hetzner Terraform execution plan"
     dir: terraform
     cmds:
       - task: fmt
-      - terraform plan -out=tfplan
+      - doppler run -- terraform plan -out=tfplan
 
   apply:
     desc: "Apply the Hetzner Terraform plan"
     dir: terraform
     cmds:
       - task: plan
-      - terraform apply tfplan
+      - doppler run -- terraform apply tfplan
 
   destroy:
     desc: "Destroy the Hetzner Terraform-managed infrastructure"
     dir: terraform
     cmds:
-      - terraform destroy -auto-approve
+      - doppler run -- terraform destroy -auto-approve

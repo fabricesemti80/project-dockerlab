@@ -16,7 +16,7 @@ terraform {
 }
 
 variable "HCLOUD_TOKEN" { sensitive = true }
-variable "TAILSCALE_AUTH_KEY" { sensitive = true }
+# variable "TAILSCALE_AUTH_KEY" { sensitive = true }
 
 variable "PROXMOX_AUTH_TOKEN" {
   sensitive   = true
