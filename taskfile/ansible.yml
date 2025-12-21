@@ -1,5 +1,26 @@
 version: '3'
 
-includes:
-  proxmox: ./ansible-proxmox.yml
-  hosts: ./ansible-hosts.yml
+tasks:
+  template:apply:
+    desc: "Apply the Proxmox template creation"
+    dir: ansible
+    cmds:
+      - ansible-playbook 00-proxmox-template-creation.yml
+
+  template:plan:
+    desc: "Plan the Proxmox template creation"
+    dir: ansible
+    cmds:
+      - ansible-playbook 00-proxmox-template-creation.yml --check --diff
+
+  hosts:ping:
+    desc: "Ping all hosts in the main inventory"
+    dir: 10_host_provisioning
+    cmds:
+      - ansible all -m ping
+
+  hosts:update:
+    desc: "Update all hosts and reboot if necessary"
+    dir: 10_host_provisioning
+    cmds:
+      - ansible-playbook playbook-update.yaml
