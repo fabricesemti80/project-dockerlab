@@ -6,3 +6,9 @@ tasks:
     dir: 10_host_provisioning
     cmds:
       - ansible all -m ping
+
+  update:
+    desc: "Update all hosts and reboot if necessary"
+    dir: 10_host_provisioning
+    cmds:
+      - ansible-playbook playbook-update.yaml

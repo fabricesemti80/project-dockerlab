@@ -1,0 +1,25 @@
+---
+# tasks file for system_update
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 43200 # 12 hours
+
+- name: Upgrade all packages to the latest version
+  apt:
+    upgrade: dist
+  register: apt_upgrade
+
+- name: Reboot the server if the kernel was updated
+  reboot:
+    msg: "Rebooting host after system upgrade"
+  when: apt_upgrade.changed
+
+- name: Wait for the host to come back online
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 5
+    timeout: 300
+  when: apt_upgrade.changed
