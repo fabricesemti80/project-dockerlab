@@ -105,8 +105,10 @@ module "dkr_srv_1" {
   network_firewall = local.vm_common.network_firewall
 
   # SSH Keys - include both keys
-  ssh_public_key_rsa     = local.ssh_public_key_rsa
-  ssh_public_key_ed25519 = local.ssh_public_key_ed25519
+  ssh_keys = [
+    local.ssh_public_key_rsa,
+    local.ssh_public_key_ed25519
+  ]
 
   # User Configuration
   username = local.username
@@ -159,8 +161,10 @@ module "dkr_srv_2" {
   network_firewall = local.vm_common.network_firewall
 
   # SSH Keys
-  ssh_public_key_rsa     = local.ssh_public_key_rsa
-  ssh_public_key_ed25519 = local.ssh_public_key_ed25519
+  ssh_keys = [
+    local.ssh_public_key_rsa,
+    local.ssh_public_key_ed25519
+  ]
 
   # User Configuration
   username = local.username

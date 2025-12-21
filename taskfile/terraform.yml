@@ -4,33 +4,33 @@ tasks:
 
   fmt:
     desc: "Format and validate Hetzner Terraform"
-    dir: 01_deploy_hetzner_instance
+    dir: terraform
     cmds:
       - terraform fmt
       - terraform validate
 
   init:
     desc: "Initialize Hetzner Terraform"
-    dir: 01_deploy_hetzner_instance
+    dir: terraform
     cmds:
       - if [ -f .envrc ]; then . ./.envrc; fi; terraform init {{.CLI_ARGS}}
 
   plan:
     desc: "Create a Hetzner Terraform execution plan"
-    dir: 01_deploy_hetzner_instance
+    dir: terraform
     cmds:
       - task: fmt
       - if [ -f .envrc ]; then . ./.envrc; fi; terraform plan -out=tfplan
 
   apply:
     desc: "Apply the Hetzner Terraform plan"
-    dir: 01_deploy_hetzner_instance
+    dir: terraform
     cmds:
       - task: plan
       - if [ -f .envrc ]; then . ./.envrc; fi; terraform apply tfplan
 
   destroy:
     desc: "Destroy the Hetzner Terraform-managed infrastructure"
-    dir: 01_deploy_hetzner_instance
+    dir: terraform
     cmds:
       - if [ -f .envrc ]; then . ./.envrc; fi; terraform destroy -auto-approve
