@@ -1,0 +1,10 @@
+[proxmox_vms]
+dkr-srv-1 ansible_host=10.0.30.11
+dkr-srv-2 ansible_host=10.0.30.12
+
+[cloud_vms]
+dkr-srv-0 ansible_host=157.180.84.140
+
+[all:children]
+proxmox_vms
+cloud_vms

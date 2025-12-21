@@ -1,32 +1,5 @@
 version: '3'
 
-tasks:
-  ping:
-    desc: "Ping all hosts in the inventory"
-    dir: 00_deploy_proxmox_instances
-    cmds:
-      - ansible all -m ping
-
-  apply:
-    desc: "Apply the entire Proxmox configuration"
-    dir: 00_deploy_proxmox_instances
-    cmds:
-      - ansible-playbook playbook-main.yaml
-
-  plan:
-    desc: "Plan mode - dry-run the entire Proxmox configuration"
-    dir: 00_deploy_proxmox_instances
-    cmds:
-      - ansible-playbook playbook-main.yaml --check --diff
-
-  vm:
-    desc: "Deploy Proxmox VMs"
-    dir: 00_deploy_proxmox_instances
-    cmds:
-      - ansible-playbook playbook-vm.yaml
-
-  init:
-    desc: "Install Ansible Galaxy roles and collections from requirements.yml"
-    dir: 00_deploy_proxmox_instances
-    cmds:
-      - echo "No requirements to install for this playbook."
+includes:
+  proxmox: ./ansible-proxmox.yml
+  hosts: ./ansible-hosts.yml

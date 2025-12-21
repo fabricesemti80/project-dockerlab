@@ -1,0 +1,8 @@
+version: '3'
+
+tasks:
+  ping:
+    desc: "Ping all hosts in the main inventory"
+    dir: 10_host_provisioning
+    cmds:
+      - ansible all -m ping
