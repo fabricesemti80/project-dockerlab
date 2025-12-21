@@ -13,6 +13,18 @@ tasks:
     cmds:
       - ansible-playbook 00-proxmox-template-creation.yml --check --diff
 
+  vm:apply:
+    desc: "Apply the Proxmox VM deployment"
+    dir: ansible
+    cmds:
+      - ansible-playbook 01-proxmox-vm-deployment.yml
+
+  vm:plan:
+    desc: "Plan the Proxmox VM deployment"
+    dir: ansible
+    cmds:
+      - ansible-playbook 01-proxmox-vm-deployment.yml --check --diff
+
   hosts:ping:
     desc: "Ping all hosts in the main inventory"
     dir: 10_host_provisioning

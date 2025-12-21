@@ -25,3 +25,6 @@
 - name: "Proxmox Template Creation"
   import_playbook: 00-proxmox-template-creation.yml
 
+- name: "Proxmox VM Deployment"
+  import_playbook: 01-proxmox-vm-deployment.yml
+

@@ -1,5 +1,0 @@
----
-- name: Create Proxmox Debian 13 Template
-  hosts: proxmox
-  roles:
-    - proxmox_template

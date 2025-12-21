@@ -1,0 +1,12 @@
+---
+# tasks file for proxmox_vm
+
+- name: Check for existing VMs
+  shell: "qm list --full | awk 'NR>1 {print $1}'"
+  register: existing_vms
+  changed_when: false
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: Include VM creation tasks
+  include_tasks: _create_vm.yml
+  loop: "{{ vms }}"
