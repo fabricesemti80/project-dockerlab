@@ -1,6 +1,13 @@
 version: '3'
 
 tasks:
+  init:
+    desc: "Install Ansible Galaxy roles and collections"
+    dir: ansible
+    cmds:
+      - ansible-galaxy install -r requirements.yml
+      - ansible-galaxy collection install -r requirements.yml
+
   template:apply:
     desc: "Apply the Proxmox template creation"
     dir: ansible

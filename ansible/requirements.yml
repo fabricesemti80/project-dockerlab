@@ -8,3 +8,5 @@ collections:
 roles:
   - name: geerlingguy.docker
     version: latest
+  - name: geerlingguy.pip
+    version: latest
