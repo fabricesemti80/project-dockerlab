@@ -7,85 +7,83 @@
   changed_when: false
   delegate_to: "{{ inventory_hostname }}"
 
-- name: Fail if VM ID already exists
-  fail:
-    msg: "VM with ID {{ vm_id }} already exists. Please choose a different vm_id or remove the existing VM."
-  when: vm_id | string in existing_vms.stdout_lines
-
-- name: Download Debian 13 cloud image
-  get_url:
-    url: "{{ image_url }}"
-    dest: "{{ download_path }}"
-    mode: '0644'
-  delegate_to: "{{ inventory_hostname }}"
-
-- name: Resize the downloaded image
-  command: "qemu-img resize {{ download_path }} {{ disk_size }}"
-  delegate_to: "{{ inventory_hostname }}"
-
-- name: Create a new virtual machine
-  command: >-
-    qm create {{ vm_id }} --name "{{ vm_name }}" --ostype l26
-    --memory {{ memory }} --agent 1 --bios ovmf --machine q35 --efidisk0 "{{ storage }}:0,pre-enrolled-keys=0"
-    --cpu host --socket 1 --cores {{ cores }} --vga serial0 --serial0 socket
-    --net0 virtio,bridge=vmbr0
-  delegate_to: "{{ inventory_hostname }}"
-
-- name: Attach the disk to the VM
-  command: "qm set {{ vm_id }} --scsihw virtio-scsi-pci --virtio0 {{ storage }}:0,import-from={{ download_path }}"
-  delegate_to: "{{ inventory_hostname }}"
-
-- name: Set boot order
-  command: "qm set {{ vm_id }} --boot order=virtio0"
-  delegate_to: "{{ inventory_hostname }}"
-
-- name: Add cloud-init drive
-  command: "qm set {{ vm_id }} --ide2 \"{{ storage }}:cloudinit\""
-  delegate_to: "{{ inventory_hostname }}"
-
-- name: Set cloud-init user and password
-  shell: "qm set {{ vm_id }} --ciuser {{ cloud_init_user }} --cipassword $(openssl passwd -6 '{{ cloud_init_password }}')"
-  delegate_to: "{{ inventory_hostname }}"
-  no_log: true
-
-- name: Configure SSH keys
+- name: Create and configure VM template if it does not exist
   block:
-    - name: Create a temporary file for SSH keys
-      tempfile:
-        state: file
-        suffix: temp
-      register: ssh_key_temp_file
+    - name: Download Debian 13 cloud image
+      get_url:
+        url: "{{ image_url }}"
+        dest: "{{ download_path }}"
+        mode: '0644'
       delegate_to: "{{ inventory_hostname }}"
 
-    - name: Add SSH public keys to the temporary file
-      lineinfile:
-        path: "{{ ssh_key_temp_file.path }}"
-        line: "{{ item }}"
-      with_items: "{{ ssh_public_keys }}"
+    - name: Resize the downloaded image
+      command: "qemu-img resize {{ download_path }} {{ disk_size }}"
       delegate_to: "{{ inventory_hostname }}"
 
-    - name: Configure SSH keys from temporary file
-      command: "qm set {{ vm_id }} --sshkeys {{ ssh_key_temp_file.path }}"
+    - name: Create a new virtual machine
+      command: >-
+        qm create {{ vm_id }} --name "{{ vm_name }}" --ostype l26
+        --memory {{ memory }} --agent 1 --bios ovmf --machine q35 --efidisk0 "{{ storage }}:0,pre-enrolled-keys=0"
+        --cpu host --socket 1 --cores {{ cores }} --vga serial0 --serial0 socket
+        --net0 virtio,bridge=vmbr0
       delegate_to: "{{ inventory_hostname }}"
 
-  always:
-    - name: Remove temporary SSH key file
+    - name: Attach the disk to the VM
+      command: "qm set {{ vm_id }} --scsihw virtio-scsi-pci --virtio0 {{ storage }}:0,import-from={{ download_path }}"
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Set boot order
+      command: "qm set {{ vm_id }} --boot order=virtio0"
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Add cloud-init drive
+      command: "qm set {{ vm_id }} --ide2 \"{{ storage }}:cloudinit\""
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Set cloud-init user and password
+      shell: "qm set {{ vm_id }} --ciuser {{ cloud_init_user }} --cipassword $(openssl passwd -6 '{{ cloud_init_password }}')"
+      delegate_to: "{{ inventory_hostname }}"
+      no_log: true
+
+    - name: Configure SSH keys
+      block:
+        - name: Create a temporary file for SSH keys
+          tempfile:
+            state: file
+            suffix: temp
+          register: ssh_key_temp_file
+          delegate_to: "{{ inventory_hostname }}"
+
+        - name: Add SSH public keys to the temporary file
+          lineinfile:
+            path: "{{ ssh_key_temp_file.path }}"
+            line: "{{ item }}"
+          with_items: "{{ ssh_public_keys }}"
+          delegate_to: "{{ inventory_hostname }}"
+
+        - name: Configure SSH keys from temporary file
+          command: "qm set {{ vm_id }} --sshkeys {{ ssh_key_temp_file.path }}"
+          delegate_to: "{{ inventory_hostname }}"
+
+      always:
+        - name: Remove temporary SSH key file
+          file:
+            path: "{{ ssh_key_temp_file.path }}"
+            state: absent
+          when: ssh_key_temp_file.path is defined
+          delegate_to: "{{ inventory_hostname }}"
+
+    - name: Set IP configuration to DHCP
+      command: "qm set {{ vm_id }} --ipconfig0 ip=dhcp"
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Convert the VM to a template
+      command: "qm template {{ vm_id }}"
+      delegate_to: "{{ inventory_hostname }}"
+
+    - name: Clean up downloaded image
       file:
-        path: "{{ ssh_key_temp_file.path }}"
+        path: "{{ download_path }}"
         state: absent
-      when: ssh_key_temp_file.path is defined
       delegate_to: "{{ inventory_hostname }}"
-
-- name: Set IP configuration to DHCP
-  command: "qm set {{ vm_id }} --ipconfig0 ip=dhcp"
-  delegate_to: "{{ inventory_hostname }}"
-
-- name: Convert the VM to a template
-  command: "qm template {{ vm_id }}"
-  delegate_to: "{{ inventory_hostname }}"
-
-- name: Clean up downloaded image
-  file:
-    path: "{{ download_path }}"
-    state: absent
-  delegate_to: "{{ inventory_hostname }}"
+  when: vm_id | string not in existing_vms.stdout_lines

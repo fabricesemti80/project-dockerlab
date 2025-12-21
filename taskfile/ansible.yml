@@ -11,13 +11,13 @@ tasks:
     desc: "Create the Proxmox template"
     dir: 00_deploy_proxmox_instances
     cmds:
-      - ansible-playbook playbook.yml
+      - ansible-playbook playbook-template.yaml
 
   plan:
     desc: "Plan mode - dry-run the Proxmox template creation"
     dir: 00_deploy_proxmox_instances
     cmds:
-      - ansible-playbook playbook.yml --check --diff
+      - ansible-playbook playbook-template.yaml --check --diff
 
   init:
     desc: "Install Ansible Galaxy roles and collections from requirements.yml"
