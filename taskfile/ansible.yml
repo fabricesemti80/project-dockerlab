@@ -79,6 +79,18 @@ tasks:
     cmds:
       - doppler run -- ansible-playbook 30-site-docker.yml --check --diff
 
+  swarm:apply:
+    desc: "Apply the swarm configuration"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 40-site-swarm.yml
+
+  swarm:plan:
+    desc: "Plan the swarm configuration"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 40-site-swarm.yml --check --diff
+
   base:apply:
     desc: "Apply the Base configuration"
     dir: ansible
@@ -90,3 +102,15 @@ tasks:
     dir: ansible
     cmds:
       - doppler run -- ansible-playbook 20-site-base.yml --check --diff
+
+  sanitycheck:apply:
+    desc: "Apply the sanity check and deployment summary"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 90-sanitycheck.yml
+
+  sanitycheck:plan:
+    desc: "Plan the sanity check and deployment summary"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 90-sanitycheck.yml --check --diff

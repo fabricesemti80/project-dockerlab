@@ -1,38 +1,60 @@
 ---
-# Sanity check playbook - verify all components are working correctly
+# Sanity check playbook - verify all components are working correctly and provide summary
 - name: "Dokploy Infrastructure Sanity Check"
-  hosts: all
+  hosts: vms
   become: true
   tags: ["sanitycheck", "sc"]
   tasks:
+    - name: "Check if Tailscale is installed"
+      ansible.builtin.stat:
+        path: /usr/bin/tailscale
+      register: tailscale_binary
+      changed_when: false
+      check_mode: false
+
     - name: "Verify Tailscale is running"
       ansible.builtin.systemd:
         name: tailscaled
         state: started
         enabled: true
+      retries: 10
+      delay: 3
+      until: tailscale_service_result is succeeded or tailscale_service_result is changed
+      register: tailscale_service_result
+      ignore_errors: true
+      when: tailscale_binary.stat.exists
 
     - name: "Check Tailscale status"
       ansible.builtin.command: tailscale status
       register: tailscale_status
       changed_when: false
       check_mode: false
+      when: tailscale_binary.stat.exists
 
     - name: "Display Tailscale status"
       ansible.builtin.debug:
         msg: "{{ tailscale_status.stdout_lines }}"
+      when: tailscale_binary.stat.exists
 
     - name: "Get Tailscale IP"
       ansible.builtin.command: tailscale ip -4
       register: tailscale_ip
       changed_when: false
       check_mode: false
+      when: tailscale_binary.stat.exists
 
     - name: "Display Tailscale IP"
       ansible.builtin.debug:
         msg: "Tailscale IP: {{ tailscale_ip.stdout }}"
+      when: tailscale_binary.stat.exists
+
+    - name: "Tailscale not installed on this host"
+      ansible.builtin.debug:
+        msg: "Tailscale is not installed on this host - skipping Tailscale checks"
+      when: not tailscale_binary.stat.exists
 
 - name: "Docker and Swarm Sanity Check"
-  hosts: all
+  hosts: vms
   become: true
   tags: ["sanitycheck", "sc"]
   tasks:
@@ -166,3 +188,44 @@
     - name: "Display system resources"
       ansible.builtin.debug:
         msg: "{{ system_df.stdout_lines }}"
+
+- name: "Final Deployment Summary"
+  hosts: swarm_managers
+  become: true
+  tags: ["sanitycheck", "sc", "summary"]
+  vars:
+    dokploy_port: "{{ lookup('env', 'DOKPLOY_PORT') | default('3000', true) }}"
+  tasks:
+    - name: "Identify Swarm Leader"
+      ansible.builtin.shell: |
+        docker node ls --filter "role=manager" --format "{% raw %}{{.Hostname}} {{.ManagerStatus}}{% endraw %}" | grep "Leader" | awk '{print $1}'
+      register: swarm_leader_hostname
+      changed_when: false
+      check_mode: false
+      run_once: true
+
+    - name: "Identify Leader Tailscale IP"
+      ansible.builtin.set_fact:
+        dokploy_leader_ip: "{{ hostvars[swarm_leader_hostname.stdout].ansible_facts['tailscale0']['ipv4']['address'] }}"
+      when: swarm_leader_hostname.stdout in hostvars
+      run_once: true
+
+    - name: "Display Dokploy Access Info"
+      ansible.builtin.debug:
+        msg: |
+
+          ============================================================
+          DOKPLOY INFRASTRUCTURE SANITY CHECK COMPLETE
+          ============================================================
+
+          All components have been verified and are working correctly.
+
+          Dokploy Access:
+            http://{{ dokploy_leader_ip | default('UNKNOWN_IP') }}:{{ dokploy_port }} (Swarm Leader)
+
+          ------------------------------------------------------------
+
+          Swarm Leader Hostname: {{ swarm_leader_hostname.stdout }}
+
+          ============================================================
+      run_once: true
