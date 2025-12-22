@@ -3,6 +3,12 @@
 # This role sets up the foundation for all nodes in the Dokploy cluster
 
 # Pre-tasks for system updates
+- name: "Force time sync with chrony if installed"
+  ansible.builtin.command: chronyc -a makestep
+  ignore_errors: true
+  changed_when: false
+  when: ansible_facts['os_family'] == 'Debian'
+
 - name: "Check apt cache age"
   ansible.builtin.stat:
     path: /var/cache/apt/pkgcache.bin

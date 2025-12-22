@@ -234,6 +234,7 @@
 
             core:
               image: "ghcr.io/moghtech/komodo-core:{{ komodo_image_tag }}"
+              user: root
               depends_on:
                 - mongo
               ports:
@@ -267,6 +268,7 @@
                 TZ: "{{ ansible_facts.date_time.tz }}"
               volumes:
                 - "{{ komodo_backups_path }}:/backups"
+                - "/var/run/docker.sock:/var/run/docker.sock"
               deploy:
                 placement:
                   constraints:
@@ -278,6 +280,7 @@
 
             periphery:
               image: "ghcr.io/moghtech/komodo-periphery:{{ komodo_image_tag }}"
+              user: root
               networks:
                 - komodo_net
               ports:
@@ -296,7 +299,7 @@
               volumes:
                 - /var/run/docker.sock:/var/run/docker.sock
                 - /proc:/proc
-                - {{ periphery_root }}:{{ periphery_root }}
+                - "{{ periphery_root }}:{{ periphery_root }}"
               deploy:
                 mode: global
                 restart_policy:
