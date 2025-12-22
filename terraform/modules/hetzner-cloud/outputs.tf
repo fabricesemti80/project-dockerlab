@@ -18,8 +18,3 @@ output "snapshot_id" {
   description = "The ID of the snapshot created from the server"
   value       = hcloud_snapshot.fresh_install_snapshot.id
 }
-
-output "snapshot_name" {
-  description = "The name of the snapshot created from the server"
-  value       = hcloud_snapshot.fresh_install_snapshot.name
-}
