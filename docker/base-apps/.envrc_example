@@ -1,6 +1,0 @@
-EMAIL=your_email@example.com
-DOMAIN_EXTERNAL=krapulax.dev
-DOMAIN_INTERNAL=krapulax.home
-CF_API_EMAIL=your_cloudflare_email@example.com
-CF_API_KEY=your_cloudflare_api_key
-HOMEPAGE_ALLOWED_HOSTS= # Allowed hosts for Homepage
