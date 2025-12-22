@@ -59,6 +59,13 @@ services:
         - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
         - "traefik.http.routers.traefik.service=api@internal"
 
+        # Homepage Labels
+        - "homepage.group=Docker"
+        - "homepage.name=Traefik"
+        - "homepage.icon=traefik.png"
+        - "homepage.href=https://traefik.${DOMAIN_EXTERNAL}/dashboard/"
+        - "homepage.description=Edge Router"
+
   dozzle:
     image: amir20/dozzle:latest
     networks:
@@ -74,6 +81,13 @@ services:
         - "traefik.http.routers.dozzle.tls=true"
         - "traefik.http.routers.dozzle.tls.certresolver=letsencrypt"
         - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
+
+        # Homepage Labels
+        - "homepage.group=Docker"
+        - "homepage.name=Dozzle"
+        - "homepage.icon=dozzle.png"
+        - "homepage.href=https://dozzle.${DOMAIN_EXTERNAL}"
+        - "homepage.description=Log Viewer"
 
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
@@ -109,6 +123,13 @@ services:
         
         # Service Definition
         - "traefik.http.services.homepage.loadbalancer.server.port=3000"
+        
+        # Homepage Labels (Self-Reference)
+        - "homepage.group=Docker"
+        - "homepage.name=Homepage"
+        - "homepage.icon=homepage.png"
+        - "homepage.href=https://${DOMAIN_EXTERNAL}"
+        - "homepage.description=Dashboard"
 
 volumes:
   homepage_data:
