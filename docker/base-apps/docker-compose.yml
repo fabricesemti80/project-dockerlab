@@ -59,6 +59,22 @@ services:
         - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
         - "traefik.http.routers.traefik.service=api@internal"
 
+  dozzle:
+    image: amir20/dozzle:latest
+    networks:
+      - proxy
+    environment:
+      - DOCKER_HOST=tcp://socket-proxy:2375
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=proxy"
+        - "traefik.http.routers.dozzle.entrypoints=websecure"
+        - "traefik.http.routers.dozzle.rule=Host(`dozzle.${DOMAIN_EXTERNAL}`)"
+        - "traefik.http.routers.dozzle.tls=true"
+        - "traefik.http.routers.dozzle.tls.certresolver=letsencrypt"
+        - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
+
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     ports:
@@ -70,27 +86,27 @@ services:
       PUID: 1000
       PGID: 1000
       TZ: Europe/London
-      HOMEPAGE_ALLOWED_HOSTS: $HOMEPAGE_ALLOWED_HOSTS
+      HOMEPAGE_ALLOWED_HOSTS: $ALLOWED_HOSTS
     networks:
       - proxy
     deploy:
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=proxy"
-
+        
         # Router 1: Internal Domain (krapulax.home) - Self-Signed / No Auth
         - "traefik.http.routers.homepage-internal.entrypoints=websecure"
         - "traefik.http.routers.homepage-internal.rule=Host(`${DOMAIN_INTERNAL}`)"
         - "traefik.http.routers.homepage-internal.tls=true"
         - "traefik.http.routers.homepage-internal.service=homepage"
-
+        
         # Router 2: External Domain (krapulax.dev) - Let's Encrypt
         - "traefik.http.routers.homepage-external.entrypoints=websecure"
         - "traefik.http.routers.homepage-external.rule=Host(`${DOMAIN_EXTERNAL}`)"
         - "traefik.http.routers.homepage-external.tls=true"
         - "traefik.http.routers.homepage-external.tls.certresolver=letsencrypt"
         - "traefik.http.routers.homepage-external.service=homepage"
-
+        
         # Service Definition
         - "traefik.http.services.homepage.loadbalancer.server.port=3000"
 
