@@ -57,6 +57,12 @@ module "dkr_srv_0" {
       protocol   = "tcp"
       port       = "9000" # Portainer HTTP
       source_ips = ["0.0.0.0/0", "::/0"]
+    },
+    {
+      direction  = "in"
+      protocol   = "tcp"
+      port       = "8080" # Test App port
+      source_ips = ["0.0.0.0/0", "::/0"]
     }
   ]
 
