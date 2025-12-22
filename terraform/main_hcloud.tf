@@ -100,6 +100,17 @@ output "dkr_srv_0_ipv6" {
   value       = module.dkr_srv_0.server_ipv6_address
 }
 
+# Snapshot outputs
+output "dkr_srv_0_snapshot_id" {
+  description = "The ID of the snapshot created from dkr_srv_0"
+  value       = module.dkr_srv_0.snapshot_id
+}
+
+output "dkr_srv_0_snapshot_name" {
+  description = "The name of the snapshot created from dkr_srv_0"
+  value       = module.dkr_srv_0.snapshot_name
+}
+
 # MANUAL SSH DIAGNOSTIC COMMANDS (run these after server deployment):
 # ssh fs@<SERVER_IP> -i ~/.ssh/id_macbook_fs "cat /var/log/tailscale-install.log"
 # ssh fs@<SERVER_IP> -i ~/.ssh/id_macbook_fs "which tailscale || echo 'Tailscale not found in PATH'"

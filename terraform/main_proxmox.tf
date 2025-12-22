@@ -16,8 +16,8 @@ locals {
 
   # Shared VM configuration
   vm_common = {
-    description    = "Managed by Terraform"
-    tags           = ["community-script", "debian13", "docker", "controller", "terraformed"]
+    description    = "Terraform Managed Docker Controller VM"
+    tags           = ["community-script", "debian13", "docker", "controller", "terraform"]
     node_name      = "pve-2"
     template_vm_id = 9008
     full_clone     = true

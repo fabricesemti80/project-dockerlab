@@ -42,6 +42,18 @@ resource "hcloud_server" "server" {
   firewall_ids = [hcloud_firewall.server_fw.id]
 
   # User Data
- user_data = var.user_data != null ? var.user_data : null
+  user_data = var.user_data != null ? var.user_data : null
 
+  # Labels to match Proxmox VMs
+  labels = {
+    environment = "production"
+    network     = "tailscale"
+    role        = "cloud"
+    manager     = "true"
+  }
+}
+
+# Snapshot of the Hetzner server
+resource "hcloud_snapshot" "fresh_install_snapshot" {
+  server_id = hcloud_server.server.id
 }
