@@ -1,6 +1,6 @@
 # Ansible Documentation
 
-This document provides comprehensive documentation for the Ansible automation in the project-dockerlab setup.
+This document provides comprehensive documentation for the Ansible automation in project-dockerlab.
 
 ## Overview
 
@@ -16,8 +16,8 @@ ansible/
 │   └── hosts            # Static inventory definition
 ├── roles/               # Custom roles
 │   ├── common_base/     # Base system configuration
-│   ├── docker_tuning/   # Docker optimization settings
 │   ├── dokploy/         # Dokploy deployment
+│   ├── portainer_be/    # Portainer Business Edition
 │   ├── proxmox_template/# Proxmox template creation
 │   ├── proxmox_vm/      # Proxmox VM deployment
 │   ├── sanitycheck/     # System sanity checks
@@ -32,7 +32,9 @@ ansible/
 ├── 20-site-base.yml
 ├── 20-site-tailscale.yml
 ├── 30-site-docker.yml
+├── 30-site-docker-user-only.yml
 ├── 40-site-swarm.yml
+├── 40-dokploy.yml
 ├── ansible.cfg
 ├── requirements.yml
 └── site.yml             # Main orchestration playbook
@@ -50,6 +52,13 @@ The main `site.yml` orchestrates deployment in the following order:
 | 4 | `20-site-tailscale.yml` | Tailscale mesh network setup |
 | 5 | `30-site-docker.yml` | Docker installation and configuration |
 | 6 | `40-site-swarm.yml` | Docker Swarm cluster formation |
+
+### Additional Playbooks
+
+| Playbook | Description |
+|----------|-------------|
+| `30-site-docker-user-only.yml` | Safe playbook to add users to docker group without restarting Docker |
+| `40-dokploy.yml` | Deploys Dokploy container management platform |
 
 ## Inventory
 
@@ -86,10 +95,6 @@ Performs base system configuration:
 - Installs chrony for time sync
 - Installs common packages
 
-### docker_tuning
-
-Optimizes Docker configuration for production workloads.
-
 ### swarm_bootstrap
 
 Initializes Docker Swarm cluster:
@@ -112,6 +117,42 @@ Post-Tailscale installation tasks:
 
 Updates system packages and performs system maintenance.
 
+### dokploy
+
+Deploys and configures Dokploy container management platform.
+
+### portainer_be
+
+Deploys Portainer Business Edition for container management.
+
+## Docker Configuration
+
+Docker installation and daemon configuration is handled by `30-site-docker.yml` using the `geerlingguy.docker` role with the following daemon options:
+
+```yaml
+docker_daemon_options:
+  mtu: 1280
+  hosts:
+    - "tcp://{{ ansible_tailscale0.ipv4.address }}:2376"
+    - "unix:///var/run/docker.sock"
+  log-driver: "json-file"
+  log-opts:
+    max-size: "10m"
+    max-file: "3"
+  storage-driver: "overlay2"
+  live-restore: false          # Must be false for Swarm
+  userland-proxy: false
+  default-address-pools:
+    - base: "10.20.0.0/16"
+      size: 24
+```
+
+Key configuration points:
+- **MTU 1280**: Compatible with Tailscale tunnel
+- **TCP binding**: Docker API exposed on Tailscale IP for secure remote access
+- **live-restore: false**: Required for Docker Swarm mode
+- **Custom address pools**: Avoids conflicts with home network
+
 ## Required Dependencies
 
 Install Galaxy roles and collections before running playbooks:
@@ -129,7 +170,7 @@ doppler run -- ansible-galaxy collection install -r requirements.yml
 
 | Role | Purpose |
 |------|---------|
-| `geerlingguy.docker` | Docker installation |
+| `geerlingguy.docker` | Docker installation and daemon configuration |
 | `geerlingguy.pip` | Python pip installation |
 
 ### External Collections
@@ -210,9 +251,16 @@ The playbook includes debug tasks that show:
 - Tailscale status
 - Tailscale IP address
 
-### Docker Issues
+### Docker Swarm Issues
 
-Ensure the systemd override is in place:
+If Docker restarts and services move between nodes:
+- Check volume persistence with `docker volume ls`
+- Use placement constraints for stateful services
+- See [Portainer multi-manager docs](https://docs.portainer.io/faqs/installing/how-can-i-ensure-portainers-configuration-is-retained)
+
+### Safe Docker User Addition
+
+To add users to the docker group without restarting Docker:
 ```bash
-cat /etc/systemd/system/docker.service.d/override.conf
+doppler run -- ansible-playbook 30-site-docker-user-only.yml
 ```

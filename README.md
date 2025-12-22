@@ -43,6 +43,13 @@ project-dockerlab/
 │   ├── group_vars/          # Variable definitions
 │   ├── inventory/           # Host inventory
 │   ├── roles/               # Ansible roles
+│   │   ├── common_base/     # Base system configuration
+│   │   ├── dokploy/         # Dokploy deployment
+│   │   ├── portainer_be/    # Portainer Business Edition
+│   │   ├── swarm_bootstrap/ # Docker Swarm initialization
+│   │   ├── swarm_labels/    # Swarm node labeling
+│   │   ├── system_update/   # System updates
+│   │   └── tailscale_post/  # Tailscale post-config
 │   └── *.yml                # Playbooks
 ├── terraform/               # Infrastructure as code
 │   ├── modules/             # Reusable modules
@@ -56,6 +63,7 @@ project-dockerlab/
 │   ├── terraform.md         # Terraform documentation
 │   ├── doppler.md           # Doppler documentation
 │   └── taskfile.md          # Taskfile documentation
+├── archive/                 # Deprecated/backup files
 ├── taskfile/                # Task definitions
 └── Taskfile.yml             # Main task runner config
 ```
