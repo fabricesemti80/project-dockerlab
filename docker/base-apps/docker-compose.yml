@@ -24,10 +24,10 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      # Dashboard should be accessed via the secure router, not exposed port
     environment:
       - CF_API_EMAIL=$CF_API_EMAIL
       - CF_API_KEY=$CF_API_KEY
+      - DOCKER_API_VERSION=1.44
     networks:
       - proxy
     depends_on:
@@ -54,12 +54,10 @@ services:
         
         # Dashboard Configuration
         - "traefik.http.routers.traefik.entrypoints=websecure"
-        - "traefik.http.routers.traefik.rule=Host(`${DOMAIN_EXTERNAL}`)"
+        - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN_EXTERNAL}`)"
         - "traefik.http.routers.traefik.tls=true"
         - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
         - "traefik.http.routers.traefik.service=api@internal"
-        # Note: In a production environment, you should add middleware for authentication
-        # e.g., - "traefik.http.routers.traefik.middlewares=auth"
 
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
@@ -79,10 +77,21 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=proxy"
-        - "traefik.http.routers.homepage.entrypoints=websecure"
-        - "traefik.http.routers.homepage.rule=Host(`${DOMAIN_INTERNAL}`)"
-        - "traefik.http.routers.homepage.tls=true"
-        - "traefik.http.routers.homepage.tls.certresolver=letsencrypt"
+        
+        # Router 1: Internal Domain (krapulax.home) - Self-Signed / No Auth
+        - "traefik.http.routers.homepage-internal.entrypoints=websecure"
+        - "traefik.http.routers.homepage-internal.rule=Host(`${DOMAIN_INTERNAL}`)"
+        - "traefik.http.routers.homepage-internal.tls=true"
+        - "traefik.http.routers.homepage-internal.service=homepage"
+        
+        # Router 2: External Domain (krapulax.dev) - Let's Encrypt
+        - "traefik.http.routers.homepage-external.entrypoints=websecure"
+        - "traefik.http.routers.homepage-external.rule=Host(`${DOMAIN_EXTERNAL}`)"
+        - "traefik.http.routers.homepage-external.tls=true"
+        - "traefik.http.routers.homepage-external.tls.certresolver=letsencrypt"
+        - "traefik.http.routers.homepage-external.service=homepage"
+        
+        # Service Definition
         - "traefik.http.services.homepage.loadbalancer.server.port=3000"
 
 volumes:
