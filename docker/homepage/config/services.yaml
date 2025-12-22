@@ -1,0 +1,7 @@
+---
+# Homepage Services Configuration
+# Services with homepage.* labels will be automatically discovered from Docker
+# Ensure your services have labels like:
+# homepage.group=MyGroup
+# homepage.name=MyService
+# homepage.href=http://example.com
