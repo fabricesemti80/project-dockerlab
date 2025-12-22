@@ -29,6 +29,8 @@ services:
       - CF_API_EMAIL=$CF_API_EMAIL
       - CF_API_KEY=$CF_API_KEY
       - DOCKER_API_VERSION=1.44
+    volumes:
+      - ./letsencrypt/acme.json:/letsencrypt/acme.json
     networks:
       - proxy
     depends_on:
