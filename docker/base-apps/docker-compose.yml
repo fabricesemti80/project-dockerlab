@@ -14,6 +14,7 @@ services:
       - NETWORKS=1
       - NODES=1
       - INFO=1
+      - EVENTS=1
     deploy:
       mode: global
       placement:
@@ -74,7 +75,10 @@ services:
       - proxy
     environment:
       - DOCKER_HOST=tcp://socket-proxy:2375
+      - DOZZLE_REMOTE_HOSTS=tasks.dozzle:8080
+      - DOZZLE_LEVEL=info
     deploy:
+      mode: global
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=proxy"
