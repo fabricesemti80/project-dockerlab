@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  traefik:
+    image: traefik:v2.9
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - CF_API_EMAIL=$CF_API_EMAIL
+      - CF_API_KEY=$CF_API_KEY
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.traefik.entrypoints=websecure
+        - traefik.http.routers.traefik.rule=Host(`${DOMAIN_EXTERNAL}`)
+        - traefik.http.routers.traefik.tls=true
+        - traefik.http.routers.traefik.tls.certresolver=letsencrypt
+        - traefik.http.services.traefik.loadbalancer.server.port=8080
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker.swarmMode=true"
+      - "--providers.docker.exposedByDefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesresolvers.letsencrypt.acme.email=$EMAIL"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - homepage_data:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Europe/London
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.http.routers.homepage.entrypoints=websecure
+        - traefik.http.routers.homepage.rule=Host(`${DOMAIN_INTERNAL}`)
+        - traefik.http.routers.homepage.tls=true
+        - traefik.http.routers.homepage.tls.certresolver=letsencrypt
+        - traefik.http.services.homepage.loadbalancer.server.port=3000
+
+volumes:
+  homepage_data:

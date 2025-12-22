@@ -56,3 +56,89 @@ Click the "Deploy stack" button to deploy your application. Portainer will use t
 	*   **Service Status:** Verify that the service is running correctly on all nodes by running `docker service ps <service_name>` and ensuring that all replicas are in the `Running` state.
 
 This setup provides a streamlined GitOps workflow for deploying applications to Docker Swarm using Portainer Business Edition.
+
+## Traefik and Homepage Deployment
+
+This section describes how to deploy Traefik and Homepage using Docker Swarm, Traefik for automatic Let's Encrypt certificate management via Cloudflare, and Homepage as the first application to be made available.
+
+### Prerequisites
+
+*   Docker Swarm cluster
+*   Cloudflare account
+*   A domain name managed by Cloudflare
+
+### Steps
+
+1.  **Create `.envrc` file:**
+
+    Create a `.envrc` file in the `docker/base-apps` directory with the following environment variables:
+
+    ```
+    EMAIL=your_email@example.com # Email for Let's Encrypt
+    DOMAIN_EXTERNAL=krapulax.dev # External domain name
+    DOMAIN_INTERNAL=krapulax.home # Internal domain name
+    CF_API_EMAIL=your_cloudflare_email@example.com # Cloudflare API email
+    CF_API_KEY=your_cloudflare_api_key # Cloudflare API key
+    ```
+
+2.  **Deploy the stack:**
+
+    Navigate to the `docker/base-apps` directory and deploy the stack using Docker Compose:
+
+    ```
+    docker stack deploy -c docker-compose.yml traefik-homepage
+    ```
+
+3.  **Access Homepage:**
+
+    Once the stack is deployed, access Homepage using the internal domain (`DOMAIN_INTERNAL`) in your browser. Traefik will automatically obtain a Let's Encrypt certificate for the external domain (`DOMAIN_EXTERNAL`) and redirect traffic to the Homepage service.
+
+### Verification
+
+*   Verify that the Traefik and Homepage services are running correctly in the Docker Swarm cluster.
+*   Access Homepage using the internal domain in your browser.
+*  Check the traefik logs to see if the certs are ok
+=======
+This setup provides a streamlined GitOps workflow for deploying applications to Docker Swarm using Portainer Business Edition.
+
+## Traefik and Homepage Deployment
+
+This section describes how to deploy Traefik and Homepage using Docker Swarm, Traefik for automatic Let's Encrypt certificate management via Cloudflare, and Homepage as the first application to be made available.
+
+### Prerequisites
+
+*   Docker Swarm cluster
+*   Cloudflare account
+*   A domain name managed by Cloudflare
+
+### Steps
+
+1.  **Create `.envrc` file:**
+
+    Create a `.envrc` file in the `docker/base-apps` directory with the following environment variables:
+
+    ```
+    EMAIL=your_email@example.com # Email for Let's Encrypt
+    DOMAIN_EXTERNAL=krapulax.dev # External domain name
+    DOMAIN_INTERNAL=krapulax.home # Internal domain name
+    CF_API_EMAIL=your_cloudflare_email@example.com # Cloudflare API email
+    CF_API_KEY=your_cloudflare_api_key # Cloudflare API key
+    ```
+
+2.  **Deploy the stack:**
+
+    Navigate to the `docker/base-apps` directory and deploy the stack using Docker Compose:
+
+    ```
+    docker stack deploy -c docker-compose.yml traefik-homepage
+    ```
+
+3.  **Access Homepage:**
+
+    Once the stack is deployed, access Homepage using the internal domain (`DOMAIN_INTERNAL`) in your browser. Traefik will automatically obtain a Let's Encrypt certificate for the external domain (`DOMAIN_EXTERNAL`) and redirect traffic to the Homepage service.
+
+### Verification
+
+*   Verify that the Traefik and Homepage services are running correctly in the Docker Swarm cluster.
+*   Access Homepage using the internal domain in your browser.
+*  Check the traefik logs to see if the certs are ok

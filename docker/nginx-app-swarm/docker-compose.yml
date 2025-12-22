@@ -13,5 +13,5 @@ services:
     #   - "8080:80"
     ports:
       - target: 80
-        published: 8080
+        published: 7070
         mode: host
