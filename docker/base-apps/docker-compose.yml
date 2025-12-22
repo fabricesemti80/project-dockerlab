@@ -44,6 +44,7 @@ services:
       PUID: 1000
       PGID: 1000
       TZ: Europe/London
+      HOMEPAGE_ALLOWED_HOSTS: $ALLOWED_HOSTS
     deploy:
       labels:
         - traefik.enable=true

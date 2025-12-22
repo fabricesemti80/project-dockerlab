@@ -79,6 +79,7 @@ This section describes how to deploy Traefik and Homepage using Docker Swarm, Tr
     DOMAIN_INTERNAL=krapulax.home # Internal domain name
     CF_API_EMAIL=your_cloudflare_email@example.com # Cloudflare API email
     CF_API_KEY=your_cloudflare_api_key # Cloudflare API key
+    HOMEPAGE_ALLOWED_HOSTS= # Allowed hosts for Homepage (comma-separated list)
     ```
 
 2.  **Deploy the stack:**
