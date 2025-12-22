@@ -1,117 +1,17 @@
-version: "3.9"
-
+version: '3.7'
 services:
   traefik:
-    image: docker.io/library/traefik:v3.6.1
-    hostname: traefik
+    image: traefik:v3.0
+    command:
+      - "--api.insecure=true"  # Exposes Traefik's dashboard
+      - "--providers.docker=true"  # Enables Docker as the provider
+      - "--entrypoints.web.address=:80"  # Defines an HTTP EntryPoint on port 80
     ports:
-      - target: 80
-        published: 80
-        protocol: tcp
-        mode: host
-      - target: 443
-        published: 443
-        protocol: tcp
-        mode: host
-      - target: 8080
-        published: 8080
-        protocol: tcp
-        mode: host
+      - "80:80"       # Expose Traefik's HTTP EntryPoint
+      - "8080:8080"   # Expose the Traefik Dashboard
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik_certs:/var/traefik/certs/:rw
-    environment:
-      - TZ=${TZ}
-      - CF_API_EMAIL=${CF_API_EMAIL}
-      - CF_API_KEY=${CF_API_KEY}
-    configs:
-      - source: traefik_config
-        target: /etc/traefik/traefik.yaml
-      - source: traefik_middlewares
-        target: /etc/traefik/files/middlewares.yaml
-      - source: traefik_routers
-        target: /etc/traefik/files/routers.yaml
-      - source: traefik_services
-        target: /etc/traefik/files/services.yaml
-    healthcheck:
-      test: ["CMD", "traefik", "healthcheck", "--ping"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    networks:
-      - proxy_net
+      - "/var/run/docker.sock:/var/run/docker.sock"  # Access Docker API
     deploy:
-      mode: replicated
-      replicas: 1
       placement:
         constraints:
-          - node.role == manager
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-      labels:
-        - homepage.group=Infrastructure
-        - homepage.name=Traefik
-        - homepage.icon=traefik.png
-        - homepage.href=http://${DOCKER_SERVER_IP}:8080
-        - homepage.description=Reverse Proxy & Load Balancer
-
-  whoami:
-    image: traefik/whoami:latest
-    networks:
-      - proxy_net
-    deploy:
-      mode: replicated
-      replicas: 2
-      placement:
-        constraints:
-          - node.role == worker
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-      labels:
-        # Enable Traefik for this service
-        - "traefik.enable=true"
-        
-        # Local network HTTP Router (nip.io - automatic)
-        - "traefik.http.routers.whoami.rule=Host(`whoami.${DOCKER_SERVER_IP}.nip.io`)"
-        - "traefik.http.routers.whoami.entrypoints=web"
-        - "traefik.http.routers.whoami.service=whoami"
-        
-        # Local network HTTPS Router
-        - "traefik.http.routers.whoami-secure.rule=Host(`whoami.${DOCKER_SERVER_IP}.nip.io`)"
-        - "traefik.http.routers.whoami-secure.entrypoints=websecure"
-        - "traefik.http.routers.whoami-secure.tls=true"
-        - "traefik.http.routers.whoami-secure.service=whoami"
-        
-        # Custom domain routing (HTTP)
-        - "traefik.http.routers.whoami-custom.rule=Host(`whoami.${DOMAIN_EXTERNAL}`)"
-        - "traefik.http.routers.whoami-custom.entrypoints=web,websecure"
-        - "traefik.http.routers.whoami-custom.service=whoami"
-        - "traefik.http.routers.whoami-custom.tls=true"
-        - "traefik.http.routers.whoami-custom.tls.certresolver=cloudflare"
-        
-        # Service definition
-        - "traefik.http.services.whoami.loadbalancer.server.port=80"
-
-configs:
-  traefik_config:
-    file: ./config/traefik.yaml
-  traefik_middlewares:
-    file: ./files/middlewares.yaml
-  traefik_routers:
-    file: ./files/routers.yaml
-  traefik_services:
-    file: ./files/services.yaml
-
-networks:
-  proxy_net:
-    driver: overlay
-    attachable: true
-    name: proxy_net
-
-volumes:
-  traefik_certs:
+          - node.role == manager  # Only run on Swarm manager nodes
