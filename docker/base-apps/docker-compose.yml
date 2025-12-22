@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   traefik:
     image: traefik:v2.9
@@ -12,11 +10,14 @@ services:
     environment:
       - CF_API_EMAIL=$CF_API_EMAIL
       - CF_API_KEY=$CF_API_KEY
+    networks:
+      - traefik-public
     deploy:
       placement:
         constraints: [node.role == manager]
       labels:
         - traefik.enable=true
+        - traefik.docker.network=traefik-public
         - traefik.http.routers.traefik.entrypoints=websecure
         - traefik.http.routers.traefik.rule=Host(`${DOMAIN_EXTERNAL}`)
         - traefik.http.routers.traefik.tls=true
@@ -45,9 +46,12 @@ services:
       PGID: 1000
       TZ: Europe/London
       HOMEPAGE_ALLOWED_HOSTS: $ALLOWED_HOSTS
+    networks:
+      - traefik-public
     deploy:
       labels:
         - traefik.enable=true
+        - traefik.docker.network=traefik-public
         - traefik.http.routers.homepage.entrypoints=websecure
         - traefik.http.routers.homepage.rule=Host(`${DOMAIN_INTERNAL}`)
         - traefik.http.routers.homepage.tls=true
@@ -56,3 +60,8 @@ services:
 
 volumes:
   homepage_data:
+
+networks:
+  traefik-public:
+    driver: overlay
+    attachable: true
