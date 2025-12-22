@@ -68,6 +68,8 @@ services:
 
   dozzle:
     image: amir20/dozzle:latest
+    ports:
+      - "8888:8080"
     networks:
       - proxy
     environment:
