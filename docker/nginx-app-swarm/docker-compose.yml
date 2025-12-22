@@ -9,5 +9,9 @@ services:
       placement:
         constraints:
           - node.role == manager
+    # ports:
+    #   - "8080:80"
     ports:
-      - "8080:80"
+      - target: 80
+        published: 8080
+        mode: host

@@ -48,5 +48,11 @@ Click the "Deploy stack" button to deploy your application. Portainer will use t
 *   **Authentication errors:** Ensure that the username and PAT are correctly entered into Portainer and that the PAT has the necessary permissions to access the repository.
 *   **Deployment failures:** Check the stack's logs for any errors related to the `docker-compose.yml` file or the Docker Swarm cluster.
 *   **Auto-update issues:** Verify that the auto-update settings are correctly configured and that Portainer has the necessary permissions to access the Git repository.
+*   **Accessibility Issues:** If the application is not accessible on all instances on port 8080, consider the following:
+    *   **Firewall:** **Ensure that port 8080 is open on all swarm nodes. Check the firewall rules on each node to verify that incoming traffic on port 8080 is allowed.**
+    *   **Swarm Configuration:** Verify that the swarm is configured correctly and that the routing mesh is functioning as expected.
+    *   **DNS:** Check that DNS resolution is correctly pointing to all swarm nodes.
+    *   **Node Failure:** Check if one or more manager nodes may be failing.
+	*   **Service Status:** Verify that the service is running correctly on all nodes by running `docker service ps <service_name>` and ensuring that all replicas are in the `Running` state.
 
 This setup provides a streamlined GitOps workflow for deploying applications to Docker Swarm using Portainer Business Edition.
