@@ -34,10 +34,9 @@ services:
       - socket-proxy
     command:
       - "--api.dashboard=true"
-      - "--providers.docker.endpoint=tcp://socket-proxy:2375"
-      - "--providers.docker.swarmMode=true"
-      - "--providers.docker.exposedByDefault=false"
-      - "--providers.docker.network=proxy"
+      - "--providers.swarm.endpoint=tcp://socket-proxy:2375"
+      - "--providers.swarm.exposedByDefault=false"
+      - "--providers.swarm.network=proxy"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
