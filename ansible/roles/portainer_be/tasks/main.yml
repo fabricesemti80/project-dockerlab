@@ -1,0 +1,16 @@
+---
+- name: Ensure Portainer data volume exists
+  command: docker volume create portainer_data
+  register: volume_create
+  changed_when: volume_create.rc == 0
+  failed_when: volume_create.rc != 0 and "already exists" not in volume_create.stderr
+
+- name: Create Portainer stack file from template
+  ansible.builtin.template:
+    src: portainer-agent-stack.yml.j2
+    dest: /tmp/portainer-agent-stack.yml
+    mode: '0644'
+
+- name: Deploy Portainer BE stack
+  ansible.builtin.command: docker stack deploy -c /tmp/portainer-agent-stack.yml portainer
+  changed_when: true

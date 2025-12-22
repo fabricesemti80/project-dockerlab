@@ -91,6 +91,18 @@ tasks:
     cmds:
       - doppler run -- ansible-playbook 40-site-swarm.yml --check --diff
 
+  portainer:apply:
+    desc: "Apply the Portainer BE deployment"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 50-site-portainer-be.yml
+
+  portainer:plan:
+    desc: "Plan the Portainer BE deployment"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 50-site-portainer-be.yml --check --diff
+
   base:apply:
     desc: "Apply the Base configuration"
     dir: ansible
