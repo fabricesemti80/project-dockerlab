@@ -78,6 +78,7 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [proxmox_virtual_environment_file.user_data](https://registry.terraform.io/providers/bpg/proxmox/0.89.1/docs/resources/virtual_environment_file) | resource |
 | [proxmox_virtual_environment_vm.vm](https://registry.terraform.io/providers/bpg/proxmox/0.89.1/docs/resources/virtual_environment_vm) | resource |
 
 ## Inputs
@@ -126,6 +127,7 @@ No modules.
 | <a name="input_tags"></a> [tags](#input\_tags) | List of tags to assign to the VM | `list(string)` | `[]` | no |
 | <a name="input_template_vm_id"></a> [template\_vm\_id](#input\_template\_vm\_id) | The VM ID of the template to clone from | `number` | n/a | yes |
 | <a name="input_usb_devices"></a> [usb\_devices](#input\_usb\_devices) | List of USB devices to passthrough | <pre>list(object({<br/>    mapping = string<br/>    usb3    = bool<br/>  }))</pre> | `[]` | no |
+| <a name="input_user_data"></a> [user\_data](#input\_user\_data) | Optional user data content for cloud-init (simple shell commands).<br/><br/>Example usage:<br/>user\_data = <<EOF<br/>#cloud-config<br/>runcmd:<br/>  - echo "Simple initialization script"<br/>  - apt-get update<br/>  - echo "Initialization complete"<br/>EOF | `string` | `null` | no |
 | <a name="input_username"></a> [username](#input\_username) | Username for cloud-init | `string` | `null` | no |
 | <a name="input_vm_id"></a> [vm\_id](#input\_vm\_id) | The VM ID (must be unique across all VMs) | `number` | n/a | yes |
 
@@ -134,7 +136,7 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_vm_id"></a> [vm\_id](#output\_vm\_id) | The ID of the created VM |
-| <a name="output_vm_ipv4_address"></a> [vm\_ipv4\_address](#output\_vm\_ipv4\_address) | The IPv4 address of the VM (if agent is enabled) |
+| <a name="output_vm_ipv4_address"></a> [vm\_ipv4\_address](#output\_vm\_ipv4\_address) | The IPv4 address of the VM |
 | <a name="output_vm_name"></a> [vm\_name](#output\_vm\_name) | The name of the created VM |
 | <a name="output_vm_node_name"></a> [vm\_node\_name](#output\_vm\_node\_name) | The Proxmox node where the VM is running |
 | <a name="output_vm_tags"></a> [vm\_tags](#output\_vm\_tags) | The tags assigned to the VM |
