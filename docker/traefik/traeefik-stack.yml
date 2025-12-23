@@ -57,7 +57,7 @@ services:
       placement:
         constraints:
           - node.role == manager
-          # - node.labels.swarm.leader == true
+          - node.labels.swarm.leader == true # todo: add this to Ansible setup
       labels:
         - "traefik.enable=true"
 
