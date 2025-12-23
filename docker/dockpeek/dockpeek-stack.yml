@@ -7,17 +7,20 @@ services:
       - traefik_traefik-public
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      # Required for Flask session management
+      - SECRET_KEY=changeme_random_secret_string_12345
     deploy:
       replicas: 1
       placement:
         constraints:
-          - node.role == manager # Required to access Swarm Management API usually, or just local socket
+          - node.role == manager
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.dockpeek.rule=Host(`dockpeek.${DOMAIN}`)"
         - "traefik.http.routers.dockpeek.entrypoints=websecure"
         - "traefik.http.routers.dockpeek.tls.certresolver=cloudflare"
-        - "traefik.http.services.dockpeek.loadbalancer.server.port=3000" # Dockpeek listens on 3000
+        - "traefik.http.services.dockpeek.loadbalancer.server.port=8000" # Dockpeek logs say it binds to 8000, not 3000
 
 networks:
   traefik_traefik-public:
