@@ -15,5 +15,5 @@ services:
         - "traefik.http.services.whoami.loadbalancer.server.port=80"
 
 networks:
-  traefik-public:
+  traefik_traefik-public: # check the stack name prefix
     external: true
