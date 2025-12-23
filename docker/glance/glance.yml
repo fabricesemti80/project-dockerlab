@@ -28,9 +28,6 @@ pages:
                   - title: Portainer
                     url: https://portainer.krapulax.dev
           
-          # Docker widget temporarily removed as it causes "unknown widget type" error
-          # likely due to version mismatch in 'latest' image.
-          
           - type: monitor
             title: Service Health
             cache: 1m
@@ -42,6 +39,6 @@ pages:
 
       - size: small
         widgets:
-          - type: hackernews
-            title: Hacker News
-            limit: 5
+          - type: hacker-news
+            limit: 10
+            collapse-after: 5
