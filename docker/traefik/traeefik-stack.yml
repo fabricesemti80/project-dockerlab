@@ -56,7 +56,7 @@ services:
       placement:
         constraints:
           - node.role == manager
-          - node.labels.swarm.leader == true
+          # - node.labels.swarm.leader == true
       labels:
         - "traefik.enable=true"
 
