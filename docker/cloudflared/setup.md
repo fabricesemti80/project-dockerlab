@@ -66,29 +66,31 @@ With **Option A**, you simply deploy the app in Swarm (attached to `traefik_trae
 
 With **Option B**, you must *also* add the new hostname to the Cloudflare Tunnel config every time.
 
-## 5. Terraform Automation (Recommended)
+## 6. Troubleshooting
 
-This project includes a Terraform configuration to automate the Tunnel creation, DNS setup, and Token retrieval.
+### "Too Many Redirects" Error
+If you see this error, it is likely because Traefik is configured to redirect all HTTP traffic (Port 80) to HTTPS (Port 443), creating a loop when the Tunnel connects to Port 80.
 
-### Files
-- `terraform/main_tunnel.tf`: Defines the Tunnel, Wildcard Ingress Rule, and DNS Record.
-- `terraform/main_tunnel.tf`: automatically writes the `TUNNEL_TOKEN` to `docker/cloudflared/.env`.
+**The Fix:**
+Configure the Tunnel to connect directly to Traefik's **HTTPS port (443)** and ignore the certificate check.
 
-### Deployment Steps
-1.  Navigate to the `terraform/` directory.
-2.  Ensure your `terraform.tfvars` or environment variables are set (including `CLOUDFLARE_ACCOUNT_ID`).
-3.  Run the plan and apply:
-    ```bash
-    terraform plan -out=tfplan
-    terraform apply tfplan
-    ```
-4.  **Result:**
-    - A new Cloudflare Tunnel is created.
-    - A Wildcard DNS record (`*.yourdomain.com`) is pointed to the tunnel.
-    - The file `docker/cloudflared/.env` is created containing your `TUNNEL_TOKEN`.
+**In Terraform (`main_tunnel.tf`):**
+```hcl
+    ingress = [
+      {
+        hostname = "*.yourdomain.com"
+        service  = "https://traefik:443"  # Connect to HTTPS
+        origin_request = {
+          no_tls_verify = true        # Trust Traefik's internal cert
+        }
+      },
+      ...
+    ]
+```
 
-5.  **Update Portainer:**
-    - Copy the `TUNNEL_TOKEN` from `docker/cloudflared/.env`.
-    - Update your Stack environment variables in Portainer.
-    - Redeploy the stack.
+**In Cloudflare Dashboard:**
+1.  Go to **Tunnels** > **Configure**.
+2.  Edit the Public Hostname.
+3.  Change Service to **HTTPS** and URL to `traefik:443`.
+4.  Under **TLS** settings, enable **No TLS Verify**.
 

@@ -20,7 +20,10 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "main" {
     ingress = [
       {
         hostname = "*.${data.cloudflare_zone.krapulax_dev.name}"
-        service  = "http://traefik:80"
+        service  = "https://traefik:443"
+        origin_request = {
+          no_tls_verify = true
+        }
       },
       {
         service = "http_status:404"
