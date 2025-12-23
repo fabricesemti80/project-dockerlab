@@ -8,6 +8,10 @@ services:
       - monitoring-net
     volumes:
       - grafana-data:/var/lib/grafana
+      # Mount Provisioning Configs (Datasources & Dashboard Providers)
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      # Mount Dashboard JSONs
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
@@ -33,6 +37,8 @@ services:
     networks:
       - monitoring-net
     configs:
+      # NOTE: Docker Configs are immutable. If you modify prometheus.yml, you must 
+      # rename the config source below (e.g. prometheus_config_v2) to trigger an update.
       - source: prometheus_config
         target: /etc/prometheus/prometheus.yml
     volumes:

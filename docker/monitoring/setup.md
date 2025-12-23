@@ -18,12 +18,9 @@ This stack deploys a complete monitoring solution for Docker Swarm.
 ## 3. Configuration
 - **Access:** `https://grafana.yourdomain.com`
 - **Login:** User `admin`, Password (what you set above).
-- **Data Source:**
-    - Type: **Prometheus**
-    - URL: `http://prometheus:9090`
-- **Dashboards:**
-    - Import ID **1860** (Node Exporter Full) for Host metrics.
-    - Import ID **14282** (Cadvisor Exporter) for Container metrics.
+- **Auto-Provisioning:** 
+    - Prometheus is automatically configured as the default data source.
+    - Dashboards (Node Exporter & cAdvisor) are automatically imported from the `grafana/dashboards` folder.
 
 ## 4. Notes
 - `node-exporter` and `cadvisor` run in `global` mode to cover the entire cluster.
