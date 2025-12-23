@@ -15,12 +15,23 @@ This stack deploys a complete monitoring solution for Docker Swarm.
     - `GF_SECURITY_ADMIN_PASSWORD`: Set a secure password for the `admin` user.
 3.  Deploy.
 
-## 3. Configuration
+## 3. Configuration (Manual)
+Since auto-provisioning can be finicky in Swarm, follow these steps to set up your dashboards:
+
 - **Access:** `https://grafana.yourdomain.com`
 - **Login:** User `admin`, Password (what you set above).
-- **Auto-Provisioning:** 
-    - Datasources and Dashboards are automatically provisioned using **Docker Configs**.
-    - No manual import required.
+
+- **Data Source Setup:**
+    1. Go to **Connections** > **Data Sources** > **Add data source**.
+    2. Select **Prometheus**.
+    3. URL: `http://prometheus:9090`
+    4. Click **Save & Test**.
+
+- **Import Dashboards:**
+    1. Go to **Dashboards** > **New** > **Import**.
+    2. To monitor **Nodes (Host)**: Enter ID `1860` and click **Load**.
+    3. To monitor **Containers (cAdvisor)**: Enter ID `14282` and click **Load**.
+    4. Select the **Prometheus** data source created in the previous step and click **Import**.
 
 ## 4. Notes
 - `node-exporter` and `cadvisor` run in `global` mode to cover the entire cluster.
