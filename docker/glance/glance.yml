@@ -27,6 +27,8 @@ pages:
                     url: https://whoami.krapulax.dev
                   - title: Portainer
                     url: https://portainer.krapulax.dev
+                  - title: Dockpeek
+                    url: https://dockpeek.krapulax.dev
           
           - type: monitor
             title: Service Health
@@ -36,6 +38,8 @@ pages:
                 url: https://traefik.krapulax.dev
               - name: Whoami
                 url: https://whoami.krapulax.dev
+              - name: Dockpeek
+                url: https://dockpeek.krapulax.dev
 
       - size: small
         widgets:
