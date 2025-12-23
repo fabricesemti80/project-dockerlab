@@ -4,7 +4,7 @@ services:
   whoami:
     image: traefik/whoami
     networks:
-      - traefik-public
+      - traefik_traefik-public # check the stack name prefix
     deploy:
       replicas: 3
       labels:
