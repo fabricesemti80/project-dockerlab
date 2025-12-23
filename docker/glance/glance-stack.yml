@@ -6,6 +6,9 @@ services:
     networks:
       - traefik_traefik-public
     configs:
+      # NOTE: Docker Configs are immutable. If you modify glance.yml, you must 
+      # rename the config below (e.g. glance_config_v2) to trigger an update,
+      # or delete the stack and redeploy.
       - source: glance_config
         target: /app/config/glance.yml
     volumes:
