@@ -1,33 +1,52 @@
 theme:
-  background-color: "237 18% 13%"
-  primary-color: "220 89% 72%"
-  positive-color: "90 49% 61%"
-  negative-color: "349 89% 72%"
+  background-color: "225 14% 15%"
+  primary-color: "157 47% 65%"
+  contrast-multiplier: 1.1
 
 pages:
   - name: Dashboard
     columns:
       - size: small
         widgets:
-          - type: calendar
           - type: clock
+            time-format: "15:04"
+          - type: calendar
           - type: weather
             location: London, United Kingdom
+      
       - size: full
         widgets:
           - type: search
           - type: bookmarks
             groups:
-              - name: Infrastructure
+              - title: Infrastructure
                 links:
-                  - name: Traefik
+                  - title: Traefik
                     url: https://traefik.krapulax.dev
-                  - name: Whoami
+                  - title: Whoami
                     url: https://whoami.krapulax.dev
+                  - title: Portainer
+                    url: https://portainer.krapulax.dev
+          
+          - type: docker
+            title: Docker Containers
+            # Show all running containers
+            filter: "status=running"
+            # Optional: hide specific containers
+            # exclude: 
+            #   - "glance" 
+            
           - type: monitor
+            title: Service Health
             cache: 1m
             services:
               - name: Traefik
                 url: https://traefik.krapulax.dev
               - name: Whoami
                 url: https://whoami.krapulax.dev
+
+      - size: small
+        widgets:
+          - type: hackernews
+            title: Hacker News
+            limit: 5
