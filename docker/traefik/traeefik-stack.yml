@@ -11,7 +11,7 @@ version: "3.9"
 
 services:
   traefik:
-    image: traefik:v3.6.4
+    image: traefik:v3.6.5
     command:
       # Logging
       - "--log.level=INFO"
