@@ -1,0 +1,75 @@
+#?  https://doc.traefik.io/traefik/setup/swarm/
+
+#? created outside of this compose file with
+#? https://chatgpt.com/share/694a4b8f-9e70-8007-9174-40ee509007ce
+
+# CF_DNS_API_TOKEN=your_cloudflare_api_token
+# ACME_EMAIL=your_email@example.com
+# DOMAIN=example.com
+
+version: "3.9"
+
+services:
+  traefik:
+    image: traefik:v3.0
+    command:
+      # Logging
+      - "--log.level=INFO"
+
+      # API / Dashboard
+      - "--api=true"
+      - "--api.dashboard=true"
+
+      # Swarm provider
+      - "--providers.swarm=true"
+      - "--providers.swarm.exposedbydefault=false"
+      - "--providers.swarm.network=traefik-public"
+
+      # EntryPoints
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+
+      # HTTP → HTTPS
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+
+      # Let's Encrypt (Cloudflare DNS-01)
+      - "--certificatesresolvers.cloudflare.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.cloudflare.acme.storage=/acme/acme.json"
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
+
+    environment:
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
+
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      - traefik-acme:/acme
+
+    networks:
+      - traefik-public
+
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+          - node.labels.swarm.leader == true
+      labels:
+        - "traefik.enable=true"
+
+        # Dashboard router (explicit in v3)
+        - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`)"
+        - "traefik.http.routers.traefik.entrypoints=websecure"
+        - "traefik.http.routers.traefik.tls.certresolver=cloudflare"
+        - "traefik.http.routers.traefik.service=api@internal"
+
+volumes:
+  traefik-acme:
+
+networks:
+  traefik-public:
+    driver: overlay
+    attachable: true
