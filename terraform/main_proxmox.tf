@@ -27,9 +27,9 @@ locals {
     agent_timeout = "5m"
 
     # Hardware Configuration
-    memory_dedicated = 4096
-    cpu_cores        = 2
-    cpu_sockets      = 1
+    memory_dedicated = 8192
+    cpu_cores        = 4
+    cpu_sockets      = 2
 
     # Disk Configuration
     disk_datastore_id = "vm-storage"
