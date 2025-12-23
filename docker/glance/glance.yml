@@ -1,8 +1,8 @@
 theme:
-  background-color: "#1a1b26"
-  primary-color: "#7aa2f7"
-  positive-color: "#9ece6a"
-  negative-color: "#f7768e"
+  background-color: "237 18% 13%"
+  primary-color: "220 89% 72%"
+  positive-color: "90 49% 61%"
+  negative-color: "349 89% 72%"
 
 pages:
   - name: Dashboard
