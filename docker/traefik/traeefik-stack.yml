@@ -23,7 +23,7 @@ services:
       # Swarm provider
       - "--providers.swarm=true"
       - "--providers.swarm.exposedbydefault=false"
-      - "--providers.swarm.network=traefik-public"
+      - "--providers.swarm.network=traefik_traefik-public" # due the stack name prefix
 
       # EntryPoints
       - "--entrypoints.web.address=:80"
@@ -63,6 +63,9 @@ services:
           - node.labels.role == cloud
       labels:
         - "traefik.enable=true"
+
+        # Add this line to fix "port is missing" error
+        - "traefik.http.services.traefik.loadbalancer.server.port=8080"
 
         # Dashboard router (explicit in v3)
         - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`)"
