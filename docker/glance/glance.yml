@@ -28,14 +28,9 @@ pages:
                   - title: Portainer
                     url: https://portainer.krapulax.dev
           
-          - type: docker
-            title: Docker Containers
-            # Show all running containers
-            filter: "status=running"
-            # Optional: hide specific containers
-            # exclude: 
-            #   - "glance" 
-            
+          # Docker widget temporarily removed as it causes "unknown widget type" error
+          # likely due to version mismatch in 'latest' image.
+          
           - type: monitor
             title: Service Health
             cache: 1m
