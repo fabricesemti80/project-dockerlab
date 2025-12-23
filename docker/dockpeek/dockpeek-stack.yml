@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  dockpeek:
+    image: dockpeek/dockpeek:latest
+    networks:
+      - traefik_traefik-public
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager # Required to access Swarm Management API usually, or just local socket
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.dockpeek.rule=Host(`dockpeek.${DOMAIN}`)"
+        - "traefik.http.routers.dockpeek.entrypoints=websecure"
+        - "traefik.http.routers.dockpeek.tls.certresolver=cloudflare"
+        - "traefik.http.services.dockpeek.loadbalancer.server.port=3000" # Dockpeek listens on 3000
+
+networks:
+  traefik_traefik-public:
+    external: true
