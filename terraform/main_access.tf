@@ -39,7 +39,12 @@ resource "cloudflare_zero_trust_access_application" "lab_wildcard" {
         },
         {
           email = {
-            email = "fabrice.semti@gmail.com"
+            email = "fabrice.semti@gmail.com" # Github
+          }
+        },
+        {
+          email = {
+            email = "fabrice@fabricesemti.com"
           }
         }
       ]
