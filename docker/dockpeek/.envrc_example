@@ -1,0 +1,8 @@
+# Flask Secret Key
+# Generate with: openssl rand -hex 32
+SECRET_KEY=
+
+# Optional: Basic Auth (If supported by the app, or for your reference)
+# Since you use Cloudflare Access, this might be redundant.
+USERNAME=admin
+PASSWORD=

@@ -8,7 +8,11 @@
 
 ## 2. Deployment
 1.  Add a new stack in Portainer pointing to this folder (`docker/dockpeek`).
-2.  Set `DOMAIN` env var (e.g. `krapulax.dev`).
+2.  **Environment Variables:**
+    - `DOMAIN`: Your domain (e.g. `krapulax.dev`).
+    - `SECRET_KEY`: A random string (Generate with `openssl rand -hex 32`).
+    - `USERNAME`: (Optional) `admin`.
+    - `PASSWORD`: (Optional) Your secure password.
 3.  Deploy.
 
 ## 3. Access
