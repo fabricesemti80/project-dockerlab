@@ -33,9 +33,9 @@ locals {
 
     # Disk Configuration
     disk_datastore_id = "vm-storage"
-    disk_interface    = "scsi0"
-    disk_size         = 30
-    disk_iothread     = false
+    disk_interface    = "virtio0"
+    disk_size         = 32
+    disk_iothread     = true
 
     # Network Configuration
     network_bridge   = "vmbr0"

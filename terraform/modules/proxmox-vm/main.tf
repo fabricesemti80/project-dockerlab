@@ -183,7 +183,6 @@ resource "proxmox_virtual_environment_vm" "vm" {
     ignore_changes = [
       efi_disk,
       tpm_state,
-      disk,
     ]
   }
 }
