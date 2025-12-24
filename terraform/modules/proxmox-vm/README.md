@@ -101,6 +101,7 @@ No modules.
 | <a name="input_disk_iothread"></a> [disk\_iothread](#input\_disk\_iothread) | Whether to enable IO threads for the disk | `bool` | `false` | no |
 | <a name="input_disk_size"></a> [disk\_size](#input\_disk\_size) | Size of the disk in GB | `number` | `20` | no |
 | <a name="input_dns_servers"></a> [dns\_servers](#input\_dns\_servers) | List of DNS servers | `list(string)` | <pre>[<br/>  "9.9.9.9",<br/>  "149.112.112.112"<br/>]</pre> | no |
+| <a name="input_efi_disk_enabled"></a> [efi\_disk\_enabled](#input\_efi\_disk\_enabled) | Whether to enable EFI disk | `bool` | `true` | no |
 | <a name="input_full_clone"></a> [full\_clone](#input\_full\_clone) | Whether to perform a full clone (creates independent copy) | `bool` | `true` | no |
 | <a name="input_initialization_datastore_id"></a> [initialization\_datastore\_id](#input\_initialization\_datastore\_id) | The datastore for cloud-init configuration | `string` | n/a | yes |
 | <a name="input_initialization_user_data_file_id"></a> [initialization\_user\_data\_file\_id](#input\_initialization\_user\_data\_file\_id) | The Proxmox file ID for the user data snippet | `string` | `null` | no |
@@ -126,6 +127,7 @@ No modules.
 | <a name="input_started"></a> [started](#input\_started) | Whether the VM should be started after creation | `bool` | `true` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | List of tags to assign to the VM | `list(string)` | `[]` | no |
 | <a name="input_template_vm_id"></a> [template\_vm\_id](#input\_template\_vm\_id) | The VM ID of the template to clone from | `number` | n/a | yes |
+| <a name="input_tpm_state_enabled"></a> [tpm\_state\_enabled](#input\_tpm\_state\_enabled) | Whether to enable TPM state | `bool` | `true` | no |
 | <a name="input_usb_devices"></a> [usb\_devices](#input\_usb\_devices) | List of USB devices to passthrough | <pre>list(object({<br/>    mapping = string<br/>    usb3    = bool<br/>  }))</pre> | `[]` | no |
 | <a name="input_user_data"></a> [user\_data](#input\_user\_data) | Optional user data content for cloud-init (simple shell commands).<br/><br/>Example usage:<br/>user\_data = <<EOF<br/>#cloud-config<br/>runcmd:<br/>  - echo "Simple initialization script"<br/>  - apt-get update<br/>  - echo "Initialization complete"<br/>EOF | `string` | `null` | no |
 | <a name="input_username"></a> [username](#input\_username) | Username for cloud-init | `string` | `null` | no |
