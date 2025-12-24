@@ -175,3 +175,14 @@
   ansible.builtin.debug:
     msg: "Docker Swarm successfully formed with 3 managers and 0 workers"
   tags: [swarm]
+
+- name: "Create shared overlay networks"
+  docker_network:
+    name: traefik_traefik-public
+    driver: overlay
+    attachable: true
+  run_once: true
+  delegate_to: "{{ groups['swarm_managers'][0] }}"
+  tags: [swarm, network]
+  ignore_errors: true
+

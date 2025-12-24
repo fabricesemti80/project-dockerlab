@@ -1,0 +1,6 @@
+---
+- name: Deploy Portainer
+  hosts: proxmox_vms
+  become: true
+  roles:
+    - portainer

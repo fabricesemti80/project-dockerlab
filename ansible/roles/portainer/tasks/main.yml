@@ -11,6 +11,7 @@
     dest: /tmp/portainer-agent-stack.yml
     mode: '0644'
 
-- name: Deploy Portainer BE stack
+- name: Deploy Portainer stack
   ansible.builtin.command: docker stack deploy -c /tmp/portainer-agent-stack.yml portainer
   changed_when: true
+  run_once: true

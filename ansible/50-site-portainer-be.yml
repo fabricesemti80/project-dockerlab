@@ -1,8 +1,0 @@
----
-- name: "Deploy Portainer BE"
-  hosts: swarm_managers[0]
-  become: true
-  gather_facts: true
-  tags: ["portainer", "apps"]
-  roles:
-    - portainer_be

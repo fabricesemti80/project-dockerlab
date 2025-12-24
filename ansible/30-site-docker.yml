@@ -53,6 +53,7 @@
   vars:
     # User configuration
     docker_users:
+      - "{{ admin_user }}"
       - "{{ ansible_user | default('root') }}"
 
     # Docker daemon configuration (handled by geerlingguy.docker)
