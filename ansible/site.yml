@@ -19,5 +19,8 @@
 - name: "Docker Swarm Formation"
   import_playbook: 40-site-swarm.yml
 
+- name: "GlusterFS Setup"
+  import_playbook: 50-site-glusterfs.yml
+
 - name: "Portainer BE Deployment"
   import_playbook: 50-site-portainer-be.yml

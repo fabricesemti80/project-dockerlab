@@ -91,6 +91,18 @@ tasks:
     cmds:
       - doppler run -- ansible-playbook 40-site-swarm.yml --check --diff
 
+  glusterfs:apply:
+    desc: "Apply the GlusterFS configuration"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 50-site-glusterfs.yml
+
+  glusterfs:plan:
+    desc: "Plan the GlusterFS configuration"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 50-site-glusterfs.yml --check --diff
+
   portainer:apply:
     desc: "Apply the Portainer BE deployment"
     dir: ansible

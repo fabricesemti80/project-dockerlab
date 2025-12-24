@@ -1,0 +1,88 @@
+---
+- name: Install GlusterFS and XFS dependencies
+  apt:
+    name:
+      - glusterfs-server
+      - xfsprogs
+    state: present
+    update_cache: yes
+
+- name: Start and enable GlusterFS service
+  service:
+    name: glusterd
+    state: started
+    enabled: yes
+
+- name: Create XFS filesystem on gluster disk
+  filesystem:
+    fstype: xfs
+    dev: "{{ glusterfs_disk_device }}"
+    force: no
+
+- name: Create brick mount point
+  file:
+    path: "{{ glusterfs_mount_dir }}/{{ glusterfs_brick_name }}"
+    state: directory
+    mode: '0755'
+
+- name: Mount gluster disk
+  mount:
+    path: "{{ glusterfs_mount_dir }}/{{ glusterfs_brick_name }}"
+    src: "{{ glusterfs_disk_device }}"
+    fstype: xfs
+    state: mounted
+
+- name: Ensure GlusterFS mount directory exists on client
+  file:
+    path: "{{ glusterfs_client_mount_point }}"
+    state: directory
+    mode: '0755'
+
+# Peer Probing (Run only on the first node)
+- name: Peer probe other nodes
+  command: "gluster peer probe {{ item }}"
+  loop: "{{ groups['proxmox_vms'] }}"
+  when: 
+    - inventory_hostname == groups['proxmox_vms'][0]
+    - item != inventory_hostname
+  register: peer_probe
+  changed_when: "'peer probe: success' in peer_probe.stdout"
+  failed_when: "'peer probe: success' not in peer_probe.stdout and 'already in peer list' not in peer_probe.stdout"
+  ignore_errors: yes # Can be flaky if already peered
+
+# Volume Creation (Run only on the first node)
+- name: Check if Gluster volume exists
+  command: "gluster volume info {{ glusterfs_volume_name }}"
+  register: volume_info
+  changed_when: false
+  failed_when: false
+  run_once: true
+
+- name: Create GlusterFS volume
+  command: >
+    gluster volume create {{ glusterfs_volume_name }} replica 3
+    {% for host in groups['proxmox_vms'] %}
+    {{ host }}:{{ glusterfs_mount_dir }}/{{ glusterfs_brick_name }}/brick
+    {% endfor %}
+    force
+  run_once: true
+  when: 
+    - inventory_hostname == groups['proxmox_vms'][0]
+    - "'Volume Name: ' + glusterfs_volume_name not in volume_info.stdout"
+
+- name: Start GlusterFS volume
+  command: "gluster volume start {{ glusterfs_volume_name }}"
+  run_once: true
+  when: 
+    - inventory_hostname == groups['proxmox_vms'][0]
+    - "'Status: Started' not in volume_info.stdout"
+  ignore_errors: yes # If already started
+
+# Mount the GlusterFS volume locally on all nodes
+- name: Mount GlusterFS volume locally
+  mount:
+    path: "{{ glusterfs_client_mount_point }}"
+    src: "localhost:/{{ glusterfs_volume_name }}"
+    fstype: glusterfs
+    opts: "defaults,_netdev,backup-volfile-servers={{ groups['proxmox_vms'] | join(':') }}"
+    state: mounted
