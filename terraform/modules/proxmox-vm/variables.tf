@@ -301,3 +301,16 @@ variable "pool_id" {
   type        = string
   default     = null
 }
+
+# EFI and TPM Configuration
+variable "efi_disk_enabled" {
+  description = "Whether to enable EFI disk"
+  type        = bool
+  default     = true
+}
+
+variable "tpm_state_enabled" {
+  description = "Whether to enable TPM state"
+  type        = bool
+  default     = true
+}

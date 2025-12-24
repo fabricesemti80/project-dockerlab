@@ -82,6 +82,22 @@ resource "proxmox_virtual_environment_vm" "vm" {
     }
   }
 
+  dynamic "efi_disk" {
+    for_each = var.efi_disk_enabled ? [1] : []
+    content {
+      datastore_id = var.disk_datastore_id
+      file_format  = var.disk_file_format
+    }
+  }
+
+  dynamic "tpm_state" {
+    for_each = var.tpm_state_enabled ? [1] : []
+    content {
+      datastore_id = var.disk_datastore_id
+      version      = "v2.0"
+    }
+  }
+
   dynamic "hostpci" {
     for_each = var.pci_devices
     content {
@@ -163,17 +179,12 @@ resource "proxmox_virtual_environment_vm" "vm" {
   started             = var.started
   pool_id             = var.pool_id
 
-  # lifecycle {
-  #   ignore_changes = [
-  #     tags,
-  #     description,
-  #     clone,
-  #     agent,
-  #     memory,
-  #     cpu,
-  #     disk,
-  #     network_device,
-  #     initialization,
-  #   ]
-  # }
+  lifecycle {
+    ignore_changes = [
+      efi_disk,
+      tpm_state,
+      disk,
+    ]
+  }
 }
+
