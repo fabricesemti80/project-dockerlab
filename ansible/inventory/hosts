@@ -7,7 +7,7 @@ dkr-srv-2 ansible_host=10.0.30.12
 dkr-srv-3 ansible_host=10.0.30.13
 
 [cloud_vms]
-dkr-srv-0 ansible_host=157.180.84.140
+dkr-srv-0 ansible_host=157.180.84.140 ansible_user=fs ansible_ssh_private_key_file=~/.ssh/id_macbook_fs
 
 [vms:children]
 proxmox_vms

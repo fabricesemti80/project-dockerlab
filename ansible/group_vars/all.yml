@@ -1,6 +1,7 @@
 # Main admin user
 admin_user: fs
 sudo_nopasswd: true
+domain_name: krapulax.dev
 
 # list of packages to be installed
 install_packages:
