@@ -37,6 +37,19 @@ locals {
     disk_size         = 32
     disk_iothread     = true
 
+    # Additional Disks (GlusterFS)
+    additional_disks = [
+      {
+        datastore_id = "vm-storage"
+        interface    = "scsi0"
+        size         = 30
+        file_format  = "raw"
+        iothread     = true
+        cache        = "none"
+        backup       = true
+      }
+    ]
+
     # Network Configuration
     network_bridge   = "vmbr0"
     network_model    = "virtio"
@@ -108,6 +121,7 @@ module "dkr_srv_1" {
   disk_interface    = local.vm_common.disk_interface
   disk_size         = local.vm_common.disk_size
   disk_iothread     = local.vm_common.disk_iothread
+  additional_disks  = local.vm_common.additional_disks
 
   # Network Configuration
   network_bridge   = local.vm_common.network_bridge
@@ -168,6 +182,7 @@ module "dkr_srv_2" {
   disk_interface    = local.vm_common.disk_interface
   disk_size         = local.vm_common.disk_size
   disk_iothread     = local.vm_common.disk_iothread
+  additional_disks  = local.vm_common.additional_disks
 
   # Network Configuration
   network_bridge   = local.vm_common.network_bridge
@@ -228,6 +243,7 @@ module "dkr_srv_3" {
   disk_interface    = local.vm_common.disk_interface
   disk_size         = local.vm_common.disk_size
   disk_iothread     = local.vm_common.disk_iothread
+  additional_disks  = local.vm_common.additional_disks
 
   # Network Configuration
   network_bridge   = local.vm_common.network_bridge
