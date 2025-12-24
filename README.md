@@ -163,6 +163,11 @@ Detailed documentation for each component:
 | [Terraform](docs/terraform.md) | Infrastructure provisioning |
 | [Doppler](docs/doppler.md) | Secrets management |
 | [Taskfile](docs/taskfile.md) | Task runner commands |
+| [Cloudflare Tunnel Setup](docker/cloudflared/setup.md) | Secure remote access without opening external ports |
+| [Dockpeek Setup](docker/dockpeek/setup.md) | Simple Docker container explorer |
+| [Glance Setup](docker/glance/setup.md) | Self-hosted dashboard |
+| [Monitoring Setup](docker/monitoring/setup.md) | Docker Swarm monitoring solution |
+| [Traefik Setup](docker/traefik/setup.md) | Traefik Ingress Controller |
 
 ## 🖼️ Base Image Creation
 
@@ -207,6 +212,27 @@ A simple Traefik whoami service for testing Swarm deployments:
 cd apps/whoami
 docker stack deploy -c docker-compose.yaml whoami
 ```
+```
+
+#### Cloudflare Tunnel
+
+Secure remote access without opening external ports. See [Cloudflare Tunnel Setup](docker/cloudflared/setup.md) for details.
+
+#### Dockpeek
+
+A simple Docker container explorer. See [Dockpeek Setup](docker/dockpeek/setup.md) for details.
+
+#### Glance
+
+A self-hosted dashboard that puts all your feeds in one place. See [Glance Setup](docker/glance/setup.md) for details.
+
+#### Monitoring (Prometheus & Grafana)
+
+A complete monitoring solution for Docker Swarm. See [Monitoring Setup](docker/monitoring/setup.md) for details.
+
+#### Traefik
+
+Traefik Ingress Controller. See [Traefik Setup](docker/traefik/setup.md) for details.
 
 ## 🔄 Deployment Workflow
 
