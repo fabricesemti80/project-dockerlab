@@ -2,11 +2,11 @@
 TZ=Europe/London
 
 # Cloudflare Credentials for Let's Encrypt DNS Challenge
-CF_API_EMAIL=your_email@example.com
-CF_API_KEY=your_cloudflare_api_key
+ACME_EMAIL=your_email@example.com
+CF_DNS_API_TOKEN=your_cloudflare_dns_api_token
 
 # External Domain (e.g., example.com)
-DOMAIN_EXTERNAL=example.com
+DOMAIN=example.com
 
 # IP Address of the Manager Node (for Homepage/nip.io links)
 # This is usually the IP of the node where Traefik runs (manager)
