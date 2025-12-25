@@ -156,3 +156,9 @@ tasks:
     dir: ansible
     cmds:
       - doppler run -- ansible-playbook sync-dashboards.yml
+
+  monitoring:nuke:
+    desc: "Nuke monitoring data (Grafana GlusterFS & Prometheus Volumes)"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook 99-nuke-monitoring-data.yml
