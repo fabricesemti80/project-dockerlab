@@ -150,3 +150,9 @@ tasks:
     dir: ansible
     cmds:
       - doppler run -- ansible-playbook 50-site-komodo.yaml --check --diff
+
+  dashboards:sync:
+    desc: "Sync Grafana dashboards to GlusterFS"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook sync-dashboards.yml

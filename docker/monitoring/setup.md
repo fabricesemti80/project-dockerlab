@@ -9,14 +9,18 @@ This stack deploys a complete monitoring solution for Docker Swarm.
 - **cAdvisor:** Collects Container metrics from *every* node.
 
 ## 2. Deployment
-1.  Create a new Stack in Portainer pointing to `docker/monitoring`.
-2.  **Environment Variables:**
+1.  **Sync Dashboards:** Run the ansible playbook to upload dashboards to GlusterFS:
+    ```bash
+    ansible-playbook ansible/sync-dashboards.yml
+    ```
+2.  Create a new Stack in Portainer pointing to `docker/monitoring`.
+3.  **Environment Variables:**
     - `DOMAIN`: Your domain (e.g. `krapulax.dev`).
     - `GF_SECURITY_ADMIN_PASSWORD`: Set a secure password for the `admin` user.
-3.  Deploy.
+4.  Deploy.
 
-## 3. Configuration (Manual)
-Since auto-provisioning can be finicky in Swarm, follow these steps to set up your dashboards:
+## 3. Configuration
+Dashboards are now auto-provisioned from GlusterFS.
 
 - **Access:** `https://grafana.yourdomain.com`
 - **Login:** User `admin`, Password (what you set above).
@@ -27,11 +31,6 @@ Since auto-provisioning can be finicky in Swarm, follow these steps to set up yo
     3. URL: `http://prometheus:9090`
     4. Click **Save & Test**.
 
-- **Import Dashboards:**
-    1. Go to **Dashboards** > **New** > **Import**.
-    2. To monitor **Nodes (Host)**: Enter ID `1860` and click **Load**.
-    3. To monitor **Containers (cAdvisor)**: Enter ID `14282` and click **Load**.
-    4. Select the **Prometheus** data source created in the previous step and click **Import**.
 
 ## 4. Notes
 - `node-exporter` and `cadvisor` run in `global` mode to cover the entire cluster.
