@@ -46,3 +46,5 @@ pages:
           - type: hacker-news
             limit: 10
             collapse-after: 5
+          - type: docker-containers
+            hide-by-default: false

@@ -6,3 +6,5 @@ SECRET_KEY=
 # Since you use Cloudflare Access, this might be redundant.
 USERNAME=admin
 PASSWORD=
+
+DOMAIN=
