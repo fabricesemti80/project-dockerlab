@@ -30,8 +30,7 @@ services:
       - traefik_traefik-public
       - komodo-net
     depends_on:
-      mongo:
-        condition: service_healthy
+      - mongo
     environment:
       - KOMODO_DATABASE_ADDRESS=komodo_mongo:27017
       - KOMODO_DATABASE_USERNAME=${MONGO_ROOT_USER}
