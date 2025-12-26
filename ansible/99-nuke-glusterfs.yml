@@ -1,0 +1,57 @@
+---
+- name: Nuke GlusterFS
+  hosts: proxmox_vms
+  become: true
+  vars:
+    glusterfs_mount_dir: "/mnt/gluster_bricks"
+    glusterfs_brick_name: "brick1"
+    glusterfs_volume_name: "gfs_data"
+    glusterfs_client_mount_point: "/mnt/gfs_data"
+  tasks:
+    - name: Unmount GlusterFS volume locally
+      mount:
+        path: "{{ glusterfs_client_mount_point }}"
+        state: absent
+
+    - name: Stop GlusterFS volume
+      command: "gluster volume stop {{ glusterfs_volume_name }} force"
+      run_once: true
+      ignore_errors: yes
+      when: inventory_hostname == groups['proxmox_vms'][0]
+
+    - name: Delete GlusterFS volume
+      command: "gluster volume delete {{ glusterfs_volume_name }}"
+      run_once: true
+      ignore_errors: yes
+      when: inventory_hostname == groups['proxmox_vms'][0]
+
+    - name: Unmount brick disk
+      mount:
+        path: "{{ glusterfs_mount_dir }}/{{ glusterfs_brick_name }}"
+        state: unmounted
+
+    - name: Stop and disable GlusterFS service
+      service:
+        name: glusterd
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+
+    - name: Uninstall GlusterFS packages
+      apt:
+        name:
+          - glusterfs-server
+          - glusterfs-client
+          - glusterfs-common
+        state: absent
+        autoremove: yes
+
+    - name: Remove GlusterFS directories
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ glusterfs_client_mount_point }}"
+        - "{{ glusterfs_mount_dir }}"
+        - "/var/lib/glusterd"
+        - "/etc/glusterfs"
