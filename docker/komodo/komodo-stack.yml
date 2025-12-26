@@ -72,6 +72,11 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /proc:/proc
       - /etc/komodo:/etc/komodo
+    ports:
+      - target: 8120
+        published: 8120
+        protocol: tcp
+        mode: host
     deploy:
       mode: global
 
