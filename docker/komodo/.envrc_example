@@ -6,6 +6,10 @@ DOMAIN=krapulax.dev
 # Komodo Version
 KOMODO_VERSION=1.18.0
 
+# Komodo Admin (Initial Setup)
+KOMODO_INIT_ADMIN_USERNAME=admin
+KOMODO_INIT_ADMIN_PASSWORD=change_me_now
+
 # MongoDB Credentials
 MONGO_ROOT_USER=admin
 MONGO_ROOT_PASSWORD=change_me_now
