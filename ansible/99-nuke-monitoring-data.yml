@@ -5,24 +5,8 @@
   vars:
     # Adjust this if your stack name in Portainer/Swarm is different
     stack_name: "monitoring" 
-    gluster_mount: "/mnt/gfs_data"
 
   tasks:
-    - name: Clean Grafana Data on GlusterFS (Run on first node only)
-      file:
-        path: "{{ gluster_mount }}/monitoring/grafana-data"
-        state: absent
-      run_once: true
-
-    - name: Recreate Grafana Data Directory (Run on first node only)
-      file:
-        path: "{{ gluster_mount }}/monitoring/grafana-data"
-        state: directory
-        mode: '0755'
-        owner: 472
-        group: 472
-      run_once: true
-
     - name: Remove Prometheus Docker Volume (on all nodes)
       command: "docker volume rm {{ stack_name }}_prometheus-data"
       register: vol_rm

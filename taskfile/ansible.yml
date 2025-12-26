@@ -91,29 +91,17 @@ tasks:
     cmds:
       - doppler run -- ansible-playbook 40-site-swarm.yml --check --diff
 
-  glusterfs:apply:
-    desc: "Apply the GlusterFS configuration"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook 50-site-glusterfs.yml
-
-  glusterfs:plan:
-    desc: "Plan the GlusterFS configuration"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook 50-site-glusterfs.yml --check --diff
-
   portainer:apply:
     desc: "Apply the Portainer BE deployment"
     dir: ansible
     cmds:
-      - doppler run -- ansible-playbook 50-site-portainer-be.yml
+      - doppler run -- ansible-playbook 50-site-portainer.yml
 
   portainer:plan:
     desc: "Plan the Portainer BE deployment"
     dir: ansible
     cmds:
-      - doppler run -- ansible-playbook 50-site-portainer-be.yml --check --diff
+      - doppler run -- ansible-playbook 50-site-portainer.yml --check --diff
 
   base:apply:
     desc: "Apply the Base configuration"
@@ -150,12 +138,6 @@ tasks:
     dir: ansible
     cmds:
       - doppler run -- ansible-playbook 50-site-komodo.yaml --check --diff
-
-  dashboards:sync:
-    desc: "Sync Grafana dashboards to GlusterFS"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook sync-dashboards.yml
 
   monitoring:nuke:
     desc: "Nuke monitoring data (Grafana GlusterFS & Prometheus Volumes)"
