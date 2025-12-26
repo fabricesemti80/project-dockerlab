@@ -1,0 +1,15 @@
+[[stack]]
+name = "filemanager"
+tags = [
+  "homelab",
+  "media",
+  "filemanagement"
+]
+
+[stack.config]
+server = "hl-media-debian"
+project_name = "file-management"
+poll_for_updates = true
+files_on_host = true
+run_directory = "/homelab/docker/filemanager"
+file_paths = ["docker-compose.yml"]

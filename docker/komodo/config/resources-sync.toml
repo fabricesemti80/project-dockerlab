@@ -1,0 +1,7 @@
+[[resource_sync]]
+name = "hl-media-config"
+
+[resource_sync.config]
+files_on_host = true
+resource_path = ["/syncs/docker/komodo/config"]
+delete = true

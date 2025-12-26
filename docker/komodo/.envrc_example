@@ -1,0 +1,18 @@
+# Komodo Stack Environment Variables
+
+# Base Domain
+DOMAIN=krapulax.dev
+
+# Komodo Version
+KOMODO_VERSION=1.18.0
+
+# MongoDB Credentials
+MONGO_ROOT_USER=admin
+MONGO_ROOT_PASSWORD=change_me_now
+
+# Komodo Secrets
+KOMODO_JWT_SECRET=change_me_to_something_long_and_random
+KOMODO_WEBHOOK_SECRET=change_me_to_something_long_and_random
+
+# Periphery Passkey (for communication between Core and Periphery)
+KOMODO_PASSKEY=change_me_to_something_long_and_random

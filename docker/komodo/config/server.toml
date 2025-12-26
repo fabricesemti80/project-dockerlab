@@ -1,0 +1,10 @@
+[[server]]
+name = "hl-media-debian"
+tags = ["homelab", "media"]
+
+[server.config]
+address = "https://periphery:8120"
+region = "Home"
+enabled = true
+cpu_warning = 85.0
+cpu_critical = 95.0

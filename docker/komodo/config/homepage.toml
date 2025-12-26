@@ -1,0 +1,12 @@
+[[stack]]
+name = "homepage"
+description = "homepage"
+tags = ["homelab", "dashboard"]
+
+[stack.config]
+server = "hl-media-debian"
+project_name = "arr-stack"
+poll_for_updates = true
+files_on_host = true
+run_directory = "/homelab/docker/homepage"
+file_paths = ["docker-compose.yml"]
