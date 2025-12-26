@@ -14,13 +14,13 @@
         state: absent
 
     - name: Stop GlusterFS volume
-      command: "gluster volume stop {{ glusterfs_volume_name }} force"
+      shell: "echo y | gluster volume stop {{ glusterfs_volume_name }} force"
       run_once: true
       ignore_errors: yes
       when: inventory_hostname == groups['proxmox_vms'][0]
 
     - name: Delete GlusterFS volume
-      command: "gluster volume delete {{ glusterfs_volume_name }}"
+      shell: "echo y | gluster volume delete {{ glusterfs_volume_name }}"
       run_once: true
       ignore_errors: yes
       when: inventory_hostname == groups['proxmox_vms'][0]
