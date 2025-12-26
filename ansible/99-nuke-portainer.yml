@@ -1,6 +1,6 @@
 ---
 - name: Nuke Portainer
-  hosts: dkr-srv-0  # Targeting the node where Portainer is pinned
+  hosts: dkr-srv-1  # Targeting the node where Portainer is pinned
   become: true
   tasks:
     - name: Remove Portainer stack

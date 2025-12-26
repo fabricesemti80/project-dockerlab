@@ -100,7 +100,7 @@ module "dkr_srv_1" {
   name        = local.dkr_srv_1.name
   description = local.vm_common.description
   tags        = local.vm_common.tags
-  node_name   = local.vm_common.node_name
+  node_name   = "pve-0"
   vm_id       = local.dkr_srv_1.vm_id
 
   # Clone Configuration
@@ -161,7 +161,7 @@ module "dkr_srv_2" {
   name        = local.dkr_srv_2.name
   description = local.vm_common.description
   tags        = local.vm_common.tags
-  node_name   = local.vm_common.node_name
+  node_name   = "pve-1"
   vm_id       = local.dkr_srv_2.vm_id
 
   # Clone Configuration
@@ -222,7 +222,7 @@ module "dkr_srv_3" {
   name        = local.dkr_srv_3.name
   description = local.vm_common.description
   tags        = local.vm_common.tags
-  node_name   = local.vm_common.node_name
+  node_name   = "pve-2"
   vm_id       = local.dkr_srv_3.vm_id
 
   # Clone Configuration
