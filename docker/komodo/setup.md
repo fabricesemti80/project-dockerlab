@@ -18,6 +18,7 @@ Define the following environment variables in Portainer when deploying the stack
 | `KOMODO_VERSION` | The version tag for Komodo images (e.g., `1.18.0`). |
 | `KOMODO_INIT_ADMIN_USERNAME` | The initial administrator username. |
 | `KOMODO_INIT_ADMIN_PASSWORD` | The initial administrator password. |
+| `KOMODO_PASSKEY` | The passkey used for internal authentication between Core and Periphery. |
 | `MONGO_ROOT_USER` | Admin username for the MongoDB instance. |
 | `MONGO_ROOT_PASSWORD` | Admin password for the MongoDB instance. |
 | `KOMODO_JWT_SECRET` | Secret key for JWT token generation. |
