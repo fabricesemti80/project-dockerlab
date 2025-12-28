@@ -74,6 +74,7 @@ locals {
   dkr_srv_1 = {
     name         = "dkr-srv-1"
     vm_id        = 3011
+    node_name    = "pve-0"
     ipv4_address = "10.0.30.11/24"
     ipv4_gateway = "10.0.30.1"
   }
@@ -81,6 +82,7 @@ locals {
   dkr_srv_2 = {
     name         = "dkr-srv-2"
     vm_id        = 3012
+    node_name    = "pve-1"
     ipv4_address = "10.0.30.12/24"
     ipv4_gateway = "10.0.30.1"
   }
@@ -88,6 +90,7 @@ locals {
   dkr_srv_3 = {
     name         = "dkr-srv-3"
     vm_id        = 3013
+    node_name    = "pve-2"
     ipv4_address = "10.0.30.13/24"
     ipv4_gateway = "10.0.30.1"
   }
@@ -100,7 +103,7 @@ module "dkr_srv_1" {
   name        = local.dkr_srv_1.name
   description = local.vm_common.description
   tags        = local.vm_common.tags
-  node_name   = "pve-0"
+  node_name   = local.dkr_srv_1.node_name
   vm_id       = local.dkr_srv_1.vm_id
 
   # Clone Configuration
@@ -161,7 +164,7 @@ module "dkr_srv_2" {
   name        = local.dkr_srv_2.name
   description = local.vm_common.description
   tags        = local.vm_common.tags
-  node_name   = "pve-1"
+  node_name   = local.dkr_srv_2.node_name
   vm_id       = local.dkr_srv_2.vm_id
 
   # Clone Configuration
@@ -222,7 +225,7 @@ module "dkr_srv_3" {
   name        = local.dkr_srv_3.name
   description = local.vm_common.description
   tags        = local.vm_common.tags
-  node_name   = "pve-2"
+  node_name   = local.dkr_srv_3.node_name
   vm_id       = local.dkr_srv_3.vm_id
 
   # Clone Configuration
@@ -274,52 +277,4 @@ module "dkr_srv_3" {
   # EFI and TPM
   efi_disk_enabled  = local.vm_common.efi_disk_enabled
   tpm_state_enabled = local.vm_common.tpm_state_enabled
-}
-
-# Output the VM information
-output "dkr_srv_1_vm_id" {
-  description = "The ID of the dkr-srv-1 VM"
-  value       = module.dkr_srv_1.vm_id
-}
-
-output "dkr_srv_1_vm_name" {
-  description = "The name of the dkr-srv-1 VM"
-  value       = module.dkr_srv_1.vm_name
-}
-
-output "dkr_srv_1_vm_node" {
-  description = "The Proxmox node where dkr-srv-1 is running"
-  value       = module.dkr_srv_1.vm_node_name
-}
-
-# Output the VM information
-output "dkr_srv_2_vm_id" {
-  description = "The ID of the dkr-srv-2 VM"
-  value       = module.dkr_srv_2.vm_id
-}
-
-output "dkr_srv_2_vm_name" {
-  description = "The name of the dkr-srv-2 VM"
-  value       = module.dkr_srv_2.vm_name
-}
-
-output "dkr_srv_2_vm_node" {
-  description = "The Proxmox node where dkr-srv-2 is running"
-  value       = module.dkr_srv_2.vm_node_name
-}
-
-# Output the VM information
-output "dkr_srv_3_vm_id" {
-  description = "The ID of the dkr-srv-3 VM"
-  value       = module.dkr_srv_3.vm_id
-}
-
-output "dkr_srv_3_vm_name" {
-  description = "The name of the dkr-srv-3 VM"
-  value       = module.dkr_srv_3.vm_name
-}
-
-output "dkr_srv_3_vm_node" {
-  description = "The Proxmox node where dkr-srv-3 is running"
-  value       = module.dkr_srv_3.vm_node_name
 }

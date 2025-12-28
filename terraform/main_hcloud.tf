@@ -1,26 +1,21 @@
+locals {
+  dkr_srv_0 = {
+    name           = "dkr-srv-0"
+    image          = "ubuntu-22.04"
+    server_type    = "cx23"
+    location       = "hel1"
+    ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDZNMQ9ZBT1pxZCjNHGI9fE3MaFJPy8gOfOjrA+PclVk fs@Fabrices-MBP"
+    ssh_key_name   = "id_macbook_fs"
+    enable_ipv4    = true
+    enable_ipv6    = true
+  }
 
-# Hetzner Cloud Server Module
-module "dkr_srv_0" {
-  source = "./modules/hetzner-cloud"
-
-  # Server Configuration
-  server_name    = "dkr-srv-0"
-  server_image   = "ubuntu-22.04"
-  server_type    = "cx23" # 2 vCPU, 4GB RAM - Good baseline
-  location       = "hel1" # Helsinki
-  ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDZNMQ9ZBT1pxZCjNHGI9fE3MaFJPy8gOfOjrA+PclVk fs@Fabrices-MBP"
-  ssh_key_name   = "id_macbook_fs"
-  enable_ipv4    = true
-  enable_ipv6    = true
-
-  # Firewall Configuration
-  firewall_name = "dokply-firewall"
   firewall_rules = [
     {
       direction  = "in"
       protocol   = "tcp"
       port       = "22"
-      source_ips = ["0.0.0.0/0", "::/0"] # Recommend restricting this to your IP if possible
+      source_ips = ["0.0.0.0/0", "::/0"]
     },
     {
       direction  = "in"
@@ -65,6 +60,25 @@ module "dkr_srv_0" {
       source_ips = ["0.0.0.0/0", "::/0"]
     }
   ]
+}
+
+# Hetzner Cloud Server Module
+module "dkr_srv_0" {
+  source = "./modules/hetzner-cloud"
+
+  # Server Configuration
+  server_name    = local.dkr_srv_0.name
+  server_image   = local.dkr_srv_0.image
+  server_type    = local.dkr_srv_0.server_type
+  location       = local.dkr_srv_0.location
+  ssh_public_key = local.dkr_srv_0.ssh_public_key
+  ssh_key_name   = local.dkr_srv_0.ssh_key_name
+  enable_ipv4    = local.dkr_srv_0.enable_ipv4
+  enable_ipv6    = local.dkr_srv_0.enable_ipv6
+
+  # Firewall Configuration
+  firewall_name  = "dokply-firewall"
+  firewall_rules = local.firewall_rules
 
   # User data to configure fs user with both SSH keys
   user_data = <<-EOF
@@ -87,29 +101,6 @@ users:
 #   - usermod -aG docker fs
 #   - echo "fs user added to docker group"
 EOF
-
-}
-
-# Outputs
-output "dkr_srv_0_name" {
-  description = "The name of the dkr_srv_0 server"
-  value       = module.dkr_srv_0.server_name
-}
-
-output "dkr_srv_0_ipv4" {
-  description = "The public IPv4 address of the dkr_srv_0 server"
-  value       = module.dkr_srv_0.server_ipv4_address
-}
-
-output "dkr_srv_0_ipv6" {
-  description = "The public IPv6 address of the dkr_srv_0 server"
-  value       = module.dkr_srv_0.server_ipv6_address
-}
-
-# Snapshot outputs
-output "dkr_srv_0_snapshot_id" {
-  description = "The ID of the snapshot created from dkr_srv_0"
-  value       = module.dkr_srv_0.snapshot_id
 }
 
 # MANUAL SSH DIAGNOSTIC COMMANDS (run these after server deployment):

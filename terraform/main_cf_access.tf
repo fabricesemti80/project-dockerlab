@@ -1,11 +1,6 @@
 # Cloudflare Access (Zero Trust) Configuration
 # Secures the entire wildcard domain (*.krapulax.dev) behind an identity check.
 
-variable "ACCESS_EMAIL" {
-  description = "The email address allowed to access the lab services"
-  default     = "emilfabrice@gmail.com"
-}
-
 # 1. Access Application & Policy
 # Protects all subdomains (*.krapulax.dev)
 resource "cloudflare_zero_trust_access_application" "lab_wildcard" {

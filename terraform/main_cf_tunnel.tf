@@ -1,8 +1,3 @@
-variable "CLOUDFLARE_ZONE_ID" {
-  description = "Cloudflare Zone ID for krapulax.dev"
-  sensitive   = true
-}
-
 data "cloudflare_zone" "krapulax_dev" {
   zone_id = var.CLOUDFLARE_ZONE_ID
 }
@@ -91,23 +86,4 @@ resource "local_file" "tunnel_env" {
   content         = "TUNNEL_TOKEN=${local.tunnel_token}"
   filename        = "${path.module}/../docker/cloudflared/.env"
   file_permission = "0600"
-}
-
-# ------------------------------------------------------------------------------
-# Outputs
-# ------------------------------------------------------------------------------
-
-output "tunnel_name" {
-  description = "The name of the created Cloudflare Tunnel"
-  value       = cloudflare_zero_trust_tunnel_cloudflared.main.name
-}
-
-output "tunnel_id" {
-  description = "The UUID of the created Cloudflare Tunnel"
-  value       = cloudflare_zero_trust_tunnel_cloudflared.main.id
-}
-
-output "wildcard_dns" {
-  description = "The Wildcard DNS record pointing to the tunnel"
-  value       = "*.${data.cloudflare_zone.krapulax_dev.name} -> ${cloudflare_zero_trust_tunnel_cloudflared.main.id}.cfargotunnel.com"
 }

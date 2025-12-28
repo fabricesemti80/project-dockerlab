@@ -15,35 +15,12 @@ terraform {
   }
 }
 
-variable "HCLOUD_TOKEN" { sensitive = true }
-# variable "TAILSCALE_AUTH_KEY" { sensitive = true }
-
-variable "PROXMOX_AUTH_TOKEN" {
-  sensitive   = true
-  description = "terraform@pve!provider=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-}
-
-variable "CLOUDFLARE_API_TOKEN" {
-  description = "Cloudflare API Token"
-  sensitive   = true
-}
-
-variable "CLOUDFLARE_ACCOUNT_ID" {
-  description = "Cloudflare Account ID"
-  sensitive   = true
-}
-
 provider "hcloud" {
   token = var.HCLOUD_TOKEN
 }
 
 provider "cloudflare" {
   api_token = var.CLOUDFLARE_API_TOKEN
-}
-
-variable "proxmox_ssh_private_key_file" {
-  description = "Path to the SSH private key for Proxmox"
-  default     = "~/.ssh/fs_home_rsa"
 }
 
 provider "proxmox" {
