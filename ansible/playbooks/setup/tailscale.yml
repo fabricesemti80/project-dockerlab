@@ -55,3 +55,13 @@
       ansible.builtin.include_role:
         name: tailscale_post
       when: not ansible_check_mode
+
+    - name: "Show Completion Message"
+      run_once: true
+      ansible.builtin.debug:
+        msg:
+          - "=================================================="
+          - "🔒 TAILSCALE CONFIGURATION COMPLETE"
+          - "   • VPN Mesh active"
+          - "   • SSH access verified"
+          - "=================================================="

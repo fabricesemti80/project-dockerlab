@@ -55,3 +55,13 @@
         - "{{ glusterfs_mount_dir }}"
         - "/var/lib/glusterd"
         - "/etc/glusterfs"
+    
+    - name: "Show Completion Message"
+      run_once: true
+      ansible.builtin.debug:
+        msg:
+          - "=================================================="
+          - "🧨 GLUSTERFS NUKED"
+          - "   • Volumes deleted"
+          - "   • Packages removed"
+          - "=================================================="

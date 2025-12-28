@@ -1,0 +1,17 @@
+---
+- name: Deploy Portainer
+  hosts: cloud_vms
+  become: true
+  roles:
+    - portainer
+
+  post_tasks:
+    - name: "Show Completion Message"
+      run_once: true
+      ansible.builtin.debug:
+        msg:
+          - "=================================================="
+          - "🚢 PORTAINER DEPLOYMENT COMPLETE"
+          - "   • Portainer Agent running"
+          - "   • UI available"
+          - "=================================================="

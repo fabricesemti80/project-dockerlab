@@ -1,9 +1,0 @@
----
-# Docker Swarm formation and configuration playbook
-- name: "Bootstrap and configure Docker Swarm"
-  hosts: swarm_managers
-  become: true
-  tags: ["swarm", "docker", "containers"]
-  roles:
-    - swarm_bootstrap
-    - swarm_labels

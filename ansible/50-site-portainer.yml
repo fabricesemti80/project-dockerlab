@@ -1,6 +1,0 @@
----
-- name: Deploy Portainer
-  hosts: cloud_vms
-  become: true
-  roles:
-    - portainer

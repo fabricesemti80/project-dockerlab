@@ -1,0 +1,20 @@
+---
+# Docker Swarm formation and configuration playbook
+- name: "Bootstrap and configure Docker Swarm"
+  hosts: swarm_managers
+  become: true
+  tags: ["swarm", "docker", "containers"]
+  roles:
+    - swarm_bootstrap
+    - swarm_labels
+
+  post_tasks:
+    - name: "Show Completion Message"
+      run_once: true
+      ansible.builtin.debug:
+        msg:
+          - "=================================================="
+          - "🐝 SWARM FORMATION COMPLETE"
+          - "   • Cluster initialized"
+          - "   • Labels applied"
+          - "=================================================="

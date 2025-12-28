@@ -215,7 +215,7 @@
         msg: |
 
           ============================================================
-          DOKPLOY INFRASTRUCTURE SANITY CHECK COMPLETE
+          ✅ DOKPLOY INFRASTRUCTURE SANITY CHECK COMPLETE
           ============================================================
 
           All components have been verified and are working correctly.

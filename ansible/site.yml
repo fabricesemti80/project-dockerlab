@@ -1,25 +1,25 @@
 ---
 # Main site playbook that orchestrates all deployment stages
 
+# --- Infrastructure Phase ---
 - name: "Proxmox Template Creation"
-  import_playbook: 00-proxmox-template-creation.yml
+  import_playbook: playbooks/infrastructure/create_templates.yml
 
+# --- Setup Phase ---
 - name: "Site Preflight"
-  import_playbook: 10-site-preflight.yml
+  import_playbook: playbooks/setup/preflight.yml
 
 - name: "Base System Configuration"
-  import_playbook: 20-site-base.yml
+  import_playbook: playbooks/setup/base_config.yml
 
 - name: "Tailscale Fabric"
-  import_playbook: 20-site-tailscale.yml
+  import_playbook: playbooks/setup/tailscale.yml
 
 - name: "Docker Installation"
-  import_playbook: 30-site-docker.yml
+  import_playbook: playbooks/setup/docker.yml
 
+- name: "Docker Swarm Formation"
+  import_playbook: playbooks/setup/swarm.yml
 
-- name: Docker Swarm Formation
-  import_playbook: 40-site-swarm.yml
-
-- name: Portainer Deployment
-  import_playbook: 50-site-portainer.yml
-
+- name: "Portainer Deployment"
+  import_playbook: playbooks/setup/portainer.yml

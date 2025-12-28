@@ -16,3 +16,12 @@
         - "'no such volume' not in vol_rm.stderr"
       changed_when: vol_rm.rc == 0
       ignore_errors: yes
+
+    - name: "Show Completion Message"
+      run_once: true
+      ansible.builtin.debug:
+        msg:
+          - "=================================================="
+          - "🧨 MONITORING DATA NUKED"
+          - "   • Prometheus volumes removed"
+          - "=================================================="

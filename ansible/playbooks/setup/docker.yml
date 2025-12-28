@@ -82,3 +82,13 @@
       ansible.builtin.apt:
         update_cache: true
       when: ansible_facts['os_family'] == 'Debian'
+
+    - name: "Show Completion Message"
+      run_once: true
+      ansible.builtin.debug:
+        msg:
+          - "=================================================="
+          - "🐳 DOCKER INSTALLATION COMPLETE"
+          - "   • Docker Daemon active"
+          - "   • Users added to docker group"
+          - "=================================================="

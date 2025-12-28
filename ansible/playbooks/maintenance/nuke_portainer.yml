@@ -16,3 +16,13 @@
       ignore_errors: yes
       register: vol_rm
       failed_when: vol_rm.rc != 0 and "No such volume" not in vol_rm.stderr
+    
+    - name: "Show Completion Message"
+      run_once: true
+      ansible.builtin.debug:
+        msg:
+          - "=================================================="
+          - "🧨 PORTAINER NUKED"
+          - "   • Stack removed"
+          - "   • Volume deleted"
+          - "=================================================="

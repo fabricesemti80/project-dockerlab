@@ -1,0 +1,19 @@
+---
+# Base configuration playbook - initial system setup
+- name: "Base System Configuration"
+  hosts: vms
+  become: true
+  gather_facts: true
+  tags: ["base", "common"]
+  roles:
+    - common_base
+
+  post_tasks:
+    - name: "Show Completion Message"
+      run_once: true
+      ansible.builtin.debug:
+        msg:
+          - "=================================================="
+          - "✅ BASE SYSTEM CONFIGURATION COMPLETE"
+          - "   • Packages and users configured"
+          - "=================================================="
