@@ -47,3 +47,11 @@ variable "ACCESS_EMAIL" {
   type        = string
   default     = "emilfabrice@gmail.com"
 }
+
+# --- Portainer ---
+
+variable "PORTAINER_API_KEY" {
+  description = "Portainer API Key for authentication"
+  type        = string
+  sensitive   = true
+}

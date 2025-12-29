@@ -12,6 +12,10 @@ terraform {
       source  = "cloudflare/cloudflare"
       version = "~> 5.0"
     }
+    portainer = {
+      source  = "portainer/portainer"
+      version = "1.20.1"
+    }
   }
 }
 
@@ -36,4 +40,13 @@ provider "proxmox" {
       address = "10.0.40.10"
     }
   }
+}
+
+provider "portainer" {
+  endpoint = "https://157.180.84.140:9443"
+
+  # API key authentication
+  api_key = var.PORTAINER_API_KEY
+
+  skip_ssl_verify = true # Skip TLS verification as requested
 }
