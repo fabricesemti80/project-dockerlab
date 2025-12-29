@@ -1,0 +1,58 @@
+---
+- name: Ensure admin user group exists
+  ansible.builtin.group:
+    name: "{{ admin_user }}"
+    state: present
+
+- name: Ensure secondary user group exists
+  ansible.builtin.group:
+    name: "{{ secondary_user }}"
+    state: present
+
+- name: Create or update primary admin user
+  ansible.builtin.user:
+    name: "{{ admin_user }}"
+    groups:
+      - "{{ admin_user }}"
+      - sudo
+      - adm
+    state: present
+    shell: /bin/bash
+    create_home: true
+    append: true
+
+- name: Create or update secondary user
+  ansible.builtin.user:
+    name: "{{ secondary_user }}"
+    groups:
+      - "{{ secondary_user }}"
+      - "{{ admin_user }}"
+      - sudo
+    state: present
+    shell: /bin/bash
+    create_home: true
+    append: true
+
+- name: Check current sudoers entries
+  ansible.builtin.shell: |
+    grep -E "^{{ admin_user }}|^{{ secondary_user }}" /etc/sudoers || true
+  register: current_sudoers
+  changed_when: false
+
+- name: Add admin user to sudoers file with NOPASSWD (if not present)
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    regexp: "^{{ admin_user }}\\s+"
+    line: "{{ admin_user }} ALL=(ALL) NOPASSWD: ALL"
+    validate: "visudo -cf %s"
+  when: "admin_user + ' ALL=(ALL) NOPASSWD: ALL' not in current_sudoers.stdout"
+
+- name: Add secondary user to sudoers (if not present)
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    regexp: "^{{ secondary_user }}\\s+"
+    line: "{{ secondary_user }} ALL=(ALL) NOPASSWD: ALL"
+    validate: "visudo -cf %s"
+  when: >-
+    secondary_user + ' ALL=(ALL) NOPASSWD: ALL'
+    not in current_sudoers.stdout

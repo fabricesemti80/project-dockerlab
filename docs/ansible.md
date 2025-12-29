@@ -219,7 +219,7 @@ task ansible:vm:apply           # Deploy VMs from templates
 - gnupg
 - lsb-release
 - htop
-- neofetch
+- fastfetch
 - unzip
 - git
 - dnsutils
