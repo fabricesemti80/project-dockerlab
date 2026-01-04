@@ -16,11 +16,12 @@ locals {
 
   # Shared VM configuration
   vm_common = {
-    description    = "Terraform Managed Docker Controller VM"
-    tags           = ["community-script", "debian13", "docker", "controller", "terraform"]
-    node_name      = "pve-2"
-    template_vm_id = 9008
-    full_clone     = true
+    description        = "Terraform Managed Docker Swarm VM"
+    tags               = [ "debian13", "docker", "swarm", "terraform"]
+    node_name          = "pve-2"
+    template_node_name = "pve-2"
+    template_vm_id     = 9008
+    full_clone         = true
 
     # Agent Configuration
     agent_enabled = false
@@ -107,8 +108,9 @@ module "dkr_srv_1" {
   vm_id       = local.dkr_srv_1.vm_id
 
   # Clone Configuration
-  template_vm_id = local.vm_common.template_vm_id
-  full_clone     = local.vm_common.full_clone
+  template_vm_id     = local.vm_common.template_vm_id
+  template_node_name = local.vm_common.template_node_name
+  full_clone         = local.vm_common.full_clone
 
   # Agent Configuration
   agent_enabled = local.vm_common.agent_enabled
@@ -168,8 +170,9 @@ module "dkr_srv_2" {
   vm_id       = local.dkr_srv_2.vm_id
 
   # Clone Configuration
-  template_vm_id = local.vm_common.template_vm_id
-  full_clone     = local.vm_common.full_clone
+  template_vm_id     = local.vm_common.template_vm_id
+  template_node_name = local.vm_common.template_node_name
+  full_clone         = local.vm_common.full_clone
 
   # Agent Configuration
   agent_enabled = local.vm_common.agent_enabled
@@ -229,8 +232,9 @@ module "dkr_srv_3" {
   vm_id       = local.dkr_srv_3.vm_id
 
   # Clone Configuration
-  template_vm_id = local.vm_common.template_vm_id
-  full_clone     = local.vm_common.full_clone
+  template_vm_id     = local.vm_common.template_vm_id
+  template_node_name = local.vm_common.template_node_name
+  full_clone         = local.vm_common.full_clone
 
   # Agent Configuration
   agent_enabled = local.vm_common.agent_enabled

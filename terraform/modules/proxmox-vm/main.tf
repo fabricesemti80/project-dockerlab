@@ -41,6 +41,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
   clone {
     vm_id = var.template_vm_id
     full  = var.full_clone
+    node_name = var.template_node_name
   }
 
   agent {
