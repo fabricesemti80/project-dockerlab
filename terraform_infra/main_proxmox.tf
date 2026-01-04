@@ -17,7 +17,7 @@ locals {
   # Shared VM configuration
   vm_common = {
     description        = "Terraform Managed Docker Swarm VM"
-    tags               = [ "debian13", "docker", "swarm", "terraform"]
+    tags               = ["debian13", "docker", "swarm", "terraform"]
     node_name          = "pve-2"
     template_node_name = "pve-2"
     template_vm_id     = 9008
