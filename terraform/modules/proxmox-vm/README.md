@@ -35,7 +35,7 @@ module "worker_vm" {
   cpu_sockets      = 1
 
   # Disk Configuration
-  disk_datastore_id = "vm-storage"
+  disk_datastore_id = "ceph-proxmox-rbd"
   disk_interface    = "scsi0"
   disk_size         = 30
 
@@ -46,7 +46,7 @@ module "worker_vm" {
   network_firewall = false
 
   # Initialization
-  initialization_datastore_id = "vm-storage"
+  initialization_datastore_id = "ceph-proxmox-rbd"
   dns_servers                 = ["9.9.9.9", "149.112.112.112"] # Quad9 DNS
   ipv4_address                = "10.0.30.10/24"
   ipv4_gateway                = "10.0.30.1"
@@ -158,7 +158,7 @@ module "worker0" {
   template_vm_id = 9007
   memory_dedicated = 4096
   disk_size = 30
-  disk_datastore_id = "vm-storage"
+  disk_datastore_id = "ceph-proxmox-rbd"
 
   network_bridge  = "vmbr0"
   network_vlan_id = 30

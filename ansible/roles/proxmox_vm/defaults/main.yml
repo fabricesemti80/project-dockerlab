@@ -14,7 +14,7 @@ vms:
     ipv4_gateway: "10.0.30.1"
     memory: 4096
     cores: 2
-    disk_storage: "vm-storage"
+    disk_storage: "ceph-proxmox-rbd"
     disk_size: "30G"
 
   - name: "dkr-srv-2"
@@ -23,5 +23,5 @@ vms:
     ipv4_gateway: "10.0.30.1"
     memory: 4096
     cores: 2
-    disk_storage: "vm-storage"
+    disk_storage: "ceph-proxmox-rbd"
     disk_size: "30G"

@@ -104,7 +104,7 @@ Used for:
 | CPU Cores | 2 |
 | CPU Sockets | 1 |
 | Disk Size | 30 GB |
-| Disk Storage | vm-storage |
+| Disk Storage | ceph-proxmox-rbd |
 | Network | vmbr0 (VLAN 30) |
 | DNS | 9.9.9.9, 149.112.112.112 |
 
