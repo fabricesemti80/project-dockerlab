@@ -1,0 +1,9 @@
+---
+portainer_http_port: 9000
+portainer_https_port: 9443
+portainer_agent_port: 9001
+portainer_admin_user: admin
+portainer_admin_password: "ChangeMePlease123!" # Should be overridden via Doppler/site.yml
+portainer_image_version: latest
+portainer_agent_image_version: latest
+apps_domain: "{{ domain_name | default('local.dev') }}"

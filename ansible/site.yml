@@ -17,6 +17,7 @@
     install_storage: true
     install_cephfs: true
     install_swarm: true
+    install_portainer: true
     
     # LVM Configuration
     lvm_volume_group_name: "data_vg"
@@ -33,6 +34,11 @@
       - 10.0.70.23
     cephfs_user: "admin"
     
+    # Portainer Configuration
+    portainer_admin_user: admin
+    portainer_admin_password: "{{ lookup('env', 'PORTAINER_ADMIN_PASSWORD') }}"
+    apps_domain: "hl.krapulax.dev" # Consistent domain
+
     # Shell Configuration
     zsh_set_as_default: true
     enable_acl_permissions: false
@@ -47,3 +53,17 @@
     - role: docker_swarm
       tags: [swarm]
       when: install_swarm | default(false) | bool
+
+- name: Post-Swarm Setup (Portainer)
+  hosts: swarm_managers[0] # Run only on the swarm leader
+  become: true
+  vars:
+    # Inherit variables from the previous play
+    install_portainer: true
+    portainer_admin_user: admin
+    portainer_admin_password: "{{ lookup('env', 'PORTAINER_ADMIN_PASSWORD') }}"
+    apps_domain: "hl.krapulax.dev"
+  roles:
+    - role: portainer
+      tags: [portainer]
+      when: install_portainer | default(false) | bool

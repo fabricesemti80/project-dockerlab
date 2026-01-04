@@ -13,7 +13,7 @@
   when: 
     - inventory_hostname == groups['swarm_managers'][0]
     - swarm_status.stdout | default('') != 'active'
-  changed_when: "'Swarm initialized' in swarm_init.stdout"
+  changed_when: "'Swarm initialized' in (swarm_init.stdout | default(''))"
 
 - name: Get manager join token
   ansible.builtin.command: docker swarm join-token -q manager
@@ -42,4 +42,15 @@
     - inventory_hostname != groups['swarm_managers'][0]
     - swarm_status.stdout | default('') != 'active'
     - swarm_manager_token is defined
-  changed_when: "'This node joined a swarm as a manager' in swarm_join.stdout"
+  changed_when: "'This node joined a swarm as a manager' in (swarm_join.stdout | default(''))"
+
+- name: Create shared docker data directory on CephFS
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data"
+    state: directory
+    owner: "{{ primary_user }}"
+    group: "{{ primary_user }}"
+    mode: '0755'
+  when: 
+    - inventory_hostname == groups['swarm_managers'][0]
+    - install_cephfs | default(false) | bool

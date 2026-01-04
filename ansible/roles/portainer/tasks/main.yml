@@ -1,0 +1,210 @@
+---
+# Portainer installation and configuration
+# This role only runs on the first manager node (leader)
+
+- name: "Ensure docker python library is installed"
+  ansible.builtin.pip:
+    name: docker
+    state: present
+  tags: [portainer]
+
+- name: "Prepare Portainer stack file"
+  ansible.builtin.template:
+    src: portainer-stack.yml.j2
+    dest: /tmp/portainer-stack.yml
+    mode: '0644'
+  tags: [portainer]
+
+- name: "Pull Portainer images"
+  ansible.builtin.command: "docker pull {{ item }}"
+  loop:
+    - "portainer/portainer-ce:{{ portainer_image_version }}"
+    - "portainer/agent:{{ portainer_agent_image_version }}"
+  tags: [portainer]
+
+- name: "Deploy Portainer stack"
+  ansible.builtin.command: docker stack deploy -c /tmp/portainer-stack.yml portainer
+  changed_when: true
+  when: not ansible_check_mode
+  tags: [portainer]
+
+- name: "Wait for Portainer port to be open"
+  ansible.builtin.wait_for:
+    port: "{{ portainer_http_port }}"
+    host: 127.0.0.1
+    timeout: 300
+  when: not ansible_check_mode
+  tags: [portainer]
+
+- name: "Check if Portainer has hit initialization timeout"
+  ansible.builtin.shell: |
+    curl -4 -s http://127.0.0.1:{{ portainer_http_port }}/api/system/status
+  register: portainer_timeout_check
+  failed_when: false
+  changed_when: false
+  when: not ansible_check_mode
+  tags: [portainer]
+
+- name: "Restart Portainer to reset initialization timer if needed"
+  ansible.builtin.command: docker service update --force portainer_portainer
+  when: 
+    - not ansible_check_mode
+    - portainer_timeout_check.stdout is defined 
+    - "'initialization timeout' in portainer_timeout_check.stdout"
+  tags: [portainer]
+
+- name: "Wait for Portainer to be ready after potential restart"
+  ansible.builtin.shell: |
+    curl -4 -s -o /dev/null -w "%{http_code}" http://127.0.0.1:{{ portainer_http_port }}/api/system/status
+  register: portainer_ready_check
+  until: "portainer_ready_check.stdout in ['200', '401', '404']"
+  retries: 30
+  delay: 10
+  changed_when: false
+  when: not ansible_check_mode
+  tags: [portainer]
+
+- name: "Validate Portainer password length"
+  ansible.builtin.fail:
+    msg: "Portainer admin password must be at least 12 characters long."
+  when: portainer_admin_password | length < 12
+  tags: [portainer]
+
+- name: "Debug Portainer password info"
+  ansible.builtin.debug:
+    msg: 
+      - "Admin user: {{ portainer_admin_user }}"
+      - "Password length: {{ portainer_admin_password | length }}"
+  tags: [portainer]
+
+- name: "Initialize Portainer Admin if not initialized"
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ portainer_http_port }}/api/users/admin/init"
+    method: POST
+    body_format: json
+    body:
+      username: "{{ portainer_admin_user }}"
+      password: "{{ portainer_admin_password }}"
+    status_code: [200, 409]
+    use_proxy: no
+  register: portainer_init
+  when: not ansible_check_mode
+  tags: [portainer]
+
+- name: "Authenticate with Portainer API (Doppler Password)"
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ portainer_http_port }}/api/auth"
+    method: POST
+    body_format: json
+    body:
+      username: "{{ portainer_admin_user }}"
+      password: "{{ portainer_admin_password }}"
+    status_code: [200, 422]
+    use_proxy: no
+  register: portainer_auth_doppler
+  when: not ansible_check_mode
+  tags: [portainer]
+
+- name: "Authenticate with Portainer API (Default Password fallback)"
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ portainer_http_port }}/api/auth"
+    method: POST
+    body_format: json
+    body:
+      username: "{{ portainer_admin_user }}"
+      password: "ChangeMePlease123!"
+    status_code: [200, 422]
+    use_proxy: no
+  register: portainer_auth_default
+  when: 
+    - not ansible_check_mode
+    - portainer_auth_doppler.status == 422
+  tags: [portainer]
+
+- name: "Update Portainer admin password to match Doppler"
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ portainer_http_port }}/api/users/1"
+    method: PUT
+    headers:
+      Authorization: "Bearer {{ portainer_auth_default.json.jwt }}"
+    body_format: json
+    body:
+      newPassword: "{{ portainer_admin_password }}"
+    status_code: 200
+    use_proxy: no
+  when: 
+    - not ansible_check_mode
+    - portainer_auth_default.status is defined
+    - portainer_auth_default.status == 200
+  tags: [portainer]
+
+- name: "Final Authentication with Doppler Password"
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ portainer_http_port }}/api/auth"
+    method: POST
+    body_format: json
+    body:
+      username: "{{ portainer_admin_user }}"
+      password: "{{ portainer_admin_password }}"
+    status_code: 200
+    use_proxy: no
+  register: portainer_auth
+  when: not ansible_check_mode
+  tags: [portainer]
+
+- name: "Check for existing 'terraform' API Token"
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ portainer_http_port }}/api/users/1/tokens"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ portainer_auth.json.jwt }}"
+    status_code: 200
+    use_proxy: no
+  register: existing_tokens
+  when: not ansible_check_mode
+  tags: [portainer]
+
+- name: "Generate 'terraform' API Token if not exists"
+  ansible.builtin.uri:
+    url: "http://127.0.0.1:{{ portainer_http_port }}/api/users/1/tokens"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ portainer_auth.json.jwt }}"
+    body_format: json
+    body:
+      description: "terraform"
+      password: "{{ portainer_admin_password }}"
+    status_code: [200, 201]
+    use_proxy: no
+  register: portainer_token
+  when: 
+    - not ansible_check_mode
+    - existing_tokens.json is defined
+    - "existing_tokens.json | selectattr('description', 'equalto', 'terraform') | list | length == 0"
+  tags: [portainer]
+
+- name: "Save Portainer token to Doppler"
+  ansible.builtin.shell: "doppler secrets set PORTAINER_ACCESS_TOKEN={{ portainer_token.json.rawAPIKey }}"
+  delegate_to: localhost
+  become: false
+  when: 
+    - not ansible_check_mode
+    - portainer_token is defined 
+    - portainer_token.json is defined 
+    - portainer_token.json.rawAPIKey is defined
+  tags: [portainer, doppler]
+
+- name: "Portainer Access Summary"
+  ansible.builtin.debug:
+    msg:
+      - "============================================================"
+      - "PORTAINER DEPLOYMENT COMPLETE"
+      - "============================================================"
+      - "URL (Direct): http://{{ ansible_host }}:{{ portainer_http_port }}"
+      - "URL (Domain): https://portainer.{{ apps_domain }}"
+      - "Admin User: {{ portainer_admin_user }}"
+      - "Admin Password: {{ portainer_admin_password }}"
+      - "API Token: {{ portainer_token.json.rawAPIKey if (portainer_token is defined and portainer_token.json is defined and portainer_token.json.rawAPIKey is defined) else 'Stored in Doppler (PORTAINER_ACCESS_TOKEN)' }}"
+      - "============================================================"
+  when: not ansible_check_mode
+  tags: [portainer, summary]
