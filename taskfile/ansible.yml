@@ -1,9 +1,6 @@
 version: '3'
 
 tasks:
-  # ============================================================================
-  # GENERAL
-  # ============================================================================
   init:
     desc: "Install Ansible Galaxy roles and collections"
     dir: ansible
@@ -11,143 +8,14 @@ tasks:
       - doppler run -- ansible-galaxy install -r requirements.yml
       - doppler run -- ansible-galaxy collection install -r requirements.yml
 
-  site:apply:
-    desc: "Apply the entire site configuration (Infrastructure + Setup)"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook site.yml
-
-  site:plan:
-    desc: "Plan the entire site configuration"
+  plan:
+    desc: "Dry run of the site configuration with check and diff"
     dir: ansible
     cmds:
       - doppler run -- ansible-playbook site.yml --check --diff
 
-  # ============================================================================
-  # INFRASTRUCTURE (Proxmox)
-  # ============================================================================
-  template:apply:
-    desc: "Infrastructure: Create Proxmox Template"
+  apply:
+    desc: "Apply the site configuration"
     dir: ansible
     cmds:
-      - doppler run -- ansible-playbook playbooks/infrastructure/create_templates.yml -i inventory/proxmox
-
-  template:plan:
-    desc: "Infrastructure: Plan Proxmox Template creation"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/infrastructure/create_templates.yml --check --diff -i inventory/proxmox
-
-  vm:apply:
-    desc: "Infrastructure: Deploy Proxmox VMs (Optional)"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/infrastructure/deploy_vms.yml -i inventory/proxmox
-
-  vm:plan:
-    desc: "Infrastructure: Plan Proxmox VM deployment"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/infrastructure/deploy_vms.yml --check --diff -i inventory/proxmox
-
-  # ============================================================================
-  # SETUP (VM Configuration)
-  # ============================================================================
-  preflight:apply:
-    desc: "Setup: Preflight checks and system updates"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/setup/preflight.yml
-
-  preflight:plan:
-    desc: "Setup: Plan preflight checks"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/setup/preflight.yml --check --diff
-
-  base:apply:
-    desc: "Setup: Base system configuration"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/setup/base_config.yml
-
-  base:plan:
-    desc: "Setup: Plan base configuration"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/setup/base_config.yml --check --diff
-
-  tailscale:apply:
-    desc: "Setup: Tailscale configuration"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/setup/tailscale.yml
-
-  tailscale:plan:
-    desc: "Setup: Plan Tailscale configuration"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/setup/tailscale.yml --check --diff
-
-  docker:apply:
-    desc: "Setup: Docker installation"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/setup/docker.yml
-
-  docker:plan:
-    desc: "Setup: Plan Docker installation"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/setup/docker.yml --check --diff
-
-  swarm:apply:
-    desc: "Setup: Docker Swarm formation"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/setup/swarm.yml
-
-  swarm:plan:
-    desc: "Setup: Plan Swarm formation"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/setup/swarm.yml --check --diff
-
-  portainer:apply:
-    desc: "Setup: Portainer deployment"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/setup/portainer.yml
-
-  portainer:plan:
-    desc: "Setup: Plan Portainer deployment"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/setup/portainer.yml --check --diff
-
-  # ============================================================================
-  # MAINTENANCE
-  # ============================================================================
-  sanity:apply:
-    desc: "Maintenance: Run sanity checks and show summary"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/maintenance/sanity_check.yml
-
-  nuke:monitoring:
-    desc: "Maintenance: Nuke monitoring data (Prometheus Volumes)"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/maintenance/nuke_monitoring_data.yml
-
-  nuke:glusterfs:
-    desc: "Maintenance: Nuke GlusterFS (Dangerous)"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/maintenance/nuke_glusterfs.yml
-
-  nuke:portainer:
-    desc: "Maintenance: Nuke Portainer Stack & Data"
-    dir: ansible
-    cmds:
-      - doppler run -- ansible-playbook playbooks/maintenance/nuke_portainer.yml
+      - doppler run -- ansible-playbook site.yml

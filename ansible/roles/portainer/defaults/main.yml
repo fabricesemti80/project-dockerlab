@@ -1,7 +1,0 @@
----
-portainer_image_version: "2.21.5"
-portainer_agent_image_version: "2.21.5"
-portainer_http_port: "9000"
-portainer_https_port: "9443"
-portainer_agent_port: "9001"
-portainer_constraint_node_hostname: "dkr-srv-0"

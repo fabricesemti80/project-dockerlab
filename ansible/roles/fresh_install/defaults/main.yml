@@ -1,0 +1,63 @@
+---
+# Defaults for fresh_install role
+# Overridden by variables in site.yml
+
+# Default values if not provided in site.yml
+admin_user: "{{ primary_user | default('fs') }}"
+ssh_public_key_path: "{{ ssh_public_key_path | default('~/.ssh/fs_home_rsa.pub') }}"
+
+install_neovim: false
+install_storage: "{{ install_storage | default(true) }}"
+install_docker: "{{ install_docker | default(true) }}"
+install_zsh: "{{ install_zsh | default(true) }}"
+install_ssh_banner: "{{ install_ssh_banner | default(true) }}"
+install_cephfs: "{{ install_cephfs | default(false) }}"
+
+lvm_volume_group_name: "{{ lvm_volume_group_name | default('data_vg') }}"
+lvm_data_volume_name: "{{ lvm_data_volume_name | default('data_lv') }}"
+lvm_data_volume_size: "{{ lvm_data_volume_size | default('80%VG') }}"
+data_mount_point: "{{ data_mount_point | default('/data') }}"
+
+cephfs_name: "{{ cephfs_name | default('ceph-proxmox-fs') }}"
+cephfs_mount_point: "{{ cephfs_mount_point | default('/mnt/cephfs') }}"
+cephfs_monitors: "{{ cephfs_monitors | default([]) }}"
+cephfs_user: "{{ cephfs_user | default('admin') }}"
+cephfs_secret_key: "{{ lookup('env', 'CEPH_SECRET_KEY') }}"
+
+zsh_set_as_default: true
+enable_acl_permissions: false
+
+basic_packages:
+  - zsh
+  - git
+  - wget
+  - curl
+  - keychain
+  - vim
+  - build-essential
+  - zip
+  - make
+  - gcc
+  - bash
+  - bc
+  - ca-certificates
+  - iputils-ping
+  - jq
+  - less
+  - libperl-dev
+  - libxml2-utils
+  - openssh-client
+  - parallel
+  - perl
+  - time
+  - unzip
+  - lvm2
+  - dnsutils
+  - net-tools
+  - qemu-guest-agent
+  - apt-transport-https
+  - gnupg
+  - ceph-common
+
+role_pip_packages:
+  - setuptools

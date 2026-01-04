@@ -2,11 +2,9 @@
 # Ansible Galaxy roles required for this project
 # Removed geerlingguy.security due to SSH security changes and deprecation warnings
 
-collections:
-  - name: artis3n.tailscale
+# collections:
+#   - name: artis3n.tailscale
 
 roles:
   - name: geerlingguy.docker
-    version: latest
   - name: geerlingguy.pip
-    version: latest

@@ -31,6 +31,7 @@ locals {
     memory_dedicated = 8192
     cpu_cores        = 4
     cpu_sockets      = 2
+    scsi_hardware    = "virtio-scsi-single"
 
     # Disk Configuration
     disk_datastore_id = "ceph-proxmox-rbd"
@@ -74,25 +75,25 @@ locals {
   # VM-specific configurations
   dkr_srv_1 = {
     name         = "dkr-srv-1"
-    vm_id        = 3011
+    vm_id        = 3021
     node_name    = "pve-0"
-    ipv4_address = "10.0.30.11/24"
+    ipv4_address = "10.0.30.21/24"
     ipv4_gateway = "10.0.30.1"
   }
 
   dkr_srv_2 = {
     name         = "dkr-srv-2"
-    vm_id        = 3012
+    vm_id        = 3022
     node_name    = "pve-1"
-    ipv4_address = "10.0.30.12/24"
+    ipv4_address = "10.0.30.22/24"
     ipv4_gateway = "10.0.30.1"
   }
 
   dkr_srv_3 = {
     name         = "dkr-srv-3"
-    vm_id        = 3013
+    vm_id        = 3023
     node_name    = "pve-2"
-    ipv4_address = "10.0.30.13/24"
+    ipv4_address = "10.0.30.23/24"
     ipv4_gateway = "10.0.30.1"
   }
 }
@@ -120,6 +121,7 @@ module "dkr_srv_1" {
   memory_dedicated = local.vm_common.memory_dedicated
   cpu_cores        = local.vm_common.cpu_cores
   cpu_sockets      = local.vm_common.cpu_sockets
+  scsi_hardware    = local.vm_common.scsi_hardware
 
   # Disk Configuration
   disk_datastore_id = local.vm_common.disk_datastore_id
@@ -182,6 +184,7 @@ module "dkr_srv_2" {
   memory_dedicated = local.vm_common.memory_dedicated
   cpu_cores        = local.vm_common.cpu_cores
   cpu_sockets      = local.vm_common.cpu_sockets
+  scsi_hardware    = local.vm_common.scsi_hardware
 
   # Disk Configuration
   disk_datastore_id = local.vm_common.disk_datastore_id
@@ -244,6 +247,7 @@ module "dkr_srv_3" {
   memory_dedicated = local.vm_common.memory_dedicated
   cpu_cores        = local.vm_common.cpu_cores
   cpu_sockets      = local.vm_common.cpu_sockets
+  scsi_hardware    = local.vm_common.scsi_hardware
 
   # Disk Configuration
   disk_datastore_id = local.vm_common.disk_datastore_id

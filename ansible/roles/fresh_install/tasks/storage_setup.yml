@@ -1,0 +1,68 @@
+---
+- name: Gather disk information
+  ansible.builtin.setup:
+    gather_subset:
+      - hardware
+
+- name: Check if LVM binaries are available
+  ansible.builtin.command: which vgs
+  register: vgs_binary
+  failed_when: false
+  changed_when: false
+  check_mode: no
+
+- name: Get existing volume groups PVs
+  ansible.builtin.command: vgs --noheadings -o pv_name
+  register: existing_vgs_pvs
+  failed_when: false
+  changed_when: false
+  check_mode: no
+  when: vgs_binary.rc == 0
+
+- name: Set existing PVs fact
+  ansible.builtin.set_fact:
+    existing_pvs: "{{ existing_vgs_pvs.stdout_lines | default([]) | map('trim') | list }}"
+
+- name: Find additional disks for data storage
+  ansible.builtin.set_fact:
+    data_disks: >-
+      {{
+        ansible_devices.keys() | list |
+        difference(['vda']) |
+        select('match', '^sd[a-z]$|^nvme[0-9]+n[0-9]+$|^xvd[a-z]$') |
+        list
+      }}
+
+- name: Refine data disks by checking existing VGs
+  ansible.builtin.set_fact:
+    data_disks: "{{ data_disks | reject('in', existing_pvs | map('regex_replace', '^/dev/', '') | list) | list }}"
+  when: existing_pvs | length > 0
+
+- name: Debug detected data disks
+  ansible.builtin.debug:
+    msg: "Detected data disks: {{ data_disks }}"
+
+- name: Select the largest available disk for data storage
+  ansible.builtin.set_fact:
+    selected_data_disk_name: "{{ data_disks | first }}"
+  when: data_disks | length > 0
+
+- name: Create physical volume and volume group
+  community.general.lvg:
+    vg: "{{ lvm_volume_group_name }}"
+    pvs: "/dev/{{ selected_data_disk_name }}"
+    state: present
+  when:
+    - data_disks | length > 0
+    - vgs_binary.rc == 0 or not ansible_check_mode
+
+- name: Create logical volume for data
+  community.general.lvol:
+    vg: "{{ lvm_volume_group_name }}"
+    lv: "{{ lvm_data_volume_name }}"
+    size: "{{ lvm_data_volume_size }}"
+    state: present
+  when:
+    - data_disks | length > 0
+    - vgs_binary.rc == 0 or not ansible_check_mode
+    - not ansible_check_mode # Strictly skip in check mode if it might fail due to missing VG

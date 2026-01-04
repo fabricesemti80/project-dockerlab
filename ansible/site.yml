@@ -1,25 +1,37 @@
 ---
-# Main site playbook that orchestrates all deployment stages
+- name: Fresh Install and Configuration
+  hosts: all
+  become: true
+  vars:
+    # User Management
+    primary_user: fs
+    ssh_public_key_path: "~/.ssh/fs_home_rsa.pub"
+    
+    # Feature Toggles
+    install_docker: true
+    install_zsh: true
+    install_ssh_banner: true
+    install_storage: true
+    install_cephfs: true
+    
+    # LVM Configuration
+    lvm_volume_group_name: "data_vg"
+    lvm_data_volume_name: "data_lv"
+    lvm_data_volume_size: "80%VG"
+    data_mount_point: "/data"
+    
+    # CephFS Configuration
+    cephfs_name: "ceph-proxmox-fs"
+    cephfs_mount_point: "/mnt/cephfs"
+    cephfs_monitors:
+      - 10.0.70.21
+      - 10.0.70.22
+      - 10.0.70.23
+    cephfs_user: "admin"
+    # Shell Configuration
+    zsh_set_as_default: true
+    enable_acl_permissions: false
 
-# --- Infrastructure Phase ---
-- name: "Proxmox Template Creation"
-  import_playbook: playbooks/infrastructure/create_templates.yml
-
-# --- Setup Phase ---
-- name: "Site Preflight"
-  import_playbook: playbooks/setup/preflight.yml
-
-- name: "Base System Configuration"
-  import_playbook: playbooks/setup/base_config.yml
-
-- name: "Tailscale Fabric"
-  import_playbook: playbooks/setup/tailscale.yml
-
-- name: "Docker Installation"
-  import_playbook: playbooks/setup/docker.yml
-
-- name: "Docker Swarm Formation"
-  import_playbook: playbooks/setup/swarm.yml
-
-- name: "Portainer Deployment"
-  import_playbook: playbooks/setup/portainer.yml
+  roles:
+    - role: fresh_install
+      tags: [fresh_install]

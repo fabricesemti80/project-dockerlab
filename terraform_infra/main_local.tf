@@ -1,8 +1,6 @@
 resource "local_file" "ansible_inventory" {
   filename = "../ansible/inventory/hosts"
   content  = <<-EOT
-[proxmox]
-pve-2 ansible_host=10.0.40.12 ansible_user=root ansible_ssh_private_key_file=~/.ssh/fs_home_rsa
 
 [proxmox_vms]
 ${module.dkr_srv_1.vm_name} ansible_host=${split("/", module.dkr_srv_1.vm_ipv4_address)[0]}

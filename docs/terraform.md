@@ -110,10 +110,17 @@ Used for:
 
 #### VM Instances
 
-| Name | VM ID | IP Address | Gateway |
-|------|-------|------------|---------|
-| dkr-srv-1 | 3011 | 10.0.30.11/24 | 10.0.30.1 |
-| dkr-srv-2 | 3012 | 10.0.30.12/24 | 10.0.30.1 |
+| Node | VM ID | IPv4 Address | Gateway |
+|------|-------|--------------|---------|
+| dkr-srv-1 | 3021 | 10.0.30.21/24 | 10.0.30.1 |
+| dkr-srv-2 | 3022 | 10.0.30.22/24 | 10.0.30.1 |
+| dkr-srv-3 | 3023 | 10.0.30.23/24 | 10.0.30.1 |
+
+### Network Configuration
+
+- **VLAN 30**: Container Network (10.0.30.0/24)
+- **VLAN 40**: Management Network (10.0.40.0/24)
+
 
 ## Modules
 

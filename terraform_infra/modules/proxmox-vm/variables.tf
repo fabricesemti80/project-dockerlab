@@ -91,6 +91,12 @@ variable "cpu_type" {
   default     = "host"
 }
 
+variable "scsi_hardware" {
+  description = "The SCSI hardware controller model."
+  type        = string
+  default     = "virtio-scsi-pci"
+}
+
 # Disk Configuration
 variable "disk_datastore_id" {
   description = "The datastore ID for the primary disk."

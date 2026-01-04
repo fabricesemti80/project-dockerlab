@@ -126,8 +126,8 @@ task ansible:site:apply
 | Node | Location | IP Address | Role |
 |------|----------|------------|------|
 | dkr-srv-0 | Hetzner Helsinki | 157.180.84.140 | Swarm Manager |
-| dkr-srv-1 | On-premises | 10.0.30.11 | Swarm Manager |
-| dkr-srv-2 | On-premises | 10.0.30.12 | Swarm Manager |
+| dkr-srv-1 | On-premises | 10.0.30.21 | Swarm Manager |
+| dkr-srv-2 | On-premises | 10.0.30.22 | Swarm Manager |
 
 ### Network Configuration
 

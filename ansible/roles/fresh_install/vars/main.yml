@@ -1,0 +1,3 @@
+---
+# Variables for fresh_install role that should not be overridden
+# These are more static configuration values

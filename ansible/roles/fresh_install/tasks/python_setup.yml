@@ -1,0 +1,32 @@
+---
+- name: Check if pip3 exists
+  ansible.builtin.stat:
+    path: /usr/bin/pip3
+  register: pip3_bin
+
+- name: Switch to pip3
+  ansible.builtin.alternatives:
+    name: pip
+    link: /usr/bin/pip
+    path: /usr/bin/pip3
+  when: pip3_bin.stat.exists or not ansible_check_mode
+
+- name: Switch to python3
+  ansible.builtin.alternatives:
+    name: python
+    link: /usr/bin/python
+    path: /usr/bin/python3
+  when: not ansible_check_mode or true # python3 usually exists on most systems, but to be safe
+
+- name: Install role-specific pip packages
+  ansible.builtin.pip:
+    name: "{{ role_pip_packages }}"
+  when: pip3_bin.stat.exists or not ansible_check_mode
+
+- name: Install external role pip packages
+  ansible.builtin.pip:
+    name: "{{ item.name }}"
+  loop: "{{ pip_install_packages | default([]) }}"
+  when: 
+    - pip_install_packages is defined
+    - pip3_bin.stat.exists or not ansible_check_mode

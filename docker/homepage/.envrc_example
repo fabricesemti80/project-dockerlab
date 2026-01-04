@@ -19,4 +19,4 @@ DOMAIN_INTERNAL=krapulax.home
 DOMAIN_EXTERNAL=krapulax.dev
 
 # IP Address of the Manager Node (for direct links/self-reference)
-DOCKER_SERVER_IP=10.0.30.11
+DOCKER_SERVER_IP=10.0.30.21

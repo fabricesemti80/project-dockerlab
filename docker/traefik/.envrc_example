@@ -10,4 +10,4 @@ DOMAIN=example.com
 
 # IP Address of the Manager Node (for Homepage/nip.io links)
 # This is usually the IP of the node where Traefik runs (manager)
-DOCKER_SERVER_IP=10.0.30.11
+DOCKER_SERVER_IP=10.0.30.21

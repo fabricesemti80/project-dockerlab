@@ -61,6 +61,8 @@ resource "proxmox_virtual_environment_vm" "vm" {
     type    = var.cpu_type
   }
 
+  scsi_hardware = var.scsi_hardware
+
   disk {
     datastore_id = var.disk_datastore_id
     interface    = var.disk_interface

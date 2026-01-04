@@ -79,8 +79,8 @@ The inventory is defined in `inventory/hosts` and includes:
 | Host | IP Address | Environment |
 |------|------------|-------------|
 | pve-2 | 10.0.40.12 | Proxmox hypervisor |
-| dkr-srv-1 | 10.0.30.11 | On-premises VM |
-| dkr-srv-2 | 10.0.30.12 | On-premises VM |
+| dkr-srv-1 | 10.0.30.21 | On-premises VM |
+| dkr-srv-2 | 10.0.30.22 | On-premises VM |
 | dkr-srv-0 | 157.180.84.140 | Hetzner Cloud |
 
 ## Roles

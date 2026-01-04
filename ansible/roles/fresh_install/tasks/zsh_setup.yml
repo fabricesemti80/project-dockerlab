@@ -1,0 +1,36 @@
+---
+- name: Install ZSH and related packages
+  ansible.builtin.apt:
+    name:
+      - zsh
+      - git
+      - curl
+      - wget
+    state: present
+    update_cache: true
+
+- name: Check if Starship is installed
+  ansible.builtin.command: which starship
+  register: starship_check
+  changed_when: false
+  failed_when: false
+
+- name: Install Starship
+  ansible.builtin.shell: >-
+    curl -sS https://starship.rs/install.sh | sh -s -- -y
+  when: starship_check.rc != 0
+  changed_when: true
+
+- name: Configure .zshrc for admin user
+  ansible.builtin.template:
+    src: zshrc.j2
+    dest: "/home/{{ admin_user }}/.zshrc"
+    owner: "{{ admin_user }}"
+    group: "{{ admin_user }}"
+    mode: '0644'
+
+- name: Set ZSH as default shell for admin user
+  ansible.builtin.user:
+    name: "{{ admin_user }}"
+    shell: /bin/zsh
+  when: zsh_set_as_default | default(true) | bool

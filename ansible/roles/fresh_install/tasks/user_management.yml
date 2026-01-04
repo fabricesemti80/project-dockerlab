@@ -1,0 +1,76 @@
+---
+- name: Check if admin user exists
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ admin_user }}"
+  register: admin_user_info
+  failed_when: false
+
+- name: Get admin user current groups
+  ansible.builtin.getent:
+    database: group
+  register: all_groups
+  when: admin_user_info.ansible_facts.getent_passwd is defined
+
+- name: Display admin user current status
+  ansible.builtin.debug:
+    msg:
+      - >-
+        Admin user {{ admin_user }} exists: {{
+        admin_user_info.ansible_facts.getent_passwd is defined }}
+      - >-
+        Current groups: {{
+        all_groups.ansible_facts.getent_group | dict2items |
+        selectattr('value.2', 'search', admin_user) |
+        map(attribute='key') | list
+        if admin_user_info.ansible_facts.getent_passwd is defined
+        else 'N/A' }}
+  when: admin_user_info.ansible_facts.getent_passwd is defined
+
+- name: Ensure admin user group exists
+  ansible.builtin.group:
+    name: "{{ admin_user }}"
+    state: present
+
+- name: Create or update primary admin user
+  ansible.builtin.user:
+    name: "{{ admin_user }}"
+    password: >-
+      {{ admin_password | default(omit) | password_hash('sha512')
+      if admin_password is defined else omit }}
+    groups:
+      - "{{ admin_user }}"
+      - sudo
+      - adm
+    state: present
+    shell: /bin/bash
+    system: false
+    create_home: true
+    home: "/home/{{ admin_user }}"
+    update_password: >-
+      {{ 'always' if admin_password is defined else 'on_create' }}
+    comment: "Primary Administrator"
+    expires: -1
+    append: true
+
+- name: Add public key to admin user authorized_keys
+  ansible.builtin.authorized_key:
+    user: "{{ admin_user }}"
+    state: present
+    key: "{{ lookup('file', ssh_public_key_path) }}"
+    exclusive: false
+  when: (admin_user_info.ansible_facts.getent_passwd is defined) or (not ansible_check_mode)
+
+- name: Check current sudoers entries
+  ansible.builtin.shell: |
+    grep -E "^{{ admin_user }}" /etc/sudoers || true
+  register: current_sudoers
+  changed_when: false
+
+- name: Add admin user to sudoers file with NOPASSWD (if not present)
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    regexp: "^{{ admin_user }}\\s+"
+    line: "{{ admin_user }} ALL=(ALL) NOPASSWD: ALL"  # pragma: allowlist secret
+    validate: "visudo -cf %s"
+  when: "admin_user + ' ALL=(ALL) NOPASSWD: ALL' not in current_sudoers.stdout"

@@ -1,0 +1,32 @@
+---
+- name: Ensure ceph-common is installed
+  ansible.builtin.apt:
+    name: ceph-common
+    state: present
+
+- name: Ensure CephFS mount point exists
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}"
+    state: directory
+    mode: '0755'
+
+- name: Create Ceph secret file
+  ansible.builtin.copy:
+    content: "{{ cephfs_secret_key }}"
+    dest: "/etc/ceph/{{ cephfs_user }}.secret"
+    owner: root
+    group: root
+    mode: '0600'
+  when: cephfs_secret_key | length > 0
+
+- name: Mount CephFS volume
+  ansible.posix.mount:
+    path: "{{ cephfs_mount_point }}"
+    src: ":/"
+    fstype: ceph
+    opts: "mon_addr={{ cephfs_monitors | join('/') }},name={{ cephfs_user }},secretfile=/etc/ceph/{{ cephfs_user }}.secret,fs={{ cephfs_name }},_netdev"
+    state: mounted
+  when: 
+    - cephfs_monitors | length > 0
+    - cephfs_secret_key | length > 0
+    - not ansible_check_mode
