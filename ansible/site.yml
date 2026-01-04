@@ -1,5 +1,8 @@
 ---
-- name: Fresh Install and Configuration
+# ------------------------------------------------------------------------------
+# Docker Swarm Managers Setup (Full environment)
+# ------------------------------------------------------------------------------
+- name: Configure Swarm Manager Nodes
   hosts: all
   become: true
   vars:
@@ -13,6 +16,7 @@
     install_ssh_banner: true
     install_storage: true
     install_cephfs: true
+    install_swarm: true
     
     # LVM Configuration
     lvm_volume_group_name: "data_vg"
@@ -28,10 +32,18 @@
       - 10.0.70.22
       - 10.0.70.23
     cephfs_user: "admin"
+    
     # Shell Configuration
     zsh_set_as_default: true
     enable_acl_permissions: false
 
   roles:
+    - role: geerlingguy.docker
+      tags: [docker]
+    - role: geerlingguy.pip
+      tags: [python, pip]
     - role: fresh_install
       tags: [fresh_install]
+    - role: docker_swarm
+      tags: [swarm]
+      when: install_swarm | default(false) | bool

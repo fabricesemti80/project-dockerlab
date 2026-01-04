@@ -1,0 +1,45 @@
+---
+- name: Check if Docker Swarm is already initialized
+  ansible.builtin.command: docker info --format '{{ "{{" }}.Swarm.LocalNodeState{{ "}}" }}'
+  register: swarm_status
+  changed_when: false
+  when: inventory_hostname in groups['swarm_managers']
+
+- name: Initialize Docker Swarm on the first manager
+  ansible.builtin.command: >
+    docker swarm init
+    --advertise-addr {{ ansible_host }}
+  register: swarm_init
+  when: 
+    - inventory_hostname == groups['swarm_managers'][0]
+    - swarm_status.stdout | default('') != 'active'
+  changed_when: "'Swarm initialized' in swarm_init.stdout"
+
+- name: Get manager join token
+  ansible.builtin.command: docker swarm join-token -q manager
+  register: manager_token
+  when: 
+    - inventory_hostname == groups['swarm_managers'][0]
+    - inventory_hostname in groups['swarm_managers']
+  changed_when: false
+
+- name: Set manager join token as a fact
+  ansible.builtin.set_fact:
+    swarm_manager_token: "{{ hostvars[groups['swarm_managers'][0]]['manager_token']['stdout'] }}"
+  when: 
+    - "'swarm_managers' in groups"
+    - hostvars[groups['swarm_managers'][0]]['manager_token']['stdout'] is defined
+  run_once: true
+
+- name: Join other managers to the swarm
+  ansible.builtin.command: >
+    docker swarm join
+    --token {{ swarm_manager_token }}
+    {{ hostvars[groups['swarm_managers'][0]]['ansible_host'] }}:2377
+  register: swarm_join
+  when:
+    - inventory_hostname in groups['swarm_managers']
+    - inventory_hostname != groups['swarm_managers'][0]
+    - swarm_status.stdout | default('') != 'active'
+    - swarm_manager_token is defined
+  changed_when: "'This node joined a swarm as a manager' in swarm_join.stdout"
