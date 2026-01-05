@@ -2,9 +2,12 @@
 # Portainer installation and configuration
 # This role only runs on the first manager node (leader)
 
-- name: "Ensure docker python library is installed"
+- name: "Ensure required python libraries are installed"
   ansible.builtin.pip:
-    name: docker
+    name: 
+      - docker
+      - jsondiff
+      - pyyaml
     state: present
   tags: [portainer]
 
@@ -20,11 +23,17 @@
   loop:
     - "portainer/portainer-ce:{{ portainer_image_version }}"
     - "portainer/agent:{{ portainer_agent_image_version }}"
+  register: pull_result
+  changed_when: "'Downloaded newer image' in pull_result.stdout or 'Imported' in pull_result.stdout"
   tags: [portainer]
 
 - name: "Deploy Portainer stack"
-  ansible.builtin.command: docker stack deploy -c /tmp/portainer-stack.yml portainer
-  changed_when: true
+  community.docker.docker_stack:
+    name: portainer
+    compose:
+      - /tmp/portainer-stack.yml
+    state: present
+  register: stack_deploy
   when: not ansible_check_mode
   tags: [portainer]
 
@@ -33,7 +42,9 @@
     port: "{{ portainer_http_port }}"
     host: 127.0.0.1
     timeout: 300
-  when: not ansible_check_mode
+  when: 
+    - not ansible_check_mode
+    - stack_deploy.changed
   tags: [portainer]
 
 - name: "Check if Portainer has hit initialization timeout"
@@ -42,13 +53,16 @@
   register: portainer_timeout_check
   failed_when: false
   changed_when: false
-  when: not ansible_check_mode
+  when: 
+    - not ansible_check_mode
+    - stack_deploy.changed
   tags: [portainer]
 
 - name: "Restart Portainer to reset initialization timer if needed"
   ansible.builtin.command: docker service update --force portainer_portainer
   when: 
     - not ansible_check_mode
+    - stack_deploy.changed
     - portainer_timeout_check.stdout is defined 
     - "'initialization timeout' in portainer_timeout_check.stdout"
   tags: [portainer]
@@ -61,7 +75,9 @@
   retries: 30
   delay: 10
   changed_when: false
-  when: not ansible_check_mode
+  when: 
+    - not ansible_check_mode
+    - stack_deploy.changed
   tags: [portainer]
 
 - name: "Validate Portainer password length"
