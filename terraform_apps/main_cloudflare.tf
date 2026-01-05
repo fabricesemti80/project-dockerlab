@@ -65,6 +65,15 @@ resource "cloudflare_dns_record" "homelab_root" {
   comment = "Root Tunnel (Managed by Terraform)"
 }
 
+resource "cloudflare_dns_record" "beszel" {
+  zone_id = var.CLOUDFLARE_ZONE_ID
+  name    = "beszel"
+  content = "${cloudflare_zero_trust_tunnel_cloudflared.homelab.id}.cfargotunnel.com"
+  type    = "CNAME"
+  proxied = true
+  ttl     = 1
+}
+
 # 5. Cloudflare Access Application
 resource "cloudflare_zero_trust_access_application" "homelab_access" {
   account_id = var.CLOUDFLARE_ACCOUNT_ID
@@ -99,6 +108,44 @@ resource "cloudflare_zero_trust_access_application" "homelab_access" {
           email = {
             email = "fabrice@fabricesemti.com"
           }
+        }
+      ]
+    }
+  ]
+}
+
+resource "cloudflare_zero_trust_access_application" "beszel_access" {
+  account_id = var.CLOUDFLARE_ACCOUNT_ID
+  name       = "Beszel Access"
+  domain     = "beszel.${var.DOMAIN}"
+  type       = "self_hosted"
+
+  session_duration          = "24h"
+  auto_redirect_to_identity = false
+
+  policies = [
+    {
+      name     = "Allow Admin"
+      decision = "allow"
+      include = [
+        {
+          email = {
+            email = var.ACCESS_EMAIL
+          }
+        },
+        {
+          email = {
+            email = "fabrice.semti@gmail.com"
+          }
+        }
+      ]
+    },
+    {
+      name     = "Bypass for Agents"
+      decision = "bypass"
+      include = [
+        {
+          ip_range = "10.0.0.0/16"
         }
       ]
     }

@@ -25,7 +25,7 @@ tasks:
     dir: terraform_apps
     cmds:
       - task: fmt
-      - doppler run -- bash -c 'TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN terraform plan -out=tfplan -var="ACME_EMAIL=$TRAEFIK_ACME_EMAIL" -var="DOMAIN=$DOMAIN"'
+      - doppler run -- bash -c 'TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN terraform plan -out=tfplan -var="ACME_EMAIL=$TRAEFIK_ACME_EMAIL" -var="DOMAIN=$DOMAIN" -var="BESZEL_AGENT_KEY=$BESZEL_AGENT_KEY"'
 
   apply:
     desc: "Apply the Apps Terraform plan"
@@ -37,4 +37,4 @@ tasks:
     desc: "Destroy the Apps Terraform-managed stacks"
     dir: terraform_apps
     cmds:
-      - doppler run -- bash -c 'TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN terraform destroy -auto-approve -var="ACME_EMAIL=$TRAEFIK_ACME_EMAIL" -var="DOMAIN=$DOMAIN"'
+      - doppler run -- bash -c 'TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN terraform destroy -auto-approve -var="ACME_EMAIL=$TRAEFIK_ACME_EMAIL" -var="DOMAIN=$DOMAIN" -var="BESZEL_AGENT_KEY=$BESZEL_AGENT_KEY"'

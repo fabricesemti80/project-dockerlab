@@ -68,3 +68,10 @@ variable "REPO_BRANCH" {
   type        = string
   default     = "refs/heads/main"
 }
+
+variable "BESZEL_AGENT_KEY" {
+  description = "The agent key for Beszel"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
