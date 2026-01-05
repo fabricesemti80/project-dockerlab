@@ -1,0 +1,40 @@
+version: '3'
+
+tasks:
+
+  fmt:
+    desc: "Format and validate Docker Terraform"
+    dir: terraform_docker
+    cmds:
+      - doppler run -- terraform fmt
+      - doppler run -- terraform validate
+
+  init:
+    desc: "Initialize Docker Terraform"
+    dir: terraform_docker
+    cmds:
+      - doppler run -- terraform init {{.CLI_ARGS}}
+
+  create-network:
+    desc: "Create the external traefik-public network"
+    cmds:
+      - ssh -o StrictHostKeyChecking=no -i ~/.ssh/fs_home_rsa fs@10.0.30.21 "docker network create --driver overlay traefik_traefik-public || true"
+
+  plan:
+    desc: "Create a Docker Terraform execution plan"
+    dir: terraform_docker
+    cmds:
+      - task: fmt
+      - doppler run -- bash -c 'TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN terraform plan -out=tfplan -var="ACME_EMAIL=$TRAEFIK_ACME_EMAIL" -var="DOMAIN=$DOMAIN"'
+
+  apply:
+    desc: "Apply the Docker Terraform plan"
+    dir: terraform_docker
+    cmds:
+      - doppler run -- bash -c 'TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN terraform apply tfplan'
+
+  destroy:
+    desc: "Destroy the Docker Terraform-managed stacks"
+    dir: terraform_docker
+    cmds:
+      - doppler run -- bash -c 'TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN terraform destroy -auto-approve -var="ACME_EMAIL=$TRAEFIK_ACME_EMAIL" -var="DOMAIN=$DOMAIN"'

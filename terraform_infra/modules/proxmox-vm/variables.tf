@@ -187,6 +187,17 @@ variable "network_firewall" {
   default     = false
 }
 
+variable "additional_network_devices" {
+  description = "A list of additional network devices to connect the VM to."
+  type = list(object({
+    bridge   = string
+    model    = optional(string, "virtio")
+    vlan_id  = optional(number, -1)
+    firewall = optional(bool, false)
+  }))
+  default = []
+}
+
 # Initialization Configuration
 variable "initialization_datastore_id" {
   description = "The datastore ID for initialization."
@@ -221,6 +232,15 @@ variable "ipv4_gateway" {
   description = "The IPv4 gateway of the VM."
   type        = string
   default     = null
+}
+
+variable "additional_ipv4_configs" {
+  description = "A list of additional IPv4 configurations."
+  type = list(object({
+    address = string
+    gateway = optional(string)
+  }))
+  default = []
 }
 
 variable "ipv6_address" {

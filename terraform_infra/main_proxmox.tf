@@ -79,6 +79,17 @@ locals {
     node_name    = "pve-0"
     ipv4_address = "10.0.30.21/24"
     ipv4_gateway = "10.0.30.1"
+    additional_network_devices = [
+      {
+        bridge  = "vmbr0"
+        vlan_id = 70
+      }
+    ]
+    additional_ipv4_configs = [
+      {
+        address = "10.0.70.21/24"
+      }
+    ]
   }
 
   dkr_srv_2 = {
@@ -87,6 +98,17 @@ locals {
     node_name    = "pve-1"
     ipv4_address = "10.0.30.22/24"
     ipv4_gateway = "10.0.30.1"
+    additional_network_devices = [
+      {
+        bridge  = "vmbr0"
+        vlan_id = 70
+      }
+    ]
+    additional_ipv4_configs = [
+      {
+        address = "10.0.70.22/24"
+      }
+    ]
   }
 
   dkr_srv_3 = {
@@ -95,6 +117,17 @@ locals {
     node_name    = "pve-2"
     ipv4_address = "10.0.30.23/24"
     ipv4_gateway = "10.0.30.1"
+    additional_network_devices = [
+      {
+        bridge  = "vmbr0"
+        vlan_id = 70
+      }
+    ]
+    additional_ipv4_configs = [
+      {
+        address = "10.0.70.23/24"
+      }
+    ]
   }
 }
 
@@ -150,6 +183,8 @@ module "dkr_srv_1" {
   dns_servers                 = local.vm_common.dns_servers
   ipv4_address                = local.dkr_srv_1.ipv4_address
   ipv4_gateway                = local.dkr_srv_1.ipv4_gateway
+  additional_network_devices  = local.dkr_srv_1.additional_network_devices
+  additional_ipv4_configs     = local.dkr_srv_1.additional_ipv4_configs
 
   # VM Lifecycle Settings
   on_boot             = local.vm_common.on_boot
@@ -213,6 +248,8 @@ module "dkr_srv_2" {
   dns_servers                 = local.vm_common.dns_servers
   ipv4_address                = local.dkr_srv_2.ipv4_address
   ipv4_gateway                = local.dkr_srv_2.ipv4_gateway
+  additional_network_devices  = local.dkr_srv_2.additional_network_devices
+  additional_ipv4_configs     = local.dkr_srv_2.additional_ipv4_configs
 
   # VM Lifecycle Settings
   on_boot             = local.vm_common.on_boot
@@ -276,6 +313,8 @@ module "dkr_srv_3" {
   dns_servers                 = local.vm_common.dns_servers
   ipv4_address                = local.dkr_srv_3.ipv4_address
   ipv4_gateway                = local.dkr_srv_3.ipv4_gateway
+  additional_network_devices  = local.dkr_srv_3.additional_network_devices
+  additional_ipv4_configs     = local.dkr_srv_3.additional_ipv4_configs
 
   # VM Lifecycle Settings
   on_boot             = local.vm_common.on_boot

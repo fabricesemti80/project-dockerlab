@@ -10,6 +10,7 @@ vars:
 includes:
   ansible: ./taskfile/ansible.yml
   tf: ./taskfile/terraform.yml
+  tfd: ./taskfile/terraform_docker.yml
 
 tasks:
   default:

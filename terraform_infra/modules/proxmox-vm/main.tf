@@ -127,6 +127,16 @@ resource "proxmox_virtual_environment_vm" "vm" {
     firewall = var.network_firewall
   }
 
+  dynamic "network_device" {
+    for_each = var.additional_network_devices
+    content {
+      bridge   = network_device.value.bridge
+      model    = network_device.value.model
+      vlan_id  = network_device.value.vlan_id
+      firewall = network_device.value.firewall
+    }
+  }
+
   initialization {
     datastore_id = var.initialization_datastore_id
     dns {
@@ -135,22 +145,14 @@ resource "proxmox_virtual_environment_vm" "vm" {
     user_data_file_id = var.user_data != null ? proxmox_virtual_environment_file.user_data[0].id : var.initialization_user_data_file_id
 
     dynamic "ip_config" {
-      for_each = [1]  # Always create this block
+      for_each = concat(
+        var.ipv4_address != null ? [{ address = var.ipv4_address, gateway = var.ipv4_gateway }] : [],
+        var.additional_ipv4_configs
+      )
       content {
-        dynamic "ipv4" {
-          for_each = var.ipv4_address != null ? [1] : []
-          content {
-            address = var.ipv4_address
-            gateway = var.ipv4_gateway
-          }
-        }
-
-        dynamic "ipv6" {
-          for_each = var.ipv6_address != null ? [1] : []
-          content {
-            address = var.ipv6_address
-            gateway = var.ipv6_gateway
-          }
+        ipv4 {
+          address = ip_config.value.address
+          gateway = ip_config.value.gateway
         }
       }
     }

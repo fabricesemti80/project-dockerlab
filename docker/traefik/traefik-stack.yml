@@ -23,7 +23,7 @@ services:
       # Swarm provider
       - "--providers.swarm=true"
       - "--providers.swarm.exposedbydefault=false"
-      - "--providers.swarm.network=traefik_traefik-public" # due the stack name prefix
+      - "--providers.swarm.network=traefik_traefik-public"
 
       # EntryPoints
       - "--entrypoints.web.address=:80"
@@ -48,7 +48,7 @@ services:
 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik-acme:/acme
+      - /mnt/cephfs/docker-shared-data/traefik/acme:/acme
 
     networks:
       - traefik-public
@@ -57,10 +57,6 @@ services:
       placement:
         constraints:
           - node.role == manager
-          # - node.labels.leader == true
-          - node.labels.manager == true
-          - node.labels.environment == production
-          - node.labels.role == cloud
       labels:
         - "traefik.enable=true"
 
@@ -72,9 +68,6 @@ services:
         - "traefik.http.routers.traefik.entrypoints=websecure"
         - "traefik.http.routers.traefik.tls.certresolver=cloudflare"
         - "traefik.http.routers.traefik.service=api@internal"
-
-volumes:
-  traefik-acme:
 
 networks:
   traefik-public:

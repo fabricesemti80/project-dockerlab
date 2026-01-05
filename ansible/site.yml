@@ -26,12 +26,12 @@
     data_mount_point: "/data"
     
     # CephFS Configuration
-    cephfs_name: "ceph-proxmox-fs"
+    cephfs_name: "cephfs-vm"
     cephfs_mount_point: "/mnt/cephfs"
     cephfs_monitors:
-      - 10.0.70.21
-      - 10.0.70.22
-      - 10.0.70.23
+      - 10.0.70.10
+      - 10.0.70.11
+      - 10.0.70.12
     cephfs_user: "admin"
     
     # Portainer Configuration

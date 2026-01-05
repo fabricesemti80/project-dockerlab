@@ -22,9 +22,9 @@
 - name: Mount CephFS volume
   ansible.posix.mount:
     path: "{{ cephfs_mount_point }}"
-    src: ":/"
+    src: "{{ cephfs_monitors | join(',') }}:/"
     fstype: ceph
-    opts: "mon_addr={{ cephfs_monitors | join('/') }},name={{ cephfs_user }},secretfile=/etc/ceph/{{ cephfs_user }}.secret,fs={{ cephfs_name }},_netdev"
+    opts: "name={{ cephfs_user }},secretfile=/etc/ceph/{{ cephfs_user }}.secret,fs={{ cephfs_name }},_netdev"
     state: mounted
   when: 
     - cephfs_monitors | length > 0
