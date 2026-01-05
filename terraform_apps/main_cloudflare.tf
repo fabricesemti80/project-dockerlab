@@ -145,7 +145,9 @@ resource "cloudflare_zero_trust_access_application" "beszel_access" {
       decision = "bypass"
       include = [
         {
-          ip_range = "10.0.0.0/16"
+          ip = {
+            ip = "10.0.0.0/16"
+          }
         }
       ]
     }
