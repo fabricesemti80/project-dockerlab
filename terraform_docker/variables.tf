@@ -10,6 +10,24 @@ variable "CLOUDFLARE_API_TOKEN" {
   sensitive   = true
 }
 
+variable "CLOUDFLARE_ACCOUNT_ID" {
+  description = "Cloudflare Account ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "CLOUDFLARE_ZONE_ID" {
+  description = "Cloudflare Zone ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "ACCESS_EMAIL" {
+  description = "The email address allowed to access the lab services"
+  type        = string
+  default     = "emilfabrice@gmail.com"
+}
+
 variable "ACME_EMAIL" {
   description = "The email address for Let's Encrypt"
   type        = string
