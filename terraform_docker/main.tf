@@ -1,10 +1,18 @@
 resource "portainer_stack" "traefik" {
   name            = "traefik"
   deployment_type = "swarm"
-  method          = "string"
+  method          = "repository"
   endpoint_id     = 1
 
-  stack_file_content = file("${path.module}/../docker/traefik/traefik-stack.yml")
+  repository_url            = var.REPO_URL
+  repository_reference_name = var.REPO_BRANCH
+  file_path_in_repository   = "docker/traefik/traefik-stack.yml"
+
+  force_update    = true
+  pull_image      = true
+  prune           = true
+  update_interval = "5m"
+  stack_webhook   = true
 
   env {
     name  = "ACME_EMAIL"
@@ -19,5 +27,20 @@ resource "portainer_stack" "traefik" {
   env {
     name  = "DOMAIN"
     value = var.DOMAIN
+  }
+
+  env {
+    name  = "TZ"
+    value = var.TZ
+  }
+
+  env {
+    name  = "PUID"
+    value = var.PUID
+  }
+
+  env {
+    name  = "PGID"
+    value = var.PGID
   }
 }
