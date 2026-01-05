@@ -3,15 +3,15 @@ version: '3'
 tasks:
 
   fmt:
-    desc: "Format and validate Docker Terraform"
-    dir: terraform_docker
+    desc: "Format and validate Apps Terraform"
+    dir: terraform_apps
     cmds:
       - doppler run -- terraform fmt
       - doppler run -- terraform validate
 
   init:
-    desc: "Initialize Docker Terraform"
-    dir: terraform_docker
+    desc: "Initialize Apps Terraform"
+    dir: terraform_apps
     cmds:
       - doppler run -- terraform init {{.CLI_ARGS}}
 
@@ -21,20 +21,20 @@ tasks:
       - ssh -o StrictHostKeyChecking=no -i ~/.ssh/fs_home_rsa fs@10.0.30.21 "docker network create --driver overlay traefik_traefik-public || true"
 
   plan:
-    desc: "Create a Docker Terraform execution plan"
-    dir: terraform_docker
+    desc: "Create an Apps Terraform execution plan"
+    dir: terraform_apps
     cmds:
       - task: fmt
       - doppler run -- bash -c 'TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN terraform plan -out=tfplan -var="ACME_EMAIL=$TRAEFIK_ACME_EMAIL" -var="DOMAIN=$DOMAIN"'
 
   apply:
-    desc: "Apply the Docker Terraform plan"
-    dir: terraform_docker
+    desc: "Apply the Apps Terraform plan"
+    dir: terraform_apps
     cmds:
       - doppler run -- bash -c 'TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN terraform apply tfplan'
 
   destroy:
-    desc: "Destroy the Docker Terraform-managed stacks"
-    dir: terraform_docker
+    desc: "Destroy the Apps Terraform-managed stacks"
+    dir: terraform_apps
     cmds:
       - doppler run -- bash -c 'TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN terraform destroy -auto-approve -var="ACME_EMAIL=$TRAEFIK_ACME_EMAIL" -var="DOMAIN=$DOMAIN"'
