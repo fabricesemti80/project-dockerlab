@@ -37,7 +37,10 @@
     # Portainer Configuration
     portainer_admin_user: admin
     portainer_admin_password: "{{ lookup('env', 'PORTAINER_ADMIN_PASSWORD') }}"
-    apps_domain: "hl.krapulax.dev" # Consistent domain
+    # Portainer Configuration
+    portainer_admin_user: admin
+    portainer_admin_password: "{{ lookup('env', 'PORTAINER_ADMIN_PASSWORD') }}"
+    apps_domain: "{{ lookup('env', 'DOMAIN') | default('krapulax.net') }}" # Consistent domain # Consistent domain
 
     # Shell Configuration
     zsh_set_as_default: true
@@ -62,7 +65,10 @@
     install_portainer: true
     portainer_admin_user: admin
     portainer_admin_password: "{{ lookup('env', 'PORTAINER_ADMIN_PASSWORD') }}"
-    apps_domain: "hl.krapulax.dev"
+    # Portainer Configuration
+    portainer_admin_user: admin
+    portainer_admin_password: "{{ lookup('env', 'PORTAINER_ADMIN_PASSWORD') }}"
+    apps_domain: "{{ lookup('env', 'DOMAIN') | default('krapulax.net') }}" # Consistent domain
   roles:
     - role: portainer
       tags: [portainer]

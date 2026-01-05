@@ -12,7 +12,7 @@ resource "random_id" "tunnel_secret" {
 # 2. Create the Tunnel
 resource "cloudflare_zero_trust_tunnel_cloudflared" "homelab" {
   account_id    = var.CLOUDFLARE_ACCOUNT_ID
-  name          = "hl_${replace(data.cloudflare_zone.main.name, ".", "_")}"
+  name          = replace(data.cloudflare_zone.main.name, ".", "_")
   tunnel_secret = random_id.tunnel_secret.b64_std
 }
 
@@ -24,13 +24,19 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "homelab" {
   config = {
     ingress = [
       {
-        hostname = "*.${var.DOMAIN}"     # Serves *.hl.krapulax.dev
+        hostname = "*.${var.DOMAIN}"     # Serves *.krapulax.net
         service  = "https://traefik:443" # Point to Traefik service name on the 'proxy' network
         origin_request = {
           no_tls_verify = true
         }
       },
-
+      {
+        hostname = var.DOMAIN            # Serves krapulax.net
+        service  = "https://traefik:443" # Point to Traefik service name
+        origin_request = {
+          no_tls_verify = true
+        }
+      },
       {
         service = "http_status:404"
       }
@@ -38,49 +44,31 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "homelab" {
   }
 }
 
-# 4. DNS Record for Wildcard Subdomain
+# 4. DNS Records for the new domain
 resource "cloudflare_dns_record" "homelab_wildcard" {
   zone_id = var.CLOUDFLARE_ZONE_ID
-  name    = "*.hl" # Creates *.hl.krapulax.dev
+  name    = "*"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.homelab.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
   ttl     = 1
-  comment = "Homelab Wildcard Tunnel (Managed by Terraform)"
+  comment = "Wildcard Tunnel (Managed by Terraform)"
 }
 
-# Explicit records to ensure certificate coverage if nested wildcards are problematic
-resource "cloudflare_dns_record" "traefik" {
+resource "cloudflare_dns_record" "homelab_root" {
   zone_id = var.CLOUDFLARE_ZONE_ID
-  name    = "traefik.hl"
+  name    = "@"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.homelab.id}.cfargotunnel.com"
   type    = "CNAME"
   proxied = true
   ttl     = 1
-}
-
-resource "cloudflare_dns_record" "portainer" {
-  zone_id = var.CLOUDFLARE_ZONE_ID
-  name    = "portainer.hl"
-  content = "${cloudflare_zero_trust_tunnel_cloudflared.homelab.id}.cfargotunnel.com"
-  type    = "CNAME"
-  proxied = true
-  ttl     = 1
-}
-
-resource "cloudflare_dns_record" "whoami" {
-  zone_id = var.CLOUDFLARE_ZONE_ID
-  name    = "whoami.hl"
-  content = "${cloudflare_zero_trust_tunnel_cloudflared.homelab.id}.cfargotunnel.com"
-  type    = "CNAME"
-  proxied = true
-  ttl     = 1
+  comment = "Root Tunnel (Managed by Terraform)"
 }
 
 # 5. Cloudflare Access Application
 resource "cloudflare_zero_trust_access_application" "homelab_access" {
   account_id = var.CLOUDFLARE_ACCOUNT_ID
-  name       = "Homelab Access"
+  name       = "Main Access"
   domain     = "*.${var.DOMAIN}"
   type       = "self_hosted"
 
