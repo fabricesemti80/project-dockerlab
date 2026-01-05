@@ -24,6 +24,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - agent_network
+      - proxy
     deploy:
       mode: replicated
       replicas: 1
@@ -53,6 +54,8 @@ networks:
   agent_network:
     driver: overlay
     attachable: true
+  proxy:
+    external: true
 
 volumes:
   portainer_data:

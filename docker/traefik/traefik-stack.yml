@@ -23,7 +23,7 @@ services:
       # Swarm provider
       - "--providers.swarm=true"
       - "--providers.swarm.exposedbydefault=false"
-      - "--providers.swarm.network=traefik_traefik-public"
+      - "--providers.swarm.network=proxy"
 
       # EntryPoints
       - "--entrypoints.web.address=:80"
@@ -51,7 +51,7 @@ services:
       - /mnt/cephfs/docker-shared-data/traefik/acme:/acme
 
     networks:
-      - traefik-public
+      - proxy
 
     deploy:
       placement:
@@ -70,6 +70,5 @@ services:
         - "traefik.http.routers.traefik.service=api@internal"
 
 networks:
-  traefik-public:
-    name: traefik_traefik-public
+  proxy:
     external: true
