@@ -26,6 +26,14 @@
     state: present
   tags: [portainer, proxy]
 
+- name: "Ensure 'socket-proxy' overlay network exists"
+  community.docker.docker_network:
+    name: socket-proxy
+    driver: overlay
+    attachable: true
+    state: present
+  tags: [portainer, proxy]
+
 - name: "Pull Portainer images"
   ansible.builtin.command: "docker pull {{ item }}"
   loop:

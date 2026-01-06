@@ -1,0 +1,81 @@
+# Homepage - Modern Dashboard
+# https://gethomepage.dev/
+
+version: "3.9"
+
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    networks:
+      - proxy
+      - socket-proxy
+    configs:
+      - source: homepage_docker
+        target: /app/config/docker.yaml
+      - source: homepage_services
+        target: /app/config/services.yaml
+      - source: homepage_widgets
+        target: /app/config/widgets.yaml
+      - source: homepage_settings
+        target: /app/config/settings.yaml
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - HOMEPAGE_ALLOWED_HOSTS=home.${DOMAIN},${DOMAIN},10.0.30.0/24,127.0.0.1
+      - HOMEPAGE_VAR_PORTAINER_ACCESS_TOKEN=${PORTAINER_ACCESS_TOKEN}
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      labels:
+        # Traefik Configuration
+        - "traefik.enable=true"
+        - "traefik.http.routers.homepage.rule=Host(`home.${DOMAIN}`) || Host(`${DOMAIN}`)"
+        - "traefik.http.routers.homepage.entrypoints=websecure"
+        - "traefik.http.routers.homepage.tls.certresolver=cloudflare"
+        - "traefik.http.services.homepage.loadbalancer.server.port=3000"
+        
+        # Self-Discovery (Add itself to the dashboard)
+        - "homepage.group=Management"
+        - "homepage.name=Homepage"
+        - "homepage.icon=homepage.png"
+        - "homepage.href=https://${DOMAIN}"
+        - "homepage.description=Dashboard"
+        - "homepage.weight=0"
+
+networks:
+
+  proxy:
+
+    external: true
+
+  socket-proxy:
+
+    external: true
+
+
+
+configs:
+
+  homepage_docker:
+
+    file: ./config/docker.yaml
+
+  homepage_services:
+
+    file: ./config/services.yaml
+
+  homepage_widgets:
+
+    file: ./config/widgets.yaml
+
+  homepage_settings:
+
+    file: ./config/settings.yaml

@@ -14,6 +14,13 @@ services:
         - "traefik.http.routers.whoami.tls.certresolver=cloudflare"
         - "traefik.http.services.whoami.loadbalancer.server.port=80"
 
+        # Homepage Discovery
+        - "homepage.group=Test"
+        - "homepage.name=Whoami"
+        - "homepage.icon=whoami.png"
+        - "homepage.href=https://whoami.${DOMAIN}"
+        - "homepage.description=Test Application"
+
 networks:
   proxy:
     external: true

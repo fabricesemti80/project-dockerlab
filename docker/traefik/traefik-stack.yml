@@ -24,6 +24,7 @@ services:
       - "--providers.swarm=true"
       - "--providers.swarm.exposedbydefault=false"
       - "--providers.swarm.network=proxy"
+      - "--providers.swarm.endpoint=tcp://socket-proxy:2375"
 
       # EntryPoints
       - "--entrypoints.web.address=:80"
@@ -47,11 +48,11 @@ services:
       - "443:443"
 
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
       - /mnt/cephfs/docker-shared-data/traefik/acme:/acme
 
     networks:
       - proxy
+      - socket-proxy
 
     deploy:
       placement:
@@ -69,6 +70,17 @@ services:
         - "traefik.http.routers.traefik.tls.certresolver=cloudflare"
         - "traefik.http.routers.traefik.service=api@internal"
 
+        # Homepage Discovery
+        - "homepage.group=Management"
+        - "homepage.name=Traefik"
+        - "homepage.icon=traefik.png"
+        - "homepage.href=https://traefik.${DOMAIN}"
+        - "homepage.description=Reverse Proxy"
+        - "homepage.widget.type=traefik"
+        - "homepage.widget.url=https://traefik.${DOMAIN}"
+
 networks:
   proxy:
+    external: true
+  socket-proxy:
     external: true
