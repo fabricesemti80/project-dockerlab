@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  filebrowser:
+    image: gtstef/filebrowser:latest
+    networks:
+      - proxy
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - DOMAIN=${DOMAIN}
+    volumes:
+      - /mnt/cephfs/docker-shared-data/filebrowser/config:/config
+      - /mnt/cephfs/docker-shared-data/filebrowser/data:/data
+      - /mnt/cephfs:/srv
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.filebrowser.rule=Host(`files.${DOMAIN}`)"
+        - "traefik.http.routers.filebrowser.entrypoints=websecure"
+        - "traefik.http.routers.filebrowser.tls.certresolver=cloudflare"
+        - "traefik.http.services.filebrowser.loadbalancer.server.port=80"
+
+        # Homepage
+        - "homepage.group=Storage"
+        - "homepage.name=FileBrowser"
+        - "homepage.icon=filebrowser.png"
+        - "homepage.href=https://files.${DOMAIN}"
+        - "homepage.description=Cloud File Manager"
+
+networks:
+  proxy:
+    external: true

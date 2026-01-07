@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  gitlab:
+    image: 'gitlab/gitlab-ce:latest'
+    networks:
+      - proxy
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://git.${DOMAIN}'
+        traefik_proxy_enabled = true
+        gitlab_rails['gitlab_shell_ssh_port'] = 2222
+    volumes:
+      - '/mnt/cephfs/docker-shared-data/gitlab/config:/etc/gitlab'
+      - '/mnt/cephfs/docker-shared-data/gitlab/logs:/var/log/gitlab'
+      - '/mnt/cephfs/docker-shared-data/gitlab/data:/var/opt/gitlab'
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.gitlab.rule=Host(`git.${DOMAIN}`)"
+        - "traefik.http.routers.gitlab.entrypoints=websecure"
+        - "traefik.http.routers.gitlab.tls.certresolver=cloudflare"
+        - "traefik.http.services.gitlab.loadbalancer.server.port=80"
+
+        # Homepage
+        - "homepage.group=Development"
+        - "homepage.name=GitLab"
+        - "homepage.icon=gitlab.png"
+        - "homepage.href=https://git.${DOMAIN}"
+        - "homepage.description=Git Repository Manager"
+
+networks:
+  proxy:
+    external: true
