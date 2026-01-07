@@ -42,23 +42,3 @@ resource "cloudflare_zero_trust_access_application" "lab_wildcard" {
     }
   }
 }
-
-resource "cloudflare_zero_trust_access_application" "gitlab_access" {
-  account_id                 = var.CLOUDFLARE_ACCOUNT_ID
-  name                       = "GitLab Access"
-  domain                     = "git.krapulax.net"
-  type                       = "self_hosted"
-  session_duration           = "24h"
-  app_launcher_visible       = true
-  auto_redirect_to_identity  = false
-  http_only_cookie_attribute = true
-
-  policies {
-    name       = "Bypass for All"
-    decision   = "bypass"
-    precedence = 1
-    include {
-      everyone = {}
-    }
-  }
-}
