@@ -14,7 +14,8 @@ services:
     volumes:
       - /mnt/cephfs/docker-shared-data/filebrowser/config:/config
       - /mnt/cephfs/docker-shared-data/filebrowser/data:/data
-      - /mnt/cephfs:/srv
+      - /mnt/cephfs:/srv/cephfs
+      - /mnt/nfs/media:/srv/media
     deploy:
       replicas: 1
       placement:
