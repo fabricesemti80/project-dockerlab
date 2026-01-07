@@ -10,6 +10,7 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       - DOMAIN=${DOMAIN}
+      - FILEBROWSER_ADMIN_PASSWORD=${FILEBROWSER_ADMIN_PASSWORD}
     volumes:
       - /mnt/cephfs/docker-shared-data/filebrowser/config:/config
       - /mnt/cephfs/docker-shared-data/filebrowser/data:/data
