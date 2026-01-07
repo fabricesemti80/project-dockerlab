@@ -8,10 +8,11 @@ services:
       - "TZ=${TZ}"
       - "DOMAIN=${DOMAIN}"
       - "GATUS_CONFIG_PATH=/config/config.yaml"
+      - "WATCHTOWER_HTTP_API_TOKEN=${WATCHTOWER_HTTP_API_TOKEN}"
     volumes:
       - /mnt/cephfs/docker-shared-data/gatus/data:/data
     configs:
-      - source: gatus_config_v3
+      - source: gatus_config_v4
         target: /config/config.yaml
     networks:
       - proxy
@@ -38,7 +39,7 @@ services:
         - "homepage.widget.url=https://gatus.${DOMAIN}"
 
 configs:
-  gatus_config_v3:
+  gatus_config_v4:
     file: ./config/config.yaml
 
 networks:

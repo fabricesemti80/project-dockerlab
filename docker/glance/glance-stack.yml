@@ -4,28 +4,35 @@ services:
   glance:
     image: glanceapp/glance:latest
     networks:
-      - traefik_traefik-public
+      - proxy
     configs:
-      # NOTE: Docker Configs are immutable. If you modify glance.yml, you must 
-      # rename the config below (e.g. glance_config_v2) to trigger an update,
-      # or delete the stack and redeploy.
       - source: glance_config_v2
         target: /app/config/glance.yml
     volumes:
       - glance-data:/app/data
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
-      - TZ=Europe/London
+      - TZ=${TZ}
+      - DOMAIN=${DOMAIN}
     deploy:
       replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.glance.rule=Host(`glance.${DOMAIN}`)"
         - "traefik.http.routers.glance.entrypoints=websecure"
         - "traefik.http.routers.glance.tls.certresolver=cloudflare"
         - "traefik.http.services.glance.loadbalancer.server.port=8080"
+
+        # Homepage
+        - "homepage.group=Dashboard"
+        - "homepage.name=Glance"
+        - "homepage.icon=glance.png"
+        - "homepage.href=https://glance.${DOMAIN}"
+        - "homepage.description=Startpage"
 
 configs:
   glance_config_v2:
@@ -35,5 +42,5 @@ volumes:
   glance-data:
 
 networks:
-  traefik_traefik-public:
+  proxy:
     external: true

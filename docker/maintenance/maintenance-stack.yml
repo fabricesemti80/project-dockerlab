@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  watchtower:
+    image: containrrr/watchtower:latest
+    hostname: watchtower
+    networks:
+      - socket-proxy
+      - default
+    environment:
+      - TZ=${TZ}
+      - DOCKER_HOST=tcp://socket-proxy:2375
+      - DOCKER_API_VERSION=1.45
+      - WATCHTOWER_SCHEDULE=0 0 8 * * *
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_INCLUDE_RESTARTING=true
+      - WATCHTOWER_NOTIFICATIONS=slack
+      - WATCHTOWER_NOTIFICATION_SLACK_HOOK_URL=${DISCORD_WATCHTOWER_WEBHOOK}
+      - WATCHTOWER_NOTIFICATION_SLACK_IDENTIFIER=docker-swarm
+      - WATCHTOWER_HTTP_API_METRICS=true
+      - WATCHTOWER_HTTP_API_TOKEN=${WATCHTOWER_HTTP_API_TOKEN}
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "homepage.group=Infrastructure"
+        - "homepage.name=Watchtower"
+        - "homepage.icon=watchtower.png"
+        - "homepage.description=Container Updates"
+
+  system-prune:
+    image: docker:cli
+    command: >
+      sh -c "echo '0 6 * * * docker system prune -af --volumes' | crontab - && crond -f"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+    environment:
+      - TZ=${TZ}
+
+networks:
+  default:
+    driver: overlay
+  socket-proxy:
+    external: true
