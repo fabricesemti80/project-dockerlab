@@ -25,16 +25,36 @@ tasks:
     dir: terraform_apps
     cmds:
       - task: fmt
-      - doppler run -- bash -c 'TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN terraform plan -out=tfplan -var="ACME_EMAIL=$TRAEFIK_ACME_EMAIL" -var="DOMAIN=$DOMAIN" -var="BESZEL_AGENT_KEY=$BESZEL_AGENT_KEY"'
+      - task: init
+      - doppler run -- bash -c '
+          export TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN;
+          export TF_VAR_FILEBROWSER_ADMIN_PASSWORD=$FILEBROWSER_ADMIN_PASSWORD;
+          export TF_VAR_DOCMOST_APP_SECRET=$DOCMOST_APP_SECRET;
+          export TF_VAR_DOCMOST_POSTGRES_PASSWORD=$DOCMOST_POSTGRES_PASSWORD;
+          export TF_VAR_DISCORD_WATCHTOWER_WEBHOOK=$DISCORD_WATCHTOWER_WEBHOOK;
+          terraform plan -out=tfplan -var="ACME_EMAIL=$TRAEFIK_ACME_EMAIL" -var="DOMAIN=$DOMAIN" -var="BESZEL_AGENT_KEY=$BESZEL_AGENT_KEY"'
 
   apply:
     desc: "Apply the Apps Terraform plan"
     dir: terraform_apps
     cmds:
-      - doppler run -- bash -c 'TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN terraform apply tfplan'
+      - task: plan
+      - doppler run -- bash -c '
+          export TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN;
+          export TF_VAR_FILEBROWSER_ADMIN_PASSWORD=$FILEBROWSER_ADMIN_PASSWORD;
+          export TF_VAR_DOCMOST_APP_SECRET=$DOCMOST_APP_SECRET;
+          export TF_VAR_DOCMOST_POSTGRES_PASSWORD=$DOCMOST_POSTGRES_PASSWORD;
+          export TF_VAR_DISCORD_WATCHTOWER_WEBHOOK=$DISCORD_WATCHTOWER_WEBHOOK;
+          terraform apply tfplan'
 
   destroy:
     desc: "Destroy the Apps Terraform-managed stacks"
     dir: terraform_apps
     cmds:
-      - doppler run -- bash -c 'TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN terraform destroy -auto-approve -var="ACME_EMAIL=$TRAEFIK_ACME_EMAIL" -var="DOMAIN=$DOMAIN" -var="BESZEL_AGENT_KEY=$BESZEL_AGENT_KEY"'
+      - doppler run -- bash -c '
+          export TF_VAR_PORTAINER_TOKEN=$PORTAINER_ACCESS_TOKEN;
+          export TF_VAR_FILEBROWSER_ADMIN_PASSWORD=$FILEBROWSER_ADMIN_PASSWORD;
+          export TF_VAR_DOCMOST_APP_SECRET=$DOCMOST_APP_SECRET;
+          export TF_VAR_DOCMOST_POSTGRES_PASSWORD=$DOCMOST_POSTGRES_PASSWORD;
+          export TF_VAR_DISCORD_WATCHTOWER_WEBHOOK=$DISCORD_WATCHTOWER_WEBHOOK;
+          terraform destroy -auto-approve -var="ACME_EMAIL=$TRAEFIK_ACME_EMAIL" -var="DOMAIN=$DOMAIN" -var="BESZEL_AGENT_KEY=$BESZEL_AGENT_KEY"'

@@ -75,3 +75,27 @@ variable "BESZEL_AGENT_KEY" {
   sensitive   = true
   default     = ""
 }
+
+variable "FILEBROWSER_ADMIN_PASSWORD" {
+  description = "Admin password for Filebrowser"
+  type        = string
+  sensitive   = true
+}
+
+variable "DOCMOST_APP_SECRET" {
+  description = "App secret for Docmost"
+  type        = string
+  sensitive   = true
+}
+
+variable "DOCMOST_POSTGRES_PASSWORD" {
+  description = "Postgres password for Docmost"
+  type        = string
+  sensitive   = true
+}
+
+variable "DISCORD_WATCHTOWER_WEBHOOK" {
+  description = "Discord Webhook URL for Watchtower notifications"
+  type        = string
+  sensitive   = true
+}
