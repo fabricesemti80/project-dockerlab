@@ -43,7 +43,7 @@ services:
         - "traefik.http.services.homepage.loadbalancer.server.port=3000"
         
         # Self-Discovery (Add itself to the dashboard)
-        - "homepage.group=Management"
+        - "homepage.group=Utilities"
         - "homepage.name=Homepage"
         - "homepage.icon=homepage.png"
         - "homepage.href=https://${DOMAIN}"

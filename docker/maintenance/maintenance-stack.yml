@@ -25,11 +25,6 @@ services:
       placement:
         constraints:
           - node.role == manager
-      labels:
-        - "homepage.group=Infrastructure"
-        - "homepage.name=Watchtower"
-        - "homepage.icon=watchtower.png"
-        - "homepage.description=Container Updates"
 
   system-prune:
     image: docker:cli
