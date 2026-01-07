@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  gatus:
+    image: twinproduction/gatus:latest
+    hostname: 'status.${DOMAIN}'
+    environment:
+      - "TZ=${TZ}"
+      - "DOMAIN=${DOMAIN}"
+      - "GATUS_CONFIG_PATH=/config/config.yaml"
+    volumes:
+      - /mnt/cephfs/docker-shared-data/gatus/data:/data
+    configs:
+      - source: gatus_config_v3
+        target: /config/config.yaml
+    networks:
+      - proxy
+      - socket-proxy
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.gatus.rule=Host(`gatus.${DOMAIN}`)"
+        - "traefik.http.routers.gatus.entrypoints=websecure"
+        - "traefik.http.routers.gatus.tls.certresolver=cloudflare"
+        - "traefik.http.services.gatus.loadbalancer.server.port=8080"
+
+        # Homepage Discovery
+        - "homepage.group=Monitoring"
+        - "homepage.name=Gatus"
+        - "homepage.icon=gatus.png"
+        - "homepage.href=https://gatus.${DOMAIN}"
+        - "homepage.description=System Status Monitoring"
+        - "homepage.widget.type=gatus"
+        - "homepage.widget.url=https://gatus.${DOMAIN}"
+
+configs:
+  gatus_config_v3:
+    file: ./config/config.yaml
+
+networks:
+  proxy:
+    external: true
+  socket-proxy:
+    external: true

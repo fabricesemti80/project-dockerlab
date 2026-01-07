@@ -13,38 +13,61 @@ pages:
           - type: calendar
           - type: weather
             location: London, United Kingdom
+          - type: docker-containers
+            hide-by-default: false
       
       - size: full
         widgets:
           - type: search
+          - type: hacker-news
+            limit: 10
+            collapse-after: 5
           - type: bookmarks
             groups:
               - title: Infrastructure
                 links:
                   - title: Traefik
-                    url: https://traefik.krapulax.dev
-                  - title: Whoami
-                    url: https://whoami.krapulax.dev
+                    url: https://traefik.${DOMAIN}
                   - title: Portainer
-                    url: https://portainer.krapulax.dev
-                  - title: Dockpeek
-                    url: https://dockpeek.krapulax.dev
-          
+                    url: https://portainer.${DOMAIN}
+                  - title: Beszel
+                    url: https://beszel.${DOMAIN}
+                  - title: Gatus
+                    url: https://status.${DOMAIN}
+                  - title: Socket Proxy
+                    url: tcp://socket-proxy:2375
+              - title: Development
+                links:
+                  - title: GitLab
+                    url: https://git.${DOMAIN}
+                  - title: FileBrowser
+                    url: https://files.${DOMAIN}
+                  - title: Docmost
+                    url: https://doc.${DOMAIN}
+              - title: Apps
+                links:
+                  - title: Homepage
+                    url: https://home.${DOMAIN}
+                  - title: Whoami
+                    url: https://whoami.${DOMAIN}
+
+      - size: small
+        widgets:
           - type: monitor
             title: Service Health
             cache: 1m
             services:
               - name: Traefik
-                url: https://traefik.krapulax.dev
-              - name: Whoami
-                url: https://whoami.krapulax.dev
-              - name: Dockpeek
-                url: https://dockpeek.krapulax.dev
-
-      - size: small
-        widgets:
-          - type: hacker-news
-            limit: 10
-            collapse-after: 5
-          - type: docker-containers
-            hide-by-default: false
+                url: https://traefik.${DOMAIN}
+              - name: Portainer
+                url: https://portainer.${DOMAIN}
+              - name: Homepage
+                url: https://home.${DOMAIN}
+              - name: GitLab
+                url: https://git.${DOMAIN}
+              - name: Docmost
+                url: https://doc.${DOMAIN}
+              - name: FileBrowser
+                url: https://files.${DOMAIN}
+              - name: Gatus
+                url: https://status.${DOMAIN}

@@ -1,0 +1,82 @@
+endpoints:
+  - name: "GitLab"
+    group: "Development"
+    url: "http://gitlab_gitlab:8929/help"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: discord
+        enabled: true
+        description: "GitLab is down"
+
+  - name: "Portainer"
+    group: "Infrastructure"
+    url: "tcp://portainer_portainer:9000"
+    interval: 5m
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: "Traefik"
+    group: "Infrastructure"
+    url: "tcp://traefik_traefik:80"
+    interval: 5m
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: "FileBrowser"
+    group: "Storage"
+    url: "http://filebrowser_filebrowser:80/login"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "Homepage"
+    group: "Dashboard"
+    url: "http://homepage_homepage:3000"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "Glance"
+    group: "Dashboard"
+    url: "http://glance_glance:8080"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "Docmost"
+    group: "Development"
+    url: "http://docmost_docmost:3000/"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "Watchtower"
+    group: "Infrastructure"
+    url: "http://watchtower_watchtower:8080/v1/metrics"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "Beszel"
+    group: "Monitoring"
+    url: "https://beszel.${DOMAIN}"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "Socket Proxy"
+    group: "Infrastructure"
+    url: "tcp://socket-proxy_socket-proxy:2375" # Internal check
+    interval: 5m
+    conditions:
+      - "[CONNECTED] == true"
+
+storage:
+  path: /data/gatus.db
+  type: sqlite
+
+ui:
+  title: "Status | Krapulax Lab"
+  header: "System Status"

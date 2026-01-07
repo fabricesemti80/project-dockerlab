@@ -9,7 +9,7 @@ services:
       # NOTE: Docker Configs are immutable. If you modify glance.yml, you must 
       # rename the config below (e.g. glance_config_v2) to trigger an update,
       # or delete the stack and redeploy.
-      - source: glance_config
+      - source: glance_config_v2
         target: /app/config/glance.yml
     volumes:
       - glance-data:/app/data
@@ -28,7 +28,7 @@ services:
         - "traefik.http.services.glance.loadbalancer.server.port=8080"
 
 configs:
-  glance_config:
+  glance_config_v2:
     file: ./glance.yml
 
 volumes:
