@@ -54,7 +54,7 @@ endpoints:
 
   - name: "Watchtower"
     group: "Infrastructure"
-    url: "http://watchtower_watchtower:8080/v1/metrics"
+    url: "http://maintenance_watchtower:8080/v1/metrics"
     interval: 5m
     headers:
       Authorization: "Bearer ${WATCHTOWER_HTTP_API_TOKEN}"
