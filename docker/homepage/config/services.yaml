@@ -4,7 +4,7 @@
         href: https://portainer.krapulax.net
         description: Docker Management
         server: my-docker
-        container: portainer_portainer
+        service: portainer_portainer
         url: http://portainer_portainer:9000/api/system/status
         widget:
           type: portainer
