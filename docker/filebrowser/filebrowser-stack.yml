@@ -37,10 +37,10 @@ services:
         - "homepage.server=my-docker"
         - "homepage.service=filebrowser_filebrowser"
         - "homepage.url=http://filebrowser_filebrowser:80"
-        - "homepage.widget.type=filebrowser"
-        - "homepage.widget.url=http://filebrowser_filebrowser:80"
-        - "homepage.widget.username=admin"
-        - "homepage.widget.password=${FILEBROWSER_ADMIN_PASSWORD}"
+        # - "homepage.widget.type=filebrowser"
+        # - "homepage.widget.url=http://filebrowser_filebrowser:80"
+        # - "homepage.widget.username=admin"
+        # - "homepage.widget.password=${FILEBROWSER_ADMIN_PASSWORD}"
 
 networks:
   proxy:
