@@ -11,3 +11,17 @@
           url: http://portainer_portainer:9000
           env: 1
           key: {{HOMEPAGE_VAR_PORTAINER_ACCESS_TOKEN}}
+
+- Storage:
+    - FileBrowser:
+        icon: filebrowser.png
+        href: https://files.krapulax.net
+        description: Cloud File Manager
+        server: my-docker
+        service: filebrowser_filebrowser
+        url: http://filebrowser_filebrowser:80
+        widget:
+          type: filebrowser
+          url: http://filebrowser_filebrowser:80
+          username: admin
+          password: {{HOMEPAGE_VAR_FILEBROWSER_ADMIN_PASSWORD}}
