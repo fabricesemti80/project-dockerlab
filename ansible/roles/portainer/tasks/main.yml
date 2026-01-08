@@ -241,18 +241,6 @@
   when: not ansible_check_mode
   tags: [portainer, doppler]
 
-- name: "Update Portainer service labels for Homepage widget"
-  ansible.builtin.command: |
-    docker service update \
-      --label-add "homepage.widget.key={{ portainer_token.json.rawAPIKey if (portainer_token is defined and portainer_token.json is defined and portainer_token.json.rawAPIKey is defined) else lookup('env', 'PORTAINER_ACCESS_TOKEN') }}" \
-      --label-add "homepage.widget.url=http://portainer_portainer:9000" \
-      portainer_portainer
-  delegate_to: "{{ inventory_hostname }}"
-  when: 
-    - not ansible_check_mode
-    - (portainer_token is defined and portainer_token.json is defined and portainer_token.json.rawAPIKey is defined) or (lookup('env', 'PORTAINER_ACCESS_TOKEN') | length > 0)
-  tags: [portainer, doppler]
-
 - name: "Portainer Access Summary"
   ansible.builtin.debug:
     msg:
