@@ -47,3 +47,8 @@ variable "ACCESS_EMAIL" {
   type        = string
   default     = "emilfabrice@gmail.com"
 }
+
+variable "DOMAIN" {
+  description = "The root domain for the lab"
+  type        = string
+}

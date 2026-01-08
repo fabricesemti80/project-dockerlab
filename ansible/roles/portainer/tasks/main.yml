@@ -215,7 +215,7 @@
     - "existing_tokens.json | selectattr('description', 'equalto', 'terraform') | list | length == 0"
   tags: [portainer]
 
-- name: "Save Portainer token to Doppler"
+- name: "Save fresh Portainer token to Doppler"
   ansible.builtin.shell: "doppler secrets set PORTAINER_ACCESS_TOKEN={{ portainer_token.json.rawAPIKey }}"
   delegate_to: localhost
   become: false
@@ -224,6 +224,13 @@
     - portainer_token is defined 
     - portainer_token.json is defined 
     - portainer_token.json.rawAPIKey is defined
+  tags: [portainer, doppler]
+
+- name: "Ensure Terraform alias exists in Doppler"
+  ansible.builtin.shell: "doppler secrets set TF_VAR_PORTAINER_TOKEN='${PORTAINER_ACCESS_TOKEN}'"
+  delegate_to: localhost
+  become: false
+  when: not ansible_check_mode
   tags: [portainer, doppler]
 
 - name: "Portainer Access Summary"
