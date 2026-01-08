@@ -25,8 +25,8 @@ services:
         - "homepage.icon=beszel.png"
         - "homepage.href=https://beszel.${DOMAIN}"
         - "homepage.description=Resource Monitor"
-        - "homepage.widget.type=beszel"
-        - "homepage.widget.url=https://beszel.${DOMAIN}"
+        # - "homepage.widget.type=beszel"
+        # - "homepage.widget.url=https://beszel.${DOMAIN}"
 
   agent:
     image: henrygd/beszel-agent:latest

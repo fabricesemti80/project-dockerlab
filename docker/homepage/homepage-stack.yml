@@ -43,13 +43,6 @@ services:
         - "traefik.http.routers.homepage.tls.certresolver=cloudflare"
         - "traefik.http.services.homepage.loadbalancer.server.port=3000"
         
-        # Self-Discovery (Add itself to the dashboard)
-        - "homepage.group=Utilities"
-        - "homepage.name=Homepage"
-        - "homepage.icon=homepage.png"
-        - "homepage.href=https://${DOMAIN}"
-        - "homepage.description=Dashboard"
-        - "homepage.weight=0"
 
 networks:
 

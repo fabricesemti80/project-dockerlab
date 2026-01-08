@@ -76,8 +76,8 @@ services:
         - "homepage.icon=traefik.png"
         - "homepage.href=https://traefik.${DOMAIN}"
         - "homepage.description=Reverse Proxy"
-        - "homepage.widget.type=traefik"
-        - "homepage.widget.url=https://traefik.${DOMAIN}"
+        # - "homepage.widget.type=traefik"
+        # - "homepage.widget.url=https://traefik.${DOMAIN}"
 
 networks:
   proxy:
