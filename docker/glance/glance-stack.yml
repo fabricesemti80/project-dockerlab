@@ -6,7 +6,7 @@ services:
     networks:
       - proxy
     configs:
-      - source: glance_config_v3 # Updated to v3; original file name is  glance.yml
+      - source: glance_config
         target: /app/config/glance.yml
     volumes:
       - glance-data:/app/data
@@ -35,8 +35,8 @@ services:
         - "homepage.description=Startpage"
 
 configs:
-  glance_config_v2:
-    file: ./glance.yml
+  glance_config:
+    file: ./config/glance.yml
 
 volumes:
   glance-data:
