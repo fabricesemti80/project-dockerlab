@@ -12,10 +12,10 @@ services:
       - DOMAIN=${DOMAIN}
       - FILEBROWSER_ADMIN_PASSWORD=${FILEBROWSER_ADMIN_PASSWORD}
     volumes:
-      - /mnt/cephfs/docker-shared-data/filebrowser/config:/config
-      - /mnt/cephfs/docker-shared-data/filebrowser/data:/data
-      - /mnt/cephfs:/srv/cephfs
-      - /mnt/nfs/media:/srv/media
+      - /mnt/cephfs/docker-shared-data/filebrowser/config:/config # Configuration files - allow running on any node
+      - /mnt/cephfs/docker-shared-data/filebrowser/data:/data      # User files - allow running on any node
+      - /mnt/cephfs:/srv/cephfs # Access to CephFS storage
+      - /mnt/nfs/media:/srv/media # Access to NFS media storage
     deploy:
       replicas: 1
       placement:
