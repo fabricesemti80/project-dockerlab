@@ -163,15 +163,11 @@ locals {
   }))
 }
 
-# 7. Push the Tunnel Token back to Doppler
-# We use local-exec because Doppler Service Tokens (provided to Terraform)
-# are read-only and cannot write secrets. This uses your local CLI auth.
-resource "null_resource" "push_tunnel_token_to_doppler" {
-  triggers = {
-    tunnel_token = local.tunnel_token
-  }
-
-  provisioner "local-exec" {
-    command = "doppler secrets set TUNNEL_TOKEN='${local.tunnel_token}'"
-  }
+# 7. Sync the Tunnel Token to Doppler
+# This ensures Doppler remains the source of truth for all secrets
+resource "doppler_secret" "tunnel_token" {
+  project = var.DOPPLER_PROJECT
+  config  = var.DOPPLER_CONFIG
+  name    = "TUNNEL_TOKEN"
+  value   = local.tunnel_token
 }
