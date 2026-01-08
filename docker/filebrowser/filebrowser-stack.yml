@@ -40,7 +40,7 @@ services:
         - "homepage.widget.type=filebrowser"
         - "homepage.widget.url=http://filebrowser_filebrowser:80"
         - "homepage.widget.username=admin"
-        - "homepage.widget.password={{HOMEPAGE_VAR_FILEBROWSER_ADMIN_PASSWORD}}"
+        - "homepage.widget.password=$${HOMEPAGE_VAR_FILEBROWSER_ADMIN_PASSWORD}"
 
 networks:
   proxy:
