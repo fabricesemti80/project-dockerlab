@@ -13,9 +13,6 @@ pages:
           - type: calendar
           - type: weather
             location: London, United Kingdom
-          - type: docker-containers
-            hide-by-default: false
-      
       - size: full
         widgets:
           - type: search
@@ -65,9 +62,11 @@ pages:
                 url: https://home.${DOMAIN}
               - name: GitLab
                 url: https://git.${DOMAIN}
-              - name: Docmost
-                url: https://doc.${DOMAIN}
+              # - name: Docmost
+              #   url: https://doc.${DOMAIN}
               - name: FileBrowser
                 url: https://files.${DOMAIN}
               - name: Gatus
                 url: https://status.${DOMAIN}
+          - type: docker-containers
+            hide-by-default: false
