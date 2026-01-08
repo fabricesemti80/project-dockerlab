@@ -13,7 +13,7 @@ tasks:
     desc: "Initialize Apps Terraform"
     dir: terraform_apps
     cmds:
-      - doppler run -- terraform init {{.CLI_ARGS}}
+      - doppler run -- terraform init
 
   create-network:
     desc: "Create the external traefik-public network"
@@ -26,17 +26,18 @@ tasks:
     cmds:
       - task: fmt
       - task: init
-      - doppler run -- terraform plan -out=tfplan
+      - doppler run -- terraform plan {{.CLI_ARGS}} -out=tfplan
 
   apply:
     desc: "Apply the Apps Terraform plan"
     dir: terraform_apps
     cmds:
       - task: plan
+        vars: { CLI_ARGS: "{{.CLI_ARGS}}" }
       - doppler run -- terraform apply tfplan
 
   destroy:
     desc: "Destroy the Apps Terraform-managed stacks"
     dir: terraform_apps
     cmds:
-      - doppler run -- terraform destroy -auto-approve
+      - doppler run -- terraform destroy -auto-approve {{.CLI_ARGS}}

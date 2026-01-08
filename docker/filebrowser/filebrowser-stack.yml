@@ -28,6 +28,20 @@ services:
         - "traefik.http.routers.filebrowser.tls.certresolver=cloudflare"
         - "traefik.http.services.filebrowser.loadbalancer.server.port=80"
 
+        # Homepage
+        - "homepage.group=Storage"
+        - "homepage.name=FileBrowser"
+        - "homepage.icon=filebrowser.png"
+        - "homepage.href=https://files.${DOMAIN}"
+        - "homepage.description=Cloud File Manager"
+        - "homepage.server=my-docker"
+        - "homepage.service=filebrowser_filebrowser"
+        - "homepage.url=http://filebrowser_filebrowser:80"
+        - "homepage.widget.type=filebrowser"
+        - "homepage.widget.url=http://filebrowser_filebrowser:80"
+        - "homepage.widget.username=admin"
+        - "homepage.widget.password=${HOMEPAGE_VAR_FILEBROWSER_ADMIN_PASSWORD}"
+
 networks:
   proxy:
     external: true
