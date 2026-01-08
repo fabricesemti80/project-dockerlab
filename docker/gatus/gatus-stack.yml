@@ -24,7 +24,7 @@ services:
           - node.role == manager
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.gatus.rule=Host(`gatus.${DOMAIN}`)"
+        - "traefik.http.routers.gatus.rule=Host(`status.${DOMAIN}`)"
         - "traefik.http.routers.gatus.entrypoints=websecure"
         - "traefik.http.routers.gatus.tls.certresolver=cloudflare"
         - "traefik.http.services.gatus.loadbalancer.server.port=8080"
@@ -33,10 +33,10 @@ services:
         - "homepage.group=Monitoring"
         - "homepage.name=Gatus"
         - "homepage.icon=gatus.png"
-        - "homepage.href=https://gatus.${DOMAIN}"
+        - "homepage.href=https://status.${DOMAIN}"
         - "homepage.description=System Status Monitoring"
         - "homepage.widget.type=gatus"
-        - "homepage.widget.url=https://gatus.${DOMAIN}"
+        - "homepage.widget.url=https://status.${DOMAIN}"
 
 configs:
   gatus_config_v5:
