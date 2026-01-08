@@ -99,3 +99,19 @@ variable "DISCORD_WATCHTOWER_WEBHOOK" {
   type        = string
   sensitive   = true
 }
+
+variable "DOPPLER_TOKEN" {
+  description = "The Doppler token for authentication"
+  type        = string
+  sensitive   = true
+}
+
+variable "DOPPLER_PROJECT" {
+  description = "The Doppler project name"
+  type        = string
+}
+
+variable "DOPPLER_CONFIG" {
+  description = "The Doppler config name"
+  type        = string
+}

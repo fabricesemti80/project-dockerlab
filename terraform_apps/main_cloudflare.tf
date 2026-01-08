@@ -163,9 +163,11 @@ locals {
   }))
 }
 
-# Output the Tunnel Token to a local .env file for the cloudflared stack
-resource "local_file" "tunnel_env" {
-  content         = "TUNNEL_TOKEN=${local.tunnel_token}"
-  filename        = "${path.module}/../docker/cloudflared/.env"
-  file_permission = "0600"
+# 7. Sync the Tunnel Token to Doppler
+# This ensures Doppler remains the source of truth for all secrets
+resource "doppler_secret" "tunnel_token" {
+  project = var.DOPPLER_PROJECT
+  config  = var.DOPPLER_CONFIG
+  name    = "TUNNEL_TOKEN"
+  value   = local.tunnel_token
 }

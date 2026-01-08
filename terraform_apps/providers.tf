@@ -12,11 +12,19 @@ terraform {
       source  = "hashicorp/random"
       version = "~> 3.6"
     }
+    doppler = {
+      source  = "dopplerhq/doppler"
+      version = "~> 1.3"
+    }
   }
 }
 
 provider "cloudflare" {
   api_token = var.CLOUDFLARE_API_TOKEN
+}
+
+provider "doppler" {
+  doppler_token = var.DOPPLER_TOKEN
 }
 
 provider "portainer" {

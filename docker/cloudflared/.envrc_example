@@ -1,3 +1,0 @@
-# Cloudflare Tunnel Token
-# Get this from the Cloudflare Zero Trust Dashboard > Access > Tunnels
-TUNNEL_TOKEN=eyJhIjoi...
