@@ -46,8 +46,8 @@ services:
         - "homepage.href=https://portainer.{{ apps_domain }}"
         - "homepage.description=Docker Management"
         - "homepage.widget.type=portainer"
-        - "homepage.widget.url=https://portainer.{{ apps_domain }}"
-        - "homepage.widget.key={{ '{{' }}HOMEPAGE_VAR_PORTAINER_ACCESS_TOKEN{{ '}}' }}"
+        - "homepage.widget.url=http://portainer_portainer:9000"
+        - "homepage.widget.key={{ portainer_access_token | default('{{' ~ 'HOMEPAGE_VAR_PORTAINER_ACCESS_TOKEN' ~ '}}', true) }}"
         - "homepage.widget.env=1"
 
 networks:

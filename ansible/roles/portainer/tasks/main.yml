@@ -16,6 +16,8 @@
     src: portainer-stack.yml.j2
     dest: /tmp/portainer-stack.yml
     mode: '0644'
+  vars:
+    portainer_access_token: "{{ lookup('env', 'PORTAINER_ACCESS_TOKEN') }}"
   tags: [portainer]
 
 - name: "Ensure 'proxy' overlay network exists"
@@ -120,6 +122,9 @@
     status_code: [200, 409]
     use_proxy: no
   register: portainer_init
+  until: portainer_init is not failed
+  retries: 10
+  delay: 5
   when: not ansible_check_mode
   tags: [portainer]
 
@@ -134,6 +139,9 @@
     status_code: [200, 422]
     use_proxy: no
   register: portainer_auth_doppler
+  until: portainer_auth_doppler is not failed
+  retries: 10
+  delay: 5
   when: not ansible_check_mode
   tags: [portainer]
 
@@ -231,6 +239,18 @@
   delegate_to: localhost
   become: false
   when: not ansible_check_mode
+  tags: [portainer, doppler]
+
+- name: "Update Portainer service labels for Homepage widget"
+  ansible.builtin.command: |
+    docker service update \
+      --label-add "homepage.widget.key={{ portainer_token.json.rawAPIKey if (portainer_token is defined and portainer_token.json is defined and portainer_token.json.rawAPIKey is defined) else lookup('env', 'PORTAINER_ACCESS_TOKEN') }}" \
+      --label-add "homepage.widget.url=http://portainer_portainer:9000" \
+      portainer_portainer
+  delegate_to: "{{ inventory_hostname }}"
+  when: 
+    - not ansible_check_mode
+    - (portainer_token is defined and portainer_token.json is defined and portainer_token.json.rawAPIKey is defined) or (lookup('env', 'PORTAINER_ACCESS_TOKEN') | length > 0)
   tags: [portainer, doppler]
 
 - name: "Portainer Access Summary"

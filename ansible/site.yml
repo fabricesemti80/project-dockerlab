@@ -37,10 +37,7 @@
     # Portainer Configuration
     portainer_admin_user: admin
     portainer_admin_password: "{{ lookup('env', 'PORTAINER_ADMIN_PASSWORD') }}"
-    # Portainer Configuration
-    portainer_admin_user: admin
-    portainer_admin_password: "{{ lookup('env', 'PORTAINER_ADMIN_PASSWORD') }}"
-    apps_domain: "{{ lookup('env', 'DOMAIN') | default('krapulax.net') }}" # Consistent domain # Consistent domain
+    apps_domain: "{{ lookup('env', 'DOMAIN') | default('krapulax.net') }}" # Consistent domain
 
     # Shell Configuration
     zsh_set_as_default: true
@@ -63,9 +60,6 @@
   vars:
     # Inherit variables from the previous play
     install_portainer: true
-    portainer_admin_user: admin
-    portainer_admin_password: "{{ lookup('env', 'PORTAINER_ADMIN_PASSWORD') }}"
-    # Portainer Configuration
     portainer_admin_user: admin
     portainer_admin_password: "{{ lookup('env', 'PORTAINER_ADMIN_PASSWORD') }}"
     apps_domain: "{{ lookup('env', 'DOMAIN') | default('krapulax.net') }}" # Consistent domain
