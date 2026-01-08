@@ -184,6 +184,11 @@ resource "portainer_stack" "homepage" {
     value = var.PORTAINER_TOKEN
   }
 
+  env {
+    name  = "FILEBROWSER_ADMIN_PASSWORD"
+    value = var.FILEBROWSER_ADMIN_PASSWORD
+  }
+
   depends_on = [portainer_stack.socket-proxy]
 }
 
