@@ -1,8 +1,0 @@
-[[alerter]]
-name = "homelab-alerts"
-tags = ["homelab", "media"]
-
-[alerter.config]
-enabled = true
-endpoint.type = "Pushover"
-endpoint.params.url = "https://api.pushover.net/1/messages.json?token=${PUSHOVER_APP_TOKEN}&user=${PUSHOVER_USER_TOKEN}"
