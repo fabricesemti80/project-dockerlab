@@ -17,7 +17,7 @@ services:
         # Homepage Discovery
         - "homepage.group=Test"
         - "homepage.name=Whoami"
-        - "homepage.icon=whoami.png"
+        - "homepage.icon=sh-basic-memory.png"
         - "homepage.href=https://whoami.${DOMAIN}"
         - "homepage.description=Test Application"
 
