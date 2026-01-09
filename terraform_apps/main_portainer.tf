@@ -261,42 +261,42 @@ resource "portainer_stack" "gatus" {
   }
 }
 
-# resource "portainer_stack" "docmost" {
-#   name            = "docmost"
-#   deployment_type = "swarm"
-#   method          = "repository"
-#   endpoint_id     = 1
+resource "portainer_stack" "docmost" {
+  name            = "docmost"
+  deployment_type = "swarm"
+  method          = "repository"
+  endpoint_id     = 1
 
-#   repository_url            = var.REPO_URL
-#   repository_reference_name = var.REPO_BRANCH
-#   file_path_in_repository   = "docker/docmost/docmost-stack.yml"
+  repository_url            = var.REPO_URL
+  repository_reference_name = var.REPO_BRANCH
+  file_path_in_repository   = "docker/docmost/docmost-stack.yml"
 
-#   force_update    = true
-#   pull_image      = true
-#   prune           = true
-#   update_interval = "5m"
-#   stack_webhook   = true
+  force_update    = true
+  pull_image      = true
+  prune           = true
+  update_interval = "5m"
+  stack_webhook   = true
 
-#   env {
-#     name  = "DOMAIN"
-#     value = var.DOMAIN
-#   }
+  env {
+    name  = "DOMAIN"
+    value = var.DOMAIN
+  }
 
-#   env {
-#     name  = "TZ"
-#     value = var.TZ
-#   }
+  env {
+    name  = "TZ"
+    value = var.TZ
+  }
 
-#   env {
-#     name  = "DOCMOST_APP_SECRET"
-#     value = var.DOCMOST_APP_SECRET
-#   }
+  env {
+    name  = "DOCMOST_APP_SECRET"
+    value = var.DOCMOST_APP_SECRET
+  }
 
-#   env {
-#     name  = "DOCMOST_POSTGRES_PASSWORD"
-#     value = var.DOCMOST_POSTGRES_PASSWORD
-#   }
-# }
+  env {
+    name  = "DOCMOST_POSTGRES_PASSWORD"
+    value = var.DOCMOST_POSTGRES_PASSWORD
+  }
+}
 
 resource "portainer_stack" "maintenance" {
   name            = "maintenance"
