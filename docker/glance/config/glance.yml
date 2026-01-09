@@ -17,8 +17,8 @@ pages:
         widgets:
           - type: search
           - type: hacker-news
-            limit: 10
-            collapse-after: 5
+            limit: 15
+            collapse-after: 10
           - type: bookmarks
             groups:
               - title: Infrastructure
@@ -31,12 +31,10 @@ pages:
                     url: https://beszel.${DOMAIN}
                   - title: Gatus
                     url: https://status.${DOMAIN}
-                  - title: Socket Proxy
-                    url: tcp://socket-proxy:2375
               - title: Development
                 links:
-                  - title: GitLab
-                    url: https://git.${DOMAIN}
+                  # - title: GitLab
+                  #   url: https://git.${DOMAIN}
                   - title: FileBrowser
                     url: https://files.${DOMAIN}
                   - title: Docmost
