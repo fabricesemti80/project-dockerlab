@@ -1,0 +1,68 @@
+version: "3.9"
+
+services:
+  ghost:
+    image: ghost:5-alpine
+    environment:
+      - NODE_ENV=production
+      - url=https://ghost.${DOMAIN}
+      - database__client=mysql
+      - database__connection__host=ghost-db
+      - database__connection__user=ghost
+      - database__connection__password=${GHOST_DB_PASSWORD}
+      - database__connection__database=ghost
+      - mail__transport=${GHOST_MAIL_TRANSPORT}
+      - mail__options__host=${GHOST_MAIL_HOST}
+      - mail__options__port=${GHOST_MAIL_PORT}
+      - mail__options__auth__user=${GHOST_MAIL_USER}
+      - mail__options__auth__pass=${GHOST_MAIL_PASSWORD}
+      - mail__from=${GHOST_MAIL_FROM}
+    volumes:
+      - /mnt/cephfs/docker-shared-data/ghost/content:/var/lib/ghost/content
+    networks:
+      - proxy
+      - ghost-internal
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        # Traefik
+        - "traefik.enable=true"
+        - "traefik.http.routers.ghost.rule=Host(`ghost.${DOMAIN}`)"
+        - "traefik.http.routers.ghost.entrypoints=websecure"
+        - "traefik.http.routers.ghost.tls.certresolver=cloudflare"
+        - "traefik.http.services.ghost.loadbalancer.server.port=2368"
+
+        # Homepage
+        - "homepage.group=Publishing"
+        - "homepage.name=Ghost"
+        - "homepage.icon=ghost.png"
+        - "homepage.href=https://ghost.${DOMAIN}"
+        - "homepage.description=Blogging Platform"
+    depends_on:
+      - ghost-db
+
+  ghost-db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=${GHOST_DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=ghost
+      - MYSQL_USER=ghost
+      - MYSQL_PASSWORD=${GHOST_DB_PASSWORD}
+    volumes:
+      - /mnt/cephfs/docker-shared-data/ghost/mysql:/var/lib/mysql
+    networks:
+      - ghost-internal
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+
+networks:
+  proxy:
+    external: true
+  ghost-internal:
+    driver: overlay
