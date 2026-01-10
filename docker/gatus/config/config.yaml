@@ -68,6 +68,13 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
 
+  - name: "Wallos"
+    group: "Finance"
+    url: "https://wallos.${DOMAIN}"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
   - name: "Socket Proxy"
     group: "Infrastructure"
     url: "tcp://socket-proxy_socket-proxy:2375" # Internal check

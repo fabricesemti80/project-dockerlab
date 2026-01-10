@@ -47,6 +47,14 @@
     selected_data_disk_name: "{{ data_disks | first }}"
   when: data_disks | length > 0
 
+- name: Remove missing physical volumes from volume group
+  ansible.builtin.command: vgreduce --removemissing {{ lvm_volume_group_name }} --force
+  failed_when: false
+  changed_when: false
+  when:
+    - vgs_binary.rc == 0
+    - not ansible_check_mode
+
 - name: Create physical volume and volume group
   community.general.lvg:
     vg: "{{ lvm_volume_group_name }}"

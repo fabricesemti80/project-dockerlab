@@ -47,3 +47,8 @@
   include_tasks: ceph_setup.yml
   tags: [storage, ceph]
   when: install_cephfs | default(false) | bool
+
+- name: Application Data Directories
+  include_tasks: app_data_setup.yml
+  tags: [storage, apps]
+  when: install_cephfs | default(false) | bool

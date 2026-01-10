@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  wallos:
+    image: bellamy/wallos:latest
+    environment:
+      - TZ=${TZ}
+      - BASE_URL=https://wallos.${DOMAIN}
+    volumes:
+      - /mnt/cephfs/docker-shared-data/wallos/db:/var/www/html/db
+      - /mnt/cephfs/docker-shared-data/wallos/logos:/var/www/html/images/uploads/logos
+    networks:
+      - proxy
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        # Traefik
+        - "traefik.enable=true"
+        - "traefik.http.routers.wallos.rule=Host(`wallos.${DOMAIN}`)"
+        - "traefik.http.routers.wallos.entrypoints=websecure"
+        - "traefik.http.routers.wallos.tls.certresolver=cloudflare"
+        - "traefik.http.services.wallos.loadbalancer.server.port=80"
+
+        # Homepage
+        - "homepage.group=Finance"
+        - "homepage.name=Wallos"
+        - "homepage.icon=wallos.png"
+        - "homepage.href=https://wallos.${DOMAIN}"
+        - "homepage.description=Subscription Tracker"
+        - "homepage.widget.type=wallos"
+        - "homepage.widget.url=http://wallos:80"
+        # - "homepage.widget.key=API_KEY" # Optional, if Wallos adds API key later
+
+networks:
+  proxy:
+    external: true

@@ -43,6 +43,8 @@ pages:
                 links:
                   - title: Homepage
                     url: https://home.${DOMAIN}
+                  - title: Wallos
+                    url: https://wallos.${DOMAIN}
                   - title: Whoami
                     url: https://whoami.${DOMAIN}
 
