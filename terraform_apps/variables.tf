@@ -131,7 +131,7 @@ variable "GHOST_DB_ROOT_PASSWORD" {
 variable "GHOST_MAIL_TRANSPORT" {
   description = "Mail transport for Ghost (e.g., SMTP)"
   type        = string
-  default     = ""
+  default     = "SMTP"
 }
 
 variable "GHOST_MAIL_HOST" {

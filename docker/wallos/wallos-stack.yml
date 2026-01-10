@@ -30,8 +30,8 @@ services:
         - "homepage.icon=wallos.png"
         - "homepage.href=https://wallos.${DOMAIN}"
         - "homepage.description=Subscription Tracker"
-        - "homepage.widget.type=wallos"
-        - "homepage.widget.url=http://wallos:80"
+        # - "homepage.widget.type=wallos"
+        # - "homepage.widget.url=http://wallos:80"
         # - "homepage.widget.key=API_KEY" # Optional, if Wallos adds API key later
 
 networks:
