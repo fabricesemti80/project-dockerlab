@@ -5,7 +5,7 @@ services:
     image: ghost:5-alpine
     environment:
       - NODE_ENV=production
-      - url=https://ghost.${DOMAIN}
+      - url=https://blog.${DOMAIN}
       - database__client=mysql
       - database__connection__host=ghost-db
       - database__connection__user=ghost
@@ -30,7 +30,7 @@ services:
       labels:
         # Traefik
         - "traefik.enable=true"
-        - "traefik.http.routers.ghost.rule=Host(`ghost.${DOMAIN}`)"
+        - "traefik.http.routers.ghost.rule=Host(`blog.${DOMAIN}`)"
         - "traefik.http.routers.ghost.entrypoints=websecure"
         - "traefik.http.routers.ghost.tls.certresolver=cloudflare"
         - "traefik.http.services.ghost.loadbalancer.server.port=2368"
@@ -39,7 +39,7 @@ services:
         - "homepage.group=Publishing"
         - "homepage.name=Ghost"
         - "homepage.icon=ghost.png"
-        - "homepage.href=https://ghost.${DOMAIN}"
+        - "homepage.href=https://blog.${DOMAIN}"
         - "homepage.description=Blogging Platform"
     depends_on:
       - ghost-db

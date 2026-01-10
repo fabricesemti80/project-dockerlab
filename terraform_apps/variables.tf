@@ -115,3 +115,52 @@ variable "DOPPLER_CONFIG" {
   description = "The Doppler config name"
   type        = string
 }
+
+variable "GHOST_DB_PASSWORD" {
+  description = "MySQL password for Ghost database user"
+  type        = string
+  sensitive   = true
+}
+
+variable "GHOST_DB_ROOT_PASSWORD" {
+  description = "MySQL root password for Ghost database"
+  type        = string
+  sensitive   = true
+}
+
+variable "GHOST_MAIL_TRANSPORT" {
+  description = "Mail transport for Ghost (e.g., SMTP)"
+  type        = string
+  default     = ""
+}
+
+variable "GHOST_MAIL_HOST" {
+  description = "SMTP host for Ghost mail"
+  type        = string
+  default     = "smtp.gmail.com"
+}
+
+variable "GHOST_MAIL_PORT" {
+  description = "SMTP port for Ghost mail"
+  type        = string
+  default     = "587"
+}
+
+variable "GHOST_MAIL_USER" {
+  description = "SMTP username for Ghost mail"
+  type        = string
+  default     = ""
+}
+
+variable "GHOST_MAIL_PASSWORD" {
+  description = "SMTP password for Ghost mail"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "GHOST_MAIL_FROM" {
+  description = "From address for Ghost emails"
+  type        = string
+  default     = "noreply@krapulax.net"
+}

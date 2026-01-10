@@ -10,3 +10,15 @@
     - db
     - logos
   when: install_cephfs | default(false) | bool
+
+- name: Ensure Ghost data directories exist
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/ghost/{{ item }}"
+    state: directory
+    owner: "1000"
+    group: "1000"
+    mode: '0755'
+  loop:
+    - content
+    - mysql
+  when: install_cephfs | default(false) | bool

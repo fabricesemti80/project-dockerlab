@@ -154,6 +154,31 @@ resource "cloudflare_zero_trust_access_application" "beszel_access" {
   ]
 }
 
+resource "cloudflare_zero_trust_access_application" "blog_access" {
+  account_id = var.CLOUDFLARE_ACCOUNT_ID
+  name       = "Blog Access"
+  domain     = "blog.${var.DOMAIN}"
+  type       = "self_hosted"
+
+  session_duration          = "24h"
+  auto_redirect_to_identity = false
+
+  policies = [
+    {
+      name     = "Allow Everyone"
+      decision = "bypass"
+      include = [
+        {
+          ip = {
+            ip = "0.0.0.0/0" # Allow from anywhere
+          }
+        }
+      ]
+    }
+  ]
+}
+
+
 # 6. Generate Tunnel Token for deployment
 locals {
   tunnel_token = base64encode(jsonencode({

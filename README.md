@@ -234,6 +234,22 @@ A complete monitoring solution for Docker Swarm. See [Monitoring Setup](docker/m
 
 Traefik Ingress Controller. See [Traefik Setup](docker/traefik/setup.md) for details.
 
+#### Ghost
+
+Ghost is a powerful open-source blogging and publishing platform. See [Ghost Setup](docker/ghost/setup.md) for details.
+
+**Required Doppler Secrets:**
+| Secret | Description |
+|--------|-------------|
+| `GHOST_DB_PASSWORD` | MySQL password for Ghost database user |
+| `GHOST_DB_ROOT_PASSWORD` | MySQL root password for Ghost database |
+| `GHOST_MAIL_TRANSPORT` | Mail transport (e.g., `SMTP`) - optional |
+| `GHOST_MAIL_HOST` | SMTP host - optional |
+| `GHOST_MAIL_PORT` | SMTP port - optional |
+| `GHOST_MAIL_USER` | SMTP username - optional |
+| `GHOST_MAIL_PASSWORD` | SMTP password - optional |
+| `GHOST_MAIL_FROM` | From address for emails - optional |
+
 ## 🔄 Deployment Workflow
 
 ```mermaid
