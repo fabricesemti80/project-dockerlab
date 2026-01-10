@@ -28,7 +28,7 @@ services:
         - "traefik.http.services.glance.loadbalancer.server.port=8080"
 
         # Homepage
-        - "homepage.group=Utilites"
+        - "homepage.group=Utilities"
         - "homepage.name=Glance"
         - "homepage.icon=glance.png"
         - "homepage.href=https://glance.${DOMAIN}"
