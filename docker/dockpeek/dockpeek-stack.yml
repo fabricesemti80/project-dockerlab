@@ -12,11 +12,29 @@ services:
       # If the app supports built-in auth via env vars:
       - USERNAME=${USERNAME}
       - PASSWORD=${PASSWORD}
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     deploy:
       replicas: 1
       placement:
         constraints:
           - node.role == manager
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          memory: 64M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.dockpeek.rule=Host(`dockpeek.${DOMAIN}`)"

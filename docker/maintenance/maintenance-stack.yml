@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   watchtower:
-    image: containrrr/watchtower:latest
+    image: containrrr/watchtower:1.7.1
     hostname: watchtower
     networks:
       - socket-proxy
@@ -26,7 +26,21 @@ services:
       placement:
         constraints:
           - node.role == manager
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          memory: 64M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
 
+  # NOTE: This service requires direct Docker socket access for system prune operations.
+  # Consider running docker system prune manually or via cron on host instead for better security.
   system-prune:
     image: docker:cli
     command: >
@@ -35,6 +49,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       mode: global
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 64M
+        reservations:
+          memory: 32M
     environment:
       - TZ=${TZ}
 

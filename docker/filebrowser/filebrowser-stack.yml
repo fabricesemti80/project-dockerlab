@@ -16,11 +16,29 @@ services:
       - /mnt/cephfs/docker-shared-data/filebrowser/data:/data      # User files - allow running on any node
       - /mnt/cephfs:/srv/cephfs # Access to CephFS storage
       - /mnt/nfs/media:/srv/media # Access to NFS media storage
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     deploy:
       replicas: 1
       placement:
         constraints:
           - node.role == manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          memory: 128M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.filebrowser.rule=Host(`files.${DOMAIN}`)"

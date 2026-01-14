@@ -3,6 +3,12 @@ version: "3.9"
 services:
   socket-proxy:
     image: tecnativa/docker-socket-proxy:latest
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:2375/_ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     deploy:
       mode: replicated
       replicas: 1
@@ -13,6 +19,18 @@ services:
         condition: on-failure
         delay: 5s
         max_attempts: 3
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 64M
+        reservations:
+          memory: 32M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:

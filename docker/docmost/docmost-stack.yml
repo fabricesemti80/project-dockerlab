@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   docmost:
-    image: docmost/docmost:latest
+    image: docmost/docmost:0.24.1
     networks:
       - proxy
       - docmost-net
@@ -15,12 +15,30 @@ services:
       - HOST=0.0.0.0
     volumes:
       - /mnt/cephfs/docker-shared-data/docmost/storage:/app/data/storage
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     deploy:
       mode: replicated
       replicas: 1
       placement:
         constraints:
           - node.role == manager
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
       labels:
         - "traefik.enable=true"
         - "traefik.docker.network=proxy"
@@ -47,12 +65,30 @@ services:
       - TZ=${TZ}
     volumes:
       - /mnt/cephfs/docker-shared-data/docmost/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U docmost -d docmost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     deploy:
       mode: replicated
       replicas: 1
       placement:
         constraints:
           - node.role == manager
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          memory: 128M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
 
   redis:
     image: redis:7.2-alpine
@@ -60,12 +96,30 @@ services:
       - docmost-net
     volumes:
       - /mnt/cephfs/docker-shared-data/docmost/redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     deploy:
       mode: replicated
       replicas: 1
       placement:
         constraints:
           - node.role == manager
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+        reservations:
+          memory: 64M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
 
   init-permissions:
     image: alpine:latest
