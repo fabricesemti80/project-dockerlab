@@ -18,7 +18,7 @@ services:
     volumes:
       - /mnt/cephfs/docker-shared-data/gatus/data:/data
     configs:
-      - source: gatus_config_v5
+      - source: gatus_config_v6
         target: /config/config.yaml
     networks:
       - proxy
@@ -57,7 +57,7 @@ services:
         # - "homepage.widget.url=https://status.${DOMAIN}"
 
 configs:
-  gatus_config_v5:
+  gatus_config_v6:
     file: ./config/config.yaml
 
 networks:
