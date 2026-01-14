@@ -82,6 +82,31 @@ endpoints:
     conditions:
       - "[CONNECTED] == true"
 
+  - name: "Ghost Blog"
+    group: "Publishing"
+    url: "https://blog.${DOMAIN}"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "Dockpeek"
+    group: "Infrastructure"
+    url: "http://dockpeek_dockpeek:8000"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "Cloudflared"
+    group: "Infrastructure"
+    url: "tcp://cloudflared_cloudflared:8080"
+    interval: 5m
+    conditions:
+      - "[CONNECTED] == true"
+    alerts:
+      - type: discord
+        enabled: true
+        description: "Cloudflare Tunnel is down"
+
 storage:
   path: /data/gatus.db
   type: sqlite
