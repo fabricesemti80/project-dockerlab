@@ -13,7 +13,7 @@ tasks:
     desc: "Initialize Apps Terraform"
     dir: terraform_apps
     cmds:
-      - doppler run -- terraform init
+      - doppler run -- terraform init --upgrade {{.CLI_ARGS}}
 
   create-network:
     desc: "Create the external traefik-public network"

@@ -13,7 +13,7 @@ tasks:
     desc: "Initialize Hetzner Terraform"
     dir: terraform_infra
     cmds:
-      - doppler run -- terraform init {{.CLI_ARGS}}
+      - doppler run -- terraform init --upgrade {{.CLI_ARGS}}
 
   plan:
     desc: "Create a Hetzner Terraform execution plan"
