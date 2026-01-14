@@ -1,14 +1,5 @@
 endpoints:
-  - name: "GitLab"
-    group: "Development"
-    url: "http://gitlab_gitlab:8929/help"
-    interval: 5m
-    conditions:
-      - "[STATUS] == 200"
-    alerts:
-      - type: discord
-        enabled: true
-        description: "GitLab is down"
+  # GitLab removed - not currently deployed
 
   - name: "Portainer"
     group: "Infrastructure"
@@ -88,24 +79,10 @@ endpoints:
     interval: 5m
     conditions:
       - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 5000"
 
-  - name: "Dockpeek"
-    group: "Infrastructure"
-    url: "http://dockpeek_dockpeek:8000"
-    interval: 5m
-    conditions:
-      - "[STATUS] == 200"
-
-  - name: "Cloudflared"
-    group: "Infrastructure"
-    url: "tcp://cloudflared_cloudflared:8080"
-    interval: 5m
-    conditions:
-      - "[CONNECTED] == true"
-    alerts:
-      - type: discord
-        enabled: true
-        description: "Cloudflare Tunnel is down"
+  # Dockpeek removed - on different network
+  # Cloudflared is a tunnel client (outbound only) - no ports to check
 
 storage:
   path: /data/gatus.db
