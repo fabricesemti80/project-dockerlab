@@ -2,14 +2,8 @@ version: "3.9"
 
 services:
   gatus:
-    image: twinproduction/gatus:v5.34.0
+    image: twinproduction/gatus:latest
     hostname: 'status.${DOMAIN}'
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
     environment:
       - "TZ=${TZ}"
       - "DOMAIN=${DOMAIN}"
@@ -18,7 +12,7 @@ services:
     volumes:
       - /mnt/cephfs/docker-shared-data/gatus/data:/data
     configs:
-      - source: gatus_config_v6
+      - source: gatus_config_v5
         target: /config/config.yaml
     networks:
       - proxy
@@ -28,18 +22,6 @@ services:
       placement:
         constraints:
           - node.role == manager
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          memory: 128M
-      update_config:
-        parallelism: 1
-        delay: 10s
-        failure_action: rollback
-      rollback_config:
-        parallelism: 1
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.gatus.rule=Host(`status.${DOMAIN}`)"
@@ -57,7 +39,7 @@ services:
         # - "homepage.widget.url=https://status.${DOMAIN}"
 
 configs:
-  gatus_config_v6:
+  gatus_config_v5:
     file: ./config/config.yaml
 
 networks:
