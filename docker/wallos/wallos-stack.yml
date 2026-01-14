@@ -10,7 +10,7 @@ services:
       - /mnt/cephfs/docker-shared-data/wallos/db:/var/www/html/db
       - /mnt/cephfs/docker-shared-data/wallos/logos:/var/www/html/images/uploads/logos
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:80/health.php || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
