@@ -164,3 +164,15 @@ variable "GHOST_MAIL_FROM" {
   type        = string
   default     = "noreply@krapulax.net"
 }
+
+variable "S3_ACCESS_KEY_ID" {
+  description = "Access key for S3-compatible storage (Cloudflare R2, AWS S3, Wasabi, MinIO)"
+  type        = string
+  sensitive   = true
+}
+
+variable "S3_SECRET_ACCESS_KEY" {
+  description = "Secret key for S3-compatible storage (Cloudflare R2, AWS S3, Wasabi, MinIO)"
+  type        = string
+  sensitive   = true
+}

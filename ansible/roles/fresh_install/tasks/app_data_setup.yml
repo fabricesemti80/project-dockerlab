@@ -22,3 +22,16 @@
     - content
     - mysql
   when: install_cephfs | default(false) | bool
+
+- name: Ensure Backrest data directories exist
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/backrest/{{ item }}"
+    state: directory
+    owner: "0"
+    group: "0"
+    mode: '0755'
+  loop:
+    - config
+    - data
+    - cache
+  when: install_cephfs | default(false) | bool
