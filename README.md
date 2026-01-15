@@ -212,7 +212,7 @@ A simple Traefik whoami service for testing Swarm deployments:
 cd apps/whoami
 docker stack deploy -c docker-compose.yaml whoami
 ```
-```
+
 
 #### Cloudflare Tunnel
 
@@ -237,6 +237,16 @@ Traefik Ingress Controller. See [Traefik Setup](docker/traefik/setup.md) for det
 #### Ghost
 
 Ghost is a powerful open-source blogging and publishing platform. See [Ghost Setup](docker/ghost/setup.md) for details.
+
+#### Backup
+
+Automated backup solution using Restic with support for Backblaze B2, AWS S3, or SFTP storage. See [Backup Setup](docker/backup/setup.md) for details.
+
+**Features:**
+- Pre-backup database dumps (MySQL, Postgres)
+- Incremental, deduplicated, encrypted backups
+- Automatic retention (7 daily, 4 weekly, 3 monthly)
+- Discord notifications
 
 **Required Doppler Secrets:**
 | Secret | Description |
