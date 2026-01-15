@@ -1,133 +1,56 @@
 version: "3.9"
 
-# Restic Backup Stack for Docker Swarm
-# Backs up all data from /mnt/cephfs/docker-shared-data to remote storage
+# Backrest - Web UI and orchestrator for Restic backups
+# https://github.com/garethgeorge/backrest
 #
-# Required environment variables:
-# - RESTIC_REPOSITORY: Repository URL (see examples below)
-# - RESTIC_PASSWORD: Encryption password for the repository
-# - S3_ACCESS_KEY_ID: Access key for S3-compatible storage (R2, Wasabi, MinIO, AWS S3)
-# - S3_SECRET_ACCESS_KEY: Secret key for S3-compatible storage
-# - DISCORD_WEBHOOK_URL: (optional) Discord webhook for notifications
-#
-# Repository URL examples:
-# - Cloudflare R2: s3:https://<account-id>.r2.cloudflarestorage.com/<bucket>
-# - AWS S3: s3:s3.amazonaws.com/<bucket>
-# - Wasabi: s3:https://s3.wasabisys.com/<bucket>
-# - MinIO: s3:https://minio.example.com/<bucket>
-# - Backblaze B2: b2:<bucket>:<path>
-# - SFTP: sftp:user@host:/path
+# Features:
+# - Web UI for managing backups, repos, and restores
+# - Built-in scheduling (no manual service scaling needed)
+# - Browse and restore files from snapshots
+# - Discord/Slack/Gotify notifications
+# - Supports all restic backends (S3, R2, B2, SFTP, etc.)
 
 services:
-  # Pre-backup database dumps
-  db-dump:
-    image: alpine:latest
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /mnt/cephfs/docker-shared-data:/data
+  backrest:
+    image: garethgeorge/backrest:latest
+    hostname: backrest
     environment:
-      - GHOST_DB_PASSWORD=${GHOST_DB_PASSWORD}
-      - DOCMOST_POSTGRES_PASSWORD=${DOCMOST_POSTGRES_PASSWORD}
-    command: |
-      sh -c "
-        apk add --no-cache docker-cli &&
-        echo 'Dumping Ghost MySQL...' &&
-        docker exec $$(docker ps -q -f name=ghost_ghost-db) mysqldump -u ghost -p$${GHOST_DB_PASSWORD} ghost > /data/ghost/ghost-dump.sql 2>/dev/null || echo 'Ghost dump skipped' &&
-        echo 'Dumping Docmost Postgres...' &&
-        docker exec $$(docker ps -q -f name=docmost_db) pg_dump -U docmost docmost > /data/docmost/docmost-dump.sql 2>/dev/null || echo 'Docmost dump skipped' &&
-        echo 'Database dumps complete'
-      "
-    networks:
-      - backup-internal
-    deploy:
-      mode: replicated
-      replicas: 0
-      placement:
-        constraints:
-          - node.role == manager
-      restart_policy:
-        condition: none
-      labels:
-        - "backup.stage=1-dump"
-
-  # Main backup service
-  backup:
-    image: restic/restic:latest
-    volumes:
-      - /mnt/cephfs/docker-shared-data:/data:ro
-      - backup-cache:/root/.cache/restic
-    environment:
-      - RESTIC_REPOSITORY=${RESTIC_REPOSITORY}
-      - RESTIC_PASSWORD=${RESTIC_PASSWORD}
-      # S3-compatible storage (Cloudflare R2, AWS S3, Wasabi, MinIO, etc.)
+      - TZ=${TZ}
+      - BACKREST_PORT=0.0.0.0:9898
+      - BACKREST_DATA=/data
+      - BACKREST_CONFIG=/config/config.json
+      # S3-compatible credentials (Cloudflare R2, AWS S3, Wasabi, MinIO)
+      # These are passed to restic for S3 backend access
       - AWS_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
-    command: |
-      sh -c "
-        echo 'Starting backup...' &&
-        restic backup /data \
-          --tag docker-swarm \
-          --tag scheduled \
-          --exclude '*.log' \
-          --exclude '*.tmp' \
-          --exclude 'cache/*' \
-          --verbose &&
-        echo 'Backup complete. Pruning old snapshots...' &&
-        restic forget \
-          --keep-daily 7 \
-          --keep-weekly 4 \
-          --keep-monthly 3 \
-          --prune &&
-        echo 'Pruning complete.'
-      "
+    volumes:
+      # Backrest config and data
+      - /mnt/cephfs/docker-shared-data/backrest/config:/config
+      - /mnt/cephfs/docker-shared-data/backrest/data:/data
+      - /mnt/cephfs/docker-shared-data/backrest/cache:/root/.cache/restic
+      # Data to back up (read-only)
+      - /mnt/cephfs/docker-shared-data:/backups/docker-data:ro
     networks:
-      - backup-internal
+      - proxy
     deploy:
-      mode: replicated
-      replicas: 0
+      replicas: 1
       placement:
         constraints:
           - node.role == manager
-      restart_policy:
-        condition: none
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 512M
-        reservations:
-          memory: 256M
       labels:
-        - "backup.stage=2-backup"
+        - "traefik.enable=true"
+        - "traefik.http.routers.backrest.rule=Host(`backrest.${DOMAIN}`)"
+        - "traefik.http.routers.backrest.entrypoints=websecure"
+        - "traefik.http.routers.backrest.tls.certresolver=cloudflare"
+        - "traefik.http.services.backrest.loadbalancer.server.port=9898"
 
-  # Notification service (optional)
-  notify:
-    image: alpine:latest
-    environment:
-      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
-    command: |
-      sh -c "
-        apk add --no-cache curl &&
-        curl -H 'Content-Type: application/json' \
-          -d '{\"content\": \"✅ **Backup Complete**\nDocker Swarm backup finished successfully.\"}' \
-          $${DISCORD_WEBHOOK_URL}
-      "
-    networks:
-      - backup-internal
-    deploy:
-      mode: replicated
-      replicas: 0
-      placement:
-        constraints:
-          - node.role == manager
-      restart_policy:
-        condition: none
-      labels:
-        - "backup.stage=3-notify"
+        # Homepage Discovery
+        - "homepage.group=Infrastructure"
+        - "homepage.name=Backrest"
+        - "homepage.icon=restic.png"
+        - "homepage.href=https://backrest.${DOMAIN}"
+        - "homepage.description=Backup Management"
 
 networks:
-  backup-internal:
-    driver: overlay
-
-volumes:
-  backup-cache:
-    driver: local
+  proxy:
+    external: true
