@@ -78,6 +78,13 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
 
+  - name: "OtterWiki"
+    group: "Utilities"
+    url: "http://otterwiki_otterwiki:80"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
 storage:
   path: /data/gatus.db
   type: sqlite

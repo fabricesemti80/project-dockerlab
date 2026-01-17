@@ -17,8 +17,8 @@ pages:
         widgets:
           - type: search
           - type: hacker-news
-            limit: 15
-            collapse-after: 10
+            limit: 10
+            collapse-after: 5
           - type: bookmarks
             groups:
               - title: Infrastructure
@@ -39,6 +39,8 @@ pages:
                     url: https://files.${DOMAIN}
                   - title: Docmost
                     url: https://doc.${DOMAIN}
+                  - title: OtterWiki
+                    url: https://wiki.${DOMAIN}
               - title: Apps
                 links:
                   - title: Homepage
