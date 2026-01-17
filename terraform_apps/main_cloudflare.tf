@@ -193,7 +193,7 @@ resource "cloudflare_zero_trust_access_application" "otterwiki_git_bypass" {
       decision = "bypass"
       include = [
         {
-          everyone = true
+          everyone = {}
         }
       ]
     }
