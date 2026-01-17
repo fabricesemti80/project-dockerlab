@@ -68,6 +68,7 @@ services:
 
   ghost-db:
     image: mysql:8.0
+    hostname: ghost-db
     environment:
       - MYSQL_ROOT_PASSWORD=${GHOST_DB_ROOT_PASSWORD}
       - MYSQL_DATABASE=ghost
@@ -76,7 +77,10 @@ services:
     volumes:
       - /mnt/cephfs/docker-shared-data/ghost/mysql:/var/lib/mysql
     networks:
-      - ghost-internal
+      ghost-internal:
+        aliases:
+          - ghost-db
+          - db
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "ghost", "-p${GHOST_DB_PASSWORD}"]
       interval: 30s
