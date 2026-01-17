@@ -53,6 +53,20 @@ pages:
                     url: https://whoami.${DOMAIN}
                   - title: Ghost Blog
                     url: https://blog.${DOMAIN}
+              - title: Media
+                links:
+                  - title: Jellyseer
+                    url: https://jellyseer.krapulax.dev
+                  - title: Jellyfin
+                    url: https://jellyfin.krapulax.dev
+                  - title: Sonarr
+                    url: https://sonarr.krapulax.dev
+                  - title: Radarr
+                    url: https://radarr.krapulax.dev
+                  - title: NZBGet
+                    url: https://nzbget.krapulax.dev
+                  - title: Prowlarr
+                    url: https://prowlarr.krapulax.dev
 
       - size: small
         widgets:
