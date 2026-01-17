@@ -35,3 +35,14 @@
     - data
     - cache
   when: install_cephfs | default(false) | bool
+
+- name: Ensure OtterWiki data directories exist
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/otterwiki/{{ item }}"
+    state: directory
+    owner: "1000"
+    group: "1000"
+    mode: '0755'
+  loop:
+    - app-data
+  when: install_cephfs | default(false) | bool
