@@ -9,6 +9,7 @@ services:
       - TZ=${TZ}
       - PUID=1000
       - PGID=1000
+      - GIT_WEB_SERVER=True
     volumes:
       - /mnt/cephfs/docker-shared-data/otterwiki/app-data:/app-data
     healthcheck:

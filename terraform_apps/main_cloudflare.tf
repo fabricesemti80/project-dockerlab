@@ -178,6 +178,27 @@ resource "cloudflare_zero_trust_access_application" "blog_access" {
   ]
 }
 
+resource "cloudflare_zero_trust_access_application" "otterwiki_git_bypass" {
+  account_id = var.CLOUDFLARE_ACCOUNT_ID
+  name       = "OtterWiki Git Bypass"
+  domain     = "wiki.${var.DOMAIN}/.git/*"
+  type       = "self_hosted"
+
+  session_duration          = "0s"
+  auto_redirect_to_identity = false
+
+  policies = [
+    {
+      name     = "Bypass Git"
+      decision = "bypass"
+      include = [
+        {
+          everyone = true
+        }
+      ]
+    }
+  ]
+}
 
 # 6. Generate Tunnel Token for deployment
 locals {
