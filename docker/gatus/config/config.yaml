@@ -85,6 +85,20 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
 
+  - name: "Backrest"
+    group: "Infrastructure"
+    url: "http://backrest_backrest:9898"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "Whoami"
+    group: "Test"
+    url: "http://whoami_whoami:80"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
 storage:
   path: /data/gatus.db
   type: sqlite

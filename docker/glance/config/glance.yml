@@ -31,6 +31,8 @@ pages:
                     url: https://beszel.${DOMAIN}
                   - title: Gatus
                     url: https://status.${DOMAIN}
+                  - title: Backrest
+                    url: https://backrest.${DOMAIN}
               - title: Development
                 links:
                   # - title: GitLab
@@ -49,6 +51,8 @@ pages:
                     url: https://wallos.${DOMAIN}
                   - title: Whoami
                     url: https://whoami.${DOMAIN}
+                  - title: Ghost Blog
+                    url: https://blog.${DOMAIN}
 
       - size: small
         widgets:
