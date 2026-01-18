@@ -176,3 +176,10 @@ variable "S3_SECRET_ACCESS_KEY" {
   type        = string
   sensitive   = true
 }
+
+variable "PLEX_CLAIM" {
+  description = "Plex claim token from https://plex.tv/claim"
+  type        = string
+  sensitive   = true
+  default     = ""
+}

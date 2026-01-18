@@ -3,6 +3,10 @@
 #? created outside of this compose file with
 #? https://chatgpt.com/share/694a4b8f-9e70-8007-9174-40ee509007ce
 
+#! ANSIBLE DEPENDENCY: ansible/roles/fresh_install/tasks/app_data_setup.yml
+#! - Creates /mnt/cephfs/docker-shared-data/traefik/config directory
+#! - Templates external-services.yml.j2 for external service routing (e.g., Plex)
+
 # CF_DNS_API_TOKEN=your_cloudflare_api_token
 # ACME_EMAIL=your_email@example.com
 # DOMAIN=example.com
@@ -28,6 +32,10 @@ services:
       - "--providers.swarm.exposedbydefault=false"
       - "--providers.swarm.network=proxy"
       - "--providers.swarm.endpoint=tcp://socket-proxy:2375"
+
+      # File provider (for external services)
+      - "--providers.file.directory=/config"
+      - "--providers.file.watch=true"
 
       # EntryPoints
       - "--entrypoints.web.address=:80"
@@ -59,6 +67,7 @@ services:
 
     volumes:
       - /mnt/cephfs/docker-shared-data/traefik/acme:/acme
+      - /mnt/cephfs/docker-shared-data/traefik/config:/config:ro
 
     networks:
       - proxy

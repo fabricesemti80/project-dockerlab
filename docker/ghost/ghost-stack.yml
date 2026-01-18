@@ -1,3 +1,7 @@
+#! ANSIBLE DEPENDENCY: ansible/roles/fresh_install/tasks/app_data_setup.yml
+#! - Creates /mnt/cephfs/docker-shared-data/ghost/content directory (owner: 1000:1000)
+#! - Creates /mnt/cephfs/docker-shared-data/ghost/mysql directory (owner: 1000:1000)
+
 version: "3.9"
 
 services:

@@ -1,0 +1,15 @@
+http:
+  routers:
+    plex:
+      rule: "Host(`plex.{{ apps_domain }}`)"
+      entryPoints:
+        - websecure
+      service: plex
+      tls:
+        certResolver: cloudflare
+
+  services:
+    plex:
+      loadBalancer:
+        servers:
+          - url: "http://10.0.40.2:32400"
