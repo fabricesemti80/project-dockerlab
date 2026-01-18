@@ -17,6 +17,13 @@ services:
       - /share/media/tv:/tv
       - /share/media/xxx:/xxx
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 6G
+        reservations:
+          memory: 1G
 
 volumes:
   plex_config:
