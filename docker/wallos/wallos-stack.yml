@@ -1,3 +1,7 @@
+#! ANSIBLE DEPENDENCY: ansible/roles/fresh_install/tasks/app_data_setup.yml
+#! - Creates /mnt/cephfs/docker-shared-data/wallos/db directory (owner: 82:82)
+#! - Creates /mnt/cephfs/docker-shared-data/wallos/logos directory (owner: 82:82)
+
 version: "3.9"
 
 services:

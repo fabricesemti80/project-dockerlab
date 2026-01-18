@@ -1,3 +1,8 @@
+#! ANSIBLE DEPENDENCY: ansible/roles/fresh_install/tasks/app_data_setup.yml
+#! - Creates /mnt/cephfs/docker-shared-data/backrest/config directory (owner: 0:0)
+#! - Creates /mnt/cephfs/docker-shared-data/backrest/data directory (owner: 0:0)
+#! - Creates /mnt/cephfs/docker-shared-data/backrest/cache directory (owner: 0:0)
+
 version: "3.9"
 
 # Backrest - Web UI and orchestrator for Restic backups
