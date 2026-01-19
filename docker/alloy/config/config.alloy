@@ -49,8 +49,37 @@ discovery.docker "containers" {
   host = "unix:///var/run/docker.sock"
 }
 
+discovery.relabel "docker" {
+  targets = discovery.docker.containers.targets
+
+  // Use Swarm service name if available
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_swarm_service_name"]
+    target_label  = "service_name"
+  }
+
+  // Fallback to container name
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container_name"
+  }
+
+  // Stack name from Swarm
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_stack_namespace"]
+    target_label  = "stack"
+  }
+
+  // Node hostname
+  rule {
+    target_label = "node"
+    replacement  = constants.hostname
+  }
+}
+
 prometheus.scrape "docker" {
-  targets    = discovery.docker.containers.targets
+  targets    = discovery.relabel.docker.output
   forward_to = [prometheus.remote_write.grafana_cloud.receiver]
   
   scrape_interval = "60s"
@@ -59,8 +88,38 @@ prometheus.scrape "docker" {
 // ============================================================================
 // Docker Logs
 // ============================================================================
-loki.source.docker "default" {
-  host       = "unix:///var/run/docker.sock"
-  targets    = discovery.docker.containers.targets
+loki.relabel "docker_logs" {
   forward_to = [loki.write.grafana_cloud.receiver]
+
+  // Use Swarm service name
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_swarm_service_name"]
+    target_label  = "service_name"
+  }
+
+  // Fallback to container name
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container_name"
+  }
+
+  // Stack name
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_stack_namespace"]
+    target_label  = "stack"
+  }
+
+  // Node hostname
+  rule {
+    target_label = "node"
+    replacement  = constants.hostname
+  }
+}
+
+loki.source.docker "default" {
+  host          = "unix:///var/run/docker.sock"
+  targets       = discovery.docker.containers.targets
+  relabel_rules = loki.relabel.docker_logs.rules
+  forward_to    = [loki.relabel.docker_logs.receiver]
 }
