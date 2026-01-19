@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  alloy:
+    image: grafana/alloy:latest
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    environment:
+      - GRAFANA_CLOUD_PROMETHEUS_URL=${GRAFANA_CLOUD_PROMETHEUS_URL}
+      - GRAFANA_CLOUD_PROMETHEUS_USERNAME=${GRAFANA_CLOUD_PROMETHEUS_USERNAME}
+      - GRAFANA_CLOUD_LOKI_URL=${GRAFANA_CLOUD_LOKI_URL}
+      - GRAFANA_CLOUD_LOKI_USERNAME=${GRAFANA_CLOUD_LOKI_USERNAME}
+      - GRAFANA_CLOUD_API_KEY=${GRAFANA_CLOUD_API_KEY}
+    volumes:
+      - alloy_data:/var/lib/alloy/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /:/host:ro
+    configs:
+      - source: alloy_config
+        target: /etc/alloy/config.alloy
+    ports:
+      - target: 12345
+        published: 12345
+        protocol: tcp
+        mode: host
+    networks:
+      - proxy
+    deploy:
+      mode: global
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          memory: 128M
+
+configs:
+  alloy_config:
+    file: ./config/config.alloy
+
+volumes:
+  alloy_data:
+
+networks:
+  proxy:
+    external: true

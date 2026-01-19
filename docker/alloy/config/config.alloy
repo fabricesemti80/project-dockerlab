@@ -1,0 +1,66 @@
+// Grafana Alloy Configuration for Grafana Cloud
+
+// ============================================================================
+// Prometheus Remote Write (Metrics)
+// ============================================================================
+prometheus.remote_write "grafana_cloud" {
+  endpoint {
+    url = env("GRAFANA_CLOUD_PROMETHEUS_URL")
+
+    basic_auth {
+      username = env("GRAFANA_CLOUD_PROMETHEUS_USERNAME")
+      password = env("GRAFANA_CLOUD_API_KEY")
+    }
+  }
+}
+
+// ============================================================================
+// Loki Write (Logs)
+// ============================================================================
+loki.write "grafana_cloud" {
+  endpoint {
+    url = env("GRAFANA_CLOUD_LOKI_URL")
+
+    basic_auth {
+      username = env("GRAFANA_CLOUD_LOKI_USERNAME")
+      password = env("GRAFANA_CLOUD_API_KEY")
+    }
+  }
+}
+
+// ============================================================================
+// Node Exporter (Host Metrics)
+// ============================================================================
+prometheus.exporter.unix "default" {
+  rootfs_path = "/host"
+}
+
+prometheus.scrape "node" {
+  targets    = prometheus.exporter.unix.default.targets
+  forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+  
+  scrape_interval = "60s"
+}
+
+// ============================================================================
+// Docker Discovery & Scraping
+// ============================================================================
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+prometheus.scrape "docker" {
+  targets    = discovery.docker.containers.targets
+  forward_to = [prometheus.remote_write.grafana_cloud.receiver]
+  
+  scrape_interval = "60s"
+}
+
+// ============================================================================
+// Docker Logs
+// ============================================================================
+loki.source.docker "default" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.docker.containers.targets
+  forward_to = [loki.write.grafana_cloud.receiver]
+}
