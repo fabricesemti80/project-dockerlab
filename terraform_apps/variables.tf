@@ -183,3 +183,35 @@ variable "PLEX_CLAIM" {
   sensitive   = true
   default     = ""
 }
+
+# Grafana Cloud
+variable "GRAFANA_CLOUD_PROMETHEUS_URL" {
+  description = "Grafana Cloud Prometheus remote write URL (e.g., https://prometheus-prod-xx-xxx.grafana.net/api/prom/push)"
+  type        = string
+  default     = ""
+}
+
+variable "GRAFANA_CLOUD_PROMETHEUS_USERNAME" {
+  description = "Grafana Cloud Prometheus username (numeric ID)"
+  type        = string
+  default     = ""
+}
+
+variable "GRAFANA_CLOUD_LOKI_URL" {
+  description = "Grafana Cloud Loki push URL (e.g., https://logs-prod-xxx.grafana.net/loki/api/v1/push)"
+  type        = string
+  default     = ""
+}
+
+variable "GRAFANA_CLOUD_LOKI_USERNAME" {
+  description = "Grafana Cloud Loki username (numeric ID)"
+  type        = string
+  default     = ""
+}
+
+variable "GRAFANA_CLOUD_API_KEY" {
+  description = "Grafana Cloud API key with MetricsPublisher and LogsPublisher permissions"
+  type        = string
+  sensitive   = true
+  default     = ""
+}

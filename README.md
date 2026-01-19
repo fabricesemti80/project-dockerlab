@@ -189,16 +189,7 @@ Detailed documentation for each component:
 
 ## 🔐 Secrets Management
 
-All secrets are managed through [Doppler](https://doppler.com):
-
-| Secret | Purpose |
-|--------|---------|
-| `HCLOUD_TOKEN` | Hetzner Cloud API |
-| `PROXMOX_AUTH_TOKEN` | Proxmox VE API |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare DNS |
-| `TAILSCALE_AUTH_KEY` | Tailscale network |
-
-See [Doppler Documentation](docs/doppler.md) for setup details.
+All secrets are managed through [Doppler](https://doppler.com). See [Doppler Documentation](docs/doppler.md) for setup details.
 
 ## 🐳 Applications
 
@@ -248,9 +239,52 @@ Automated backup solution using Restic with support for Backblaze B2, AWS S3, or
 - Automatic retention (7 daily, 4 weekly, 3 monthly)
 - Discord notifications
 
+#### OtterWiki
+
+A minimal, self-hosted wiki with Markdown and Git version control.
+
+**Required Doppler Secrets:** None (first registered user becomes admin)
+
+#### Plex (QNAP Secondary Environment)
+
+Media server running on QNAP NAS, routed through Traefik on the primary swarm.
+
 **Required Doppler Secrets:**
 | Secret | Description |
 |--------|-------------|
+| `PLEX_CLAIM` | Claim token from https://plex.tv/claim (expires in 4 minutes) |
+
+#### Grafana Alloy
+
+Metrics and logs collector for Grafana Cloud. Runs globally on all swarm nodes.
+
+**Required Doppler Secrets:**
+| Secret | Description | Where to find |
+|--------|-------------|---------------|
+| `GRAFANA_CLOUD_PROMETHEUS_URL` | Remote write URL (e.g., `https://prometheus-prod-xx-xxx.grafana.net/api/prom/push`) | Grafana Cloud → Connections → Hosted Prometheus → Details |
+| `GRAFANA_CLOUD_PROMETHEUS_USERNAME` | Numeric username/ID | Same page as above |
+| `GRAFANA_CLOUD_LOKI_URL` | Loki push URL (e.g., `https://logs-prod-xxx.grafana.net/loki/api/v1/push`) | Grafana Cloud → Connections → Hosted Logs → Details |
+| `GRAFANA_CLOUD_LOKI_USERNAME` | Numeric username/ID | Same page as above |
+| `GRAFANA_CLOUD_API_KEY` | API key with `MetricsPublisher` and `LogsPublisher` permissions | Grafana Cloud → Administration → API Keys → Add API Key |
+
+**How to get Grafana Cloud credentials:**
+1. Go to [grafana.com](https://grafana.com) → Sign in
+2. Navigate to **My Account** → Your Grafana Cloud stack
+3. Click **Connections** → **Hosted Prometheus** → Copy the Remote Write URL and Username
+4. Click **Connections** → **Hosted Logs** → Copy the Push URL and Username
+5. Go to **Administration** → **API Keys** → **Add API Key**
+   - Name: `alloy-homelab`
+   - Role: `MetricsPublisher` (create another for `LogsPublisher` or use Admin)
+6. Add all values to Doppler
+
+## 🔐 Required Doppler Secrets
+
+| Secret | Purpose |
+|--------|---------|
+| `HCLOUD_TOKEN` | Hetzner Cloud API |
+| `PROXMOX_AUTH_TOKEN` | Proxmox VE API |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare DNS |
+| `TAILSCALE_AUTH_KEY` | Tailscale network |
 | `GHOST_DB_PASSWORD` | MySQL password for Ghost database user |
 | `GHOST_DB_ROOT_PASSWORD` | MySQL root password for Ghost database |
 | `GHOST_MAIL_TRANSPORT` | Mail transport (e.g., `SMTP`) - optional |
@@ -259,6 +293,13 @@ Automated backup solution using Restic with support for Backblaze B2, AWS S3, or
 | `GHOST_MAIL_USER` | SMTP username - optional |
 | `GHOST_MAIL_PASSWORD` | SMTP password - optional |
 | `GHOST_MAIL_FROM` | From address for emails - optional |
+| `PLEX_CLAIM` | Plex claim token (get from https://plex.tv/claim) |
+| `GRAFANA_CLOUD_PROMETHEUS_URL` | Grafana Cloud Prometheus remote write URL |
+| `GRAFANA_CLOUD_PROMETHEUS_USERNAME` | Grafana Cloud Prometheus username |
+| `GRAFANA_CLOUD_LOKI_URL` | Grafana Cloud Loki push URL |
+| `GRAFANA_CLOUD_LOKI_USERNAME` | Grafana Cloud Loki username |
+| `GRAFANA_CLOUD_API_KEY` | Grafana Cloud API key |
+| `BESZEL_AGENT_KEY` | Beszel agent key (get from Beszel hub UI) |
 
 ## 🔄 Deployment Workflow
 

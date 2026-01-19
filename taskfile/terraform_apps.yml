@@ -36,6 +36,17 @@ tasks:
         vars: { CLI_ARGS: "{{.CLI_ARGS}}" }
       - doppler run -- terraform apply tfplan
 
+  replace:
+    desc: "Force replace a specific resource"
+    dir: terraform_apps
+    requires:
+      vars: [RESOURCE]
+    cmds:
+      - task: fmt
+      - task: init
+      - doppler run -- terraform plan -replace="{{.RESOURCE}}" -out=tfplan
+      - doppler run -- terraform apply tfplan
+
   destroy:
     desc: "Destroy the Apps Terraform-managed stacks"
     dir: terraform_apps

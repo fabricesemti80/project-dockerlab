@@ -50,3 +50,5 @@ resource "portainer_stack" "beszel_agent_qnap" {
     value = var.BESZEL_AGENT_KEY
   }
 }
+
+
