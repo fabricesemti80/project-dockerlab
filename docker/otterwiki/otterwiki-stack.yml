@@ -41,7 +41,7 @@ services:
         parallelism: 1
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=proxy"
+        - "traefik.swarm.network=proxy"
         - "traefik.http.routers.otterwiki.rule=Host(`wiki.${DOMAIN}`)"
         - "traefik.http.routers.otterwiki.entrypoints=websecure"
         - "traefik.http.routers.otterwiki.tls.certresolver=cloudflare"

@@ -41,7 +41,7 @@ services:
         parallelism: 1
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=proxy"
+        - "traefik.swarm.network=proxy"
         - "traefik.http.routers.docmost.rule=Host(`doc.${DOMAIN}`)"
         - "traefik.http.routers.docmost.entrypoints=websecure"
         - "traefik.http.routers.docmost.tls.certresolver=cloudflare"
