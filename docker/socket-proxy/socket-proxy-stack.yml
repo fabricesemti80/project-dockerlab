@@ -1,3 +1,5 @@
+# NOTE: Docker stack deploy uses v3.x schema; 3.9 is the last version.
+#       The 'version' field is deprecated for compose v2, but kept here for Swarm clarity.
 version: "3.9"
 
 services:
@@ -29,6 +31,7 @@ services:
         parallelism: 1
         delay: 10s
         failure_action: rollback
+        order: start-first
       rollback_config:
         parallelism: 1
     volumes:

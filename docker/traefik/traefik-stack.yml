@@ -11,6 +11,8 @@
 # ACME_EMAIL=your_email@example.com
 # DOMAIN=example.com
 
+# NOTE: Docker stack deploy uses v3.x schema; 3.9 is the last version.
+#       The 'version' field is deprecated for compose v2, but kept here for Swarm clarity.
 version: "3.9"
 
 services:
@@ -73,6 +75,12 @@ services:
       - proxy
       - socket-proxy
 
+    logging:
+      driver: json-file
+      options:
+        max-size: "12m"
+        max-file: "5"
+
     deploy:
       placement:
         constraints:
@@ -87,6 +95,7 @@ services:
         parallelism: 1
         delay: 10s
         failure_action: rollback
+        order: start-first
       rollback_config:
         parallelism: 1
       labels:
