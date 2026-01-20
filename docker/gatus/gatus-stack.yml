@@ -3,6 +3,8 @@ version: "3.9"
 services:
   gatus:
     image: twinproduction/gatus:latest
+    labels:
+          - "prometheus.io/scrape=false" #! no metrics endpoint for this service     
     hostname: 'status.${DOMAIN}'
     environment:
       - "TZ=${TZ}"
