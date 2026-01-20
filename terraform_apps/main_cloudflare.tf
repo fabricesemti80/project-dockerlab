@@ -1,5 +1,14 @@
 # Cloudflare Tunnel & Access Configuration for Homelab
 
+locals {
+  access_allowed_emails = [
+    "emilfabrice@gmail.com",
+    "gabriellagungl@gmail.com",
+    "fabrice.semti@gmail.com",
+    "fabrice@fabricesemti.com"
+  ]
+}
+
 data "cloudflare_zone" "main" {
   zone_id = var.CLOUDFLARE_ZONE_ID
 }
@@ -81,38 +90,25 @@ resource "cloudflare_zero_trust_access_application" "homelab_access" {
   domain     = "*.${var.DOMAIN}"
   type       = "self_hosted"
 
-  session_duration          = "30d"
+  session_duration          = "24h"
   auto_redirect_to_identity = false
 
   policies = [
     {
       name     = "Allow Admin"
       decision = "allow"
+
       include = [
-        {
+        for email in local.access_allowed_emails : {
           email = {
-            email = var.ACCESS_EMAIL
-          }
-        },
-        {
-          email = {
-            email = "gabriellagungl@gmail.com"
-          }
-        },
-        {
-          email = {
-            email = "fabrice.semti@gmail.com"
-          }
-        },
-        {
-          email = {
-            email = "fabrice@fabricesemti.com"
+            email = email
           }
         }
       ]
     }
   ]
 }
+
 
 resource "cloudflare_zero_trust_access_application" "beszel_access" {
   account_id = var.CLOUDFLARE_ACCOUNT_ID
