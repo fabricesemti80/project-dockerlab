@@ -1,17 +1,37 @@
+# NOTE: Docker stack deploy uses v3.x schema; 3.9 is the last version.
+#       The 'version' field is deprecated for compose v2, but kept here for Swarm clarity.
 version: "3.9"
 
 services:
   hub:
     image: henrygd/beszel:latest
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8090"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     volumes:
       - /mnt/cephfs/docker-shared-data/beszel/data:/beszel_data
     networks:
       - proxy
+    logging:
+      driver: json-file
+      options:
+        max-size: "12m"
+        max-file: "5"
     deploy:
       replicas: 1
       placement:
         constraints:
           - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      rollback_config:
+        parallelism: 1
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.beszel.rule=Host(`beszel.${DOMAIN}`)"
@@ -30,6 +50,12 @@ services:
 
   agent:
     image: henrygd/beszel-agent:latest
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:45876"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
     environment:
       - LISTEN=45876
       - "KEY=${BESZEL_AGENT_KEY}"
@@ -41,6 +67,11 @@ services:
         published: 45876
         protocol: tcp
         mode: host
+    logging:
+      driver: json-file
+      options:
+        max-size: "12m"
+        max-file: "5"
     deploy:
       mode: global
 
