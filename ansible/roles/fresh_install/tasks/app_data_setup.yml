@@ -56,6 +56,24 @@
     mode: '0755'
   when: install_cephfs | default(false) | bool
 
+- name: Ensure Traefik acme directory exists
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/traefik/acme"
+    state: directory
+    owner: "1000"
+    group: "1000"
+    mode: '0700'
+  when: install_cephfs | default(false) | bool
+
+- name: Create acme.json with correct permissions
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/traefik/acme/acme.json"
+    state: touch
+    owner: "1000"
+    group: "1000"
+    mode: '0600'
+  when: install_cephfs | default(false) | bool
+
 - name: Template Traefik external services config
   ansible.builtin.template:
     src: external-services.yml.j2
