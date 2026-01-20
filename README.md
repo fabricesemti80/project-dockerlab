@@ -1,39 +1,41 @@
 # Project DockerLab
 
-> A comprehensive hybrid homelab setup combining cloud and on-premises infrastructure with Docker Swarm orchestration.
+> A comprehensive on-premises homelab running Docker Swarm on Proxmox VE.
 
 ## 🏗️ Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                           Tailscale Mesh Network                        │
+│                        Proxmox VE On-Premises                           │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
-│  ┌─────────────────────┐              ┌─────────────────────────────┐  │
-│  │   Hetzner Cloud     │              │      Proxmox On-Premises    │  │
-│  │                     │              │                             │  │
-│  │  ┌───────────────┐  │              │  ┌───────────┐ ┌─────────┐  │  │
-│  │  │  dkr-srv-0    │  │◄────────────►│  │ dkr-srv-1 │ │dkr-srv-2│  │  │
-│  │  │  (Manager)    │  │              │  │ (Manager) │ │(Manager)│  │  │
-│  │  └───────────────┘  │              │  └───────────┘ └─────────┘  │  │
-│  │                     │              │                             │  │
-│  └─────────────────────┘              └─────────────────────────────┘  │
+│       ┌───────────────┐    ┌───────────────┐    ┌───────────────┐      │
+│       │   dkr-srv-1   │    │   dkr-srv-2   │    │   dkr-srv-3   │      │
+│       │   (Manager)   │◄──►│   (Manager)   │◄──►│   (Manager)   │      │
+│       │  10.0.30.21   │    │  10.0.30.22   │    │  10.0.30.23   │      │
+│       └───────────────┘    └───────────────┘    └───────────────┘      │
 │                                                                         │
-│                        Docker Swarm Cluster                            │
+│                         Docker Swarm Cluster                            │
+│                              (3 Managers)                               │
+│                                                                         │
+│       ┌─────────────────────────────────────────────────────────┐      │
+│       │                    Shared Storage                        │      │
+│       │                  CephFS (/mnt/cephfs)                   │      │
+│       └─────────────────────────────────────────────────────────┘      │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
 | Component | Technology |
 |-----------|------------|
 | **Virtualization** | Proxmox VE |
-| **Cloud Provider** | Hetzner Cloud |
 | **Container Orchestration** | Docker Swarm |
-| **Mesh Networking** | Tailscale |
+| **Shared Storage** | CephFS |
 | **Configuration Management** | Ansible |
 | **Infrastructure as Code** | Terraform |
 | **Secrets Management** | Doppler |
 | **Task Runner** | Taskfile |
 | **DNS Management** | Cloudflare |
+| **Reverse Proxy** | Traefik |
 
 ## 📁 Project Structure
 
@@ -43,21 +45,22 @@ project-dockerlab/
 │   ├── group_vars/          # Variable definitions
 │   ├── inventory/           # Host inventory
 │   ├── roles/               # Ansible roles
-│   │   ├── common_base/     # Base system configuration
-│   │   ├── dokploy/         # Dokploy deployment
-│   │   ├── portainer_be/    # Portainer Business Edition
-│   │   ├── swarm_bootstrap/ # Docker Swarm initialization
-│   │   ├── swarm_labels/    # Swarm node labeling
-│   │   ├── system_update/   # System updates
-│   │   └── tailscale_post/  # Tailscale post-config
+│   │   ├── fresh_install/   # Base OS config, users, SSH, packages
+│   │   ├── docker_swarm/    # Docker Swarm initialization
+│   │   ├── portainer/       # Portainer deployment
+│   │   ├── geerlingguy.docker/  # External role: Docker installation
+│   │   └── geerlingguy.pip/     # External role: pip/Python dependencies
 │   └── *.yml                # Playbooks
-├── terraform/               # Infrastructure as code
-│   ├── modules/             # Reusable modules
-│   │   ├── hetzner-cloud/   # Hetzner server module
-│   │   └── proxmox-vm/      # Proxmox VM module
-│   └── *.tf                 # Terraform configs
-├── apps/                    # Docker applications
-│   └── whoami/              # Example swarm service
+├── terraform_infra/         # Core infrastructure (Proxmox, Hetzner, networks)
+├── terraform_apps/          # App-level IaC (DNS, Portainer stacks)
+├── docker/                  # Swarm stacks and app configs
+│   ├── traefik/             # Traefik reverse proxy stack
+│   ├── socket-proxy/        # Docker socket proxy stack
+│   ├── homepage/            # Homepage dashboard stack
+│   ├── beszel/              # Beszel monitoring stack
+│   ├── backup/              # Restic backup stack
+│   ├── cloudflared/         # Cloudflare tunnel stack
+│   └── ...                  # Other stacks
 ├── docs/                    # Detailed documentation
 │   ├── ansible.md           # Ansible documentation
 │   ├── terraform.md         # Terraform documentation
@@ -119,21 +122,31 @@ task ansible:site:plan
 task ansible:site:apply
 ```
 
+### 5. Deploy Applications
+
+```bash
+# Deploy app stacks via Terraform (Portainer)
+task tfa:apply
+
+# Or deploy individual stacks manually
+cd docker/traefik
+docker stack deploy -c traefik-stack.yml traefik
+```
+
 ## 📋 Infrastructure
 
 ### Nodes
 
-| Node | Location | IP Address | Role |
-|------|----------|------------|------|
-| dkr-srv-0 | Hetzner Helsinki | 157.180.84.140 | Swarm Manager |
-| dkr-srv-1 | On-premises | 10.0.30.21 | Swarm Manager |
-| dkr-srv-2 | On-premises | 10.0.30.22 | Swarm Manager |
+| Node | IP Address | Role |
+|------|------------|------|
+| dkr-srv-1 | 10.0.30.21 | Swarm Manager |
+| dkr-srv-2 | 10.0.30.22 | Swarm Manager |
+| dkr-srv-3 | 10.0.30.23 | Swarm Manager |
 
 ### Network Configuration
 
 - **VLAN 30**: Docker/Container network (10.0.30.0/24)
 - **VLAN 40**: Proxmox management (10.0.40.0/24)
-- **Tailscale**: Secure mesh overlay across all nodes
 
 ## 🔧 Common Tasks
 
@@ -193,15 +206,15 @@ All secrets are managed through [Doppler](https://doppler.com). See [Doppler Doc
 
 ## 🐳 Applications
 
-Example applications are in the `apps/` directory:
+Swarm stacks are in the `docker/` directory:
 
 ### whoami
 
 A simple Traefik whoami service for testing Swarm deployments:
 
 ```bash
-cd apps/whoami
-docker stack deploy -c docker-compose.yaml whoami
+cd docker/traefik
+docker stack deploy -c whoami-stack.yml whoami
 ```
 
 
@@ -281,7 +294,6 @@ Metrics and logs collector for Grafana Cloud. Runs globally on all swarm nodes.
 
 | Secret | Purpose |
 |--------|---------|
-| `HCLOUD_TOKEN` | Hetzner Cloud API |
 | `PROXMOX_AUTH_TOKEN` | Proxmox VE API |
 | `CLOUDFLARE_API_TOKEN` | Cloudflare DNS |
 | `TAILSCALE_AUTH_KEY` | Tailscale network |
