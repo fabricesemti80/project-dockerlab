@@ -90,7 +90,7 @@ resource "cloudflare_zero_trust_access_application" "homelab_access" {
   domain     = "*.${var.DOMAIN}"
   type       = "self_hosted"
 
-  session_duration          = "24h"
+  session_duration          = "720h"
   auto_redirect_to_identity = false
 
   policies = [
