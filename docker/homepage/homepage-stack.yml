@@ -1,6 +1,8 @@
 # Homepage - Modern Dashboard
 # https://gethomepage.dev/
 
+# NOTE: Docker stack deploy uses v3.x schema; 3.9 is the last version.
+#       The 'version' field is deprecated for compose v2, but kept here for Swarm clarity.
 version: "3.9"
 
 services:
@@ -31,6 +33,11 @@ services:
       - HOMEPAGE_ALLOWED_HOSTS=home.${DOMAIN},${DOMAIN},10.0.30.0/24,127.0.0.1
       - HOMEPAGE_VAR_PORTAINER_ACCESS_TOKEN=${PORTAINER_ACCESS_TOKEN}
       - HOMEPAGE_VAR_FILEBROWSER_ADMIN_PASSWORD=${FILEBROWSER_ADMIN_PASSWORD}
+    logging:
+      driver: json-file
+      options:
+        max-size: "12m"
+        max-file: "5"
     deploy:
       mode: replicated
       replicas: 1
@@ -51,6 +58,7 @@ services:
         parallelism: 1
         delay: 10s
         failure_action: rollback
+        order: start-first
       rollback_config:
         parallelism: 1
       labels:
