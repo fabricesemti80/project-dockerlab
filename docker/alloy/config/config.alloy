@@ -52,6 +52,14 @@ discovery.docker "containers" {
 discovery.relabel "docker" {
   targets = discovery.docker.containers.targets
 
+  // Drop containers with prometheus.io/scrape = false
+  rule {
+    // Docker labels with dots/slashes are converted to underscores
+    source_labels = ["__meta_docker_container_label_prometheus_io_scrape"]
+    regex         = "false"
+    action        = "drop"
+  }
+
   // Use Swarm service name if available
   rule {
     source_labels = ["__meta_docker_container_label_com_docker_swarm_service_name"]
