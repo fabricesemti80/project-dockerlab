@@ -1,10 +1,13 @@
 ---
+# App data directory setup
+# Uses default_puid/default_pgid from group_vars, with per-app overrides where needed
+
 - name: Ensure Wallos data directories exist
   ansible.builtin.file:
     path: "{{ cephfs_mount_point }}/docker-shared-data/wallos/{{ item }}"
     state: directory
-    owner: "82"
-    group: "82"
+    owner: "{{ wallos_uid | default(default_puid) }}"
+    group: "{{ wallos_gid | default(default_pgid) }}"
     mode: '0755'
   loop:
     - db
@@ -15,8 +18,8 @@
   ansible.builtin.file:
     path: "{{ cephfs_mount_point }}/docker-shared-data/ghost/{{ item }}"
     state: directory
-    owner: "1000"
-    group: "1000"
+    owner: "{{ ghost_uid | default(default_puid) }}"
+    group: "{{ ghost_gid | default(default_pgid) }}"
     mode: '0755'
   loop:
     - content
@@ -27,8 +30,8 @@
   ansible.builtin.file:
     path: "{{ cephfs_mount_point }}/docker-shared-data/backrest/{{ item }}"
     state: directory
-    owner: "0"
-    group: "0"
+    owner: "{{ backrest_uid | default(default_puid) }}"
+    group: "{{ backrest_gid | default(default_pgid) }}"
     mode: '0755'
   loop:
     - config
@@ -40,8 +43,8 @@
   ansible.builtin.file:
     path: "{{ cephfs_mount_point }}/docker-shared-data/otterwiki/{{ item }}"
     state: directory
-    owner: "1000"
-    group: "1000"
+    owner: "{{ otterwiki_uid | default(default_puid) }}"
+    group: "{{ otterwiki_gid | default(default_pgid) }}"
     mode: '0755'
   loop:
     - app-data
@@ -51,8 +54,8 @@
   ansible.builtin.file:
     path: "{{ cephfs_mount_point }}/docker-shared-data/traefik/config"
     state: directory
-    owner: "1000"
-    group: "1000"
+    owner: "{{ traefik_uid | default(default_puid) }}"
+    group: "{{ traefik_gid | default(default_pgid) }}"
     mode: '0755'
   when: install_cephfs | default(false) | bool
 
@@ -60,8 +63,8 @@
   ansible.builtin.file:
     path: "{{ cephfs_mount_point }}/docker-shared-data/traefik/acme"
     state: directory
-    owner: "1000"
-    group: "1000"
+    owner: "{{ traefik_uid | default(default_puid) }}"
+    group: "{{ traefik_gid | default(default_pgid) }}"
     mode: '0700'
   when: install_cephfs | default(false) | bool
 
@@ -69,16 +72,67 @@
   ansible.builtin.file:
     path: "{{ cephfs_mount_point }}/docker-shared-data/traefik/acme/acme.json"
     state: touch
-    owner: "1000"
-    group: "1000"
+    owner: "{{ traefik_uid | default(default_puid) }}"
+    group: "{{ traefik_gid | default(default_pgid) }}"
     mode: '0600'
+    modification_time: preserve
+    access_time: preserve
   when: install_cephfs | default(false) | bool
 
 - name: Template Traefik external services config
   ansible.builtin.template:
     src: external-services.yml.j2
     dest: "{{ cephfs_mount_point }}/docker-shared-data/traefik/config/external-services.yml"
-    owner: "1000"
-    group: "1000"
+    owner: "{{ traefik_uid | default(default_puid) }}"
+    group: "{{ traefik_gid | default(default_pgid) }}"
     mode: '0644'
+  when: install_cephfs | default(false) | bool
+
+- name: Ensure Beszel data directory exists
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/beszel/data"
+    state: directory
+    owner: "{{ beszel_uid | default(default_puid) }}"
+    group: "{{ beszel_gid | default(default_pgid) }}"
+    mode: '0755'
+  when: install_cephfs | default(false) | bool
+
+- name: Ensure Filebrowser data directory exists
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/filebrowser"
+    state: directory
+    owner: "{{ filebrowser_uid | default(default_puid) }}"
+    group: "{{ filebrowser_gid | default(default_pgid) }}"
+    mode: '0755'
+  when: install_cephfs | default(false) | bool
+
+- name: Ensure Glance data directory exists
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/glance"
+    state: directory
+    owner: "{{ glance_uid | default(default_puid) }}"
+    group: "{{ glance_gid | default(default_pgid) }}"
+    mode: '0755'
+  when: install_cephfs | default(false) | bool
+
+- name: Ensure Homepage data directory exists
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/homepage"
+    state: directory
+    owner: "{{ homepage_uid | default(default_puid) }}"
+    group: "{{ homepage_gid | default(default_pgid) }}"
+    mode: '0755'
+  when: install_cephfs | default(false) | bool
+
+- name: Ensure Docmost data directories exist
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/docmost/{{ item }}"
+    state: directory
+    owner: "{{ docmost_uid | default(default_puid) }}"
+    group: "{{ docmost_gid | default(default_pgid) }}"
+    mode: '0755'
+  loop:
+    - data
+    - postgres
+    - redis
   when: install_cephfs | default(false) | bool

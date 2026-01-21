@@ -3,6 +3,16 @@ admin_user: fs
 sudo_nopasswd: true
 domain_name: krapulax.dev
 
+# Default container user/group IDs (can be overridden per-app)
+default_puid: "1000"
+default_pgid: "1000"
+
+# App-specific overrides (www-data = 82, root = 0)
+wallos_uid: "82"
+wallos_gid: "82"
+backrest_uid: "0"
+backrest_gid: "0"
+
 # list of packages to be installed
 install_packages:
   - apt-transport-https
