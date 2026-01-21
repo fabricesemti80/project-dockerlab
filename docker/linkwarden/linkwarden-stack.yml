@@ -1,0 +1,154 @@
+# Linkwarden - Collaborative Bookmark Manager
+# https://docs.linkwarden.app/
+
+services:
+  linkwarden:
+    image: ghcr.io/linkwarden/linkwarden:latest
+    environment:
+      - TZ=${TZ}
+      - DATABASE_URL=postgresql://postgres:${LINKWARDEN_POSTGRES_PASSWORD}@linkwarden-postgres:5432/linkwarden
+      - NEXTAUTH_URL=https://links.${DOMAIN}/api/v1/auth
+      - NEXTAUTH_SECRET=${LINKWARDEN_NEXTAUTH_SECRET}
+      - MEILI_MASTER_KEY=${LINKWARDEN_MEILI_KEY}
+      - MEILI_HOST=http://linkwarden-meilisearch:7700
+    volumes:
+      - /mnt/cephfs/docker-shared-data/linkwarden/data:/data/data
+    networks:
+      - proxy
+      - linkwarden-internal
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/v1/auth/providers"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: json-file
+      options:
+        max-size: "12m"
+        max-file: "5"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          memory: 512M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      rollback_config:
+        parallelism: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.linkwarden.rule=Host(`links.${DOMAIN}`)"
+        - "traefik.http.routers.linkwarden.entrypoints=websecure"
+        - "traefik.http.routers.linkwarden.tls.certresolver=cloudflare"
+        - "traefik.http.services.linkwarden.loadbalancer.server.port=3000"
+
+        # Homepage Discovery
+        - "homepage.group=Productivity"
+        - "homepage.name=Linkwarden"
+        - "homepage.icon=linkwarden.png"
+        - "homepage.href=https://links.${DOMAIN}"
+        - "homepage.description=Bookmark Manager"
+    depends_on:
+      - linkwarden-postgres
+      - linkwarden-meilisearch
+
+  linkwarden-postgres:
+    image: postgres:16-alpine
+    hostname: linkwarden-postgres
+    environment:
+      - TZ=${TZ}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${LINKWARDEN_POSTGRES_PASSWORD}
+      - POSTGRES_DB=linkwarden
+    volumes:
+      - /mnt/cephfs/docker-shared-data/linkwarden/postgres:/var/lib/postgresql/data
+    networks:
+      linkwarden-internal:
+        aliases:
+          - linkwarden-postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d linkwarden"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "12m"
+        max-file: "5"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+
+  linkwarden-meilisearch:
+    image: getmeili/meilisearch:v1.12.8
+    hostname: linkwarden-meilisearch
+    environment:
+      - TZ=${TZ}
+      - MEILI_MASTER_KEY=${LINKWARDEN_MEILI_KEY}
+      - MEILI_ENV=production
+    volumes:
+      - /mnt/cephfs/docker-shared-data/linkwarden/meilisearch:/meili_data
+    networks:
+      linkwarden-internal:
+        aliases:
+          - linkwarden-meilisearch
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:7700/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "12m"
+        max-file: "5"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
+
+networks:
+  proxy:
+    external: true
+  linkwarden-internal:
+    driver: overlay

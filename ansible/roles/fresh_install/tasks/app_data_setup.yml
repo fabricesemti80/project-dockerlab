@@ -136,3 +136,16 @@
     - postgres
     - redis
   when: install_cephfs | default(false) | bool
+
+- name: Ensure Linkwarden data directories exist
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/linkwarden/{{ item }}"
+    state: directory
+    owner: "{{ linkwarden_uid | default(default_puid) }}"
+    group: "{{ linkwarden_gid | default(default_pgid) }}"
+    mode: '0755'
+  loop:
+    - data
+    - postgres
+    - meilisearch
+  when: install_cephfs | default(false) | bool
