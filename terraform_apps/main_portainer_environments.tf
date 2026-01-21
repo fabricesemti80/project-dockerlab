@@ -2,13 +2,6 @@ data "portainer_environment" "local_swarm" {
   name = "primary"
 }
 
-
-
-# QNAP NAS Environment
-# resource "portainer_tag" "remote_qnap" {
-#   name = "qnap"
-# }
-
 resource "portainer_environment" "remote_qnap" {
   name                = "remote_qnap"
   environment_address = "tcp://10.0.40.2:9001"
