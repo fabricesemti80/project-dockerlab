@@ -4,7 +4,7 @@
 services:
   linkwarden:
     image: ghcr.io/linkwarden/linkwarden:latest
-    command: ["sh", "-c", "until curl -f http://linkwarden_linkwarden-meilisearch:7700/health > /dev/null 2>&1; do echo 'Waiting for MeiliSearch...'; sleep 5; done && npm start"]
+    command: ["sh", "-c", "until curl -f http://linkwarden-meilisearch:7700/health > /dev/null 2>&1; do echo 'Waiting for MeiliSearch...'; sleep 5; done && npm run start"]
     environment:
       - TZ=${TZ}
       - DATABASE_URL=postgresql://postgres:${LINKWARDEN_POSTGRES_PASSWORD}@linkwarden_linkwarden-postgres:5432/linkwarden
