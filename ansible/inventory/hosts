@@ -2,12 +2,23 @@
 dkr-srv-1 ansible_host=10.0.30.21
 dkr-srv-2 ansible_host=10.0.30.22
 dkr-srv-3 ansible_host=10.0.30.23
+dkr-wrkr-1 ansible_host=10.0.30.31
+dkr-wrkr-2 ansible_host=10.0.30.32
+
+[swarm_servers]
+dkr-srv-1
+dkr-srv-2
+dkr-srv-3
+
+[swarm_workers]
+dkr-wrkr-1
+dkr-wrkr-2
 
 [vms:children]
 proxmox_vms
 
 [swarm_managers:children]
-proxmox_vms
+swarm_servers
 
 [all:children]
 vms
