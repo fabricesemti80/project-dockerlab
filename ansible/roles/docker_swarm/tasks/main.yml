@@ -3,7 +3,7 @@
   ansible.builtin.command: docker info --format '{{ "{{" }}.Swarm.LocalNodeState{{ "}}" }}'
   register: swarm_status
   changed_when: false
-  when: inventory_hostname in groups['swarm_managers']
+  when: inventory_hostname in groups['swarm_managers'] or inventory_hostname in groups['swarm_workers']
 
 - name: Initialize Docker Swarm on the first manager
   ansible.builtin.command: >
@@ -44,6 +44,34 @@
     - swarm_manager_token is defined
   changed_when: "'This node joined a swarm as a manager' in (swarm_join.stdout | default(''))"
 
+- name: Get worker join token
+  ansible.builtin.command: docker swarm join-token -q worker
+  register: worker_token
+  when:
+    - inventory_hostname == groups['swarm_managers'][0]
+    - "'swarm_workers' in groups"
+  changed_when: false
+
+- name: Set worker join token as a fact
+  ansible.builtin.set_fact:
+    swarm_worker_token: "{{ hostvars[groups['swarm_managers'][0]]['worker_token']['stdout'] }}"
+  when:
+    - "'swarm_workers' in groups"
+    - hostvars[groups['swarm_managers'][0]]['worker_token']['stdout'] is defined
+  run_once: true
+
+- name: Join workers to the swarm
+  ansible.builtin.command: >
+    docker swarm join
+    --token {{ swarm_worker_token }}
+    {{ hostvars[groups['swarm_managers'][0]]['ansible_host'] }}:2377
+  register: swarm_join_worker
+  when:
+    - inventory_hostname in groups['swarm_workers']
+    - swarm_status.stdout | default('') != 'active'
+    - swarm_worker_token is defined
+  changed_when: "'This node joined a swarm as a worker' in (swarm_join_worker.stdout | default(''))"
+
 - name: Create shared docker data directory on CephFS
   ansible.builtin.file:
     path: "{{ cephfs_mount_point }}/docker-shared-data"
@@ -51,6 +79,6 @@
     owner: "{{ primary_user }}"
     group: "{{ primary_user }}"
     mode: '0755'
-  when: 
+  when:
     - inventory_hostname == groups['swarm_managers'][0]
     - install_cephfs | default(false) | bool
