@@ -9,19 +9,27 @@
 │                        Proxmox VE On-Premises                           │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
-│       ┌───────────────┐    ┌───────────────┐    ┌───────────────┐       │
-│       │   dkr-srv-1   │    │   dkr-srv-2   │    │   dkr-srv-3   │       │
-│       │   (Manager)   │◄──►│   (Manager)   │◄──►│   (Manager)   │       │
-│       │  10.0.30.21   │    │  10.0.30.22   │    │  10.0.30.23   │       │
-│       └───────────────┘    └───────────────┘    └───────────────┘       │
+│  Managers:                                                              │
+│       ┌───────────────┐    ┌───────────────┐    ┌───────────────┐      │
+│       │   dkr-srv-1   │    │   dkr-srv-2   │    │   dkr-srv-3   │      │
+│       │   (Manager)   │◄──►│   (Manager)   │◄──►│   (Manager)   │      │
+│       │  10.0.30.21   │    │  10.0.30.22   │    │  10.0.30.23   │      │
+│       └───────────────┘    └───────────────┘    └───────────────┘      │
+│                                                                         │
+│  Workers:                                                               │
+│       ┌───────────────┐    ┌───────────────┐                           │
+│       │  dkr-wrkr-1   │    │  dkr-wrkr-2   │                           │
+│       │   (Worker)    │    │   (Worker)    │                           │
+│       │  10.0.30.24   │    │  10.0.30.25   │                           │
+│       └───────────────┘    └───────────────┘                           │
 │                                                                         │
 │                         Docker Swarm Cluster                            │
-│                              (3 Managers)                               │
+│                        (3 Managers + 2 Workers)                         │
 │                                                                         │
-│       ┌─────────────────────────────────────────────────────────┐       │
+│       ┌─────────────────────────────────────────────────────────┐      │
 │       │                    Shared Storage                        │      │
-│       │                  CephFS (/mnt/cephfs)                   │       │
-│       └─────────────────────────────────────────────────────────┘       │
+│       │                  CephFS (/mnt/cephfs)                   │      │
+│       └─────────────────────────────────────────────────────────┘      │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -137,17 +145,18 @@ docker stack deploy -c traefik-stack.yml traefik
 
 ### Nodes
 
-| Node | Location | IP Address | Role |
-|------|----------|------------|------|
-| dkr-srv-0 | Hetzner Helsinki | 157.180.84.140 | Swarm Manager |
-| dkr-srv-1 | On-premises | 10.0.30.21 | Swarm Manager |
-| dkr-srv-2 | On-premises | 10.0.30.22 | Swarm Manager |
+| Node | IP Address | Role | Purpose |
+|------|------------|------|---------|
+| dkr-srv-1 | 10.0.30.21 | Manager | Swarm management, core services |
+| dkr-srv-2 | 10.0.30.22 | Manager | Swarm management, core services |
+| dkr-srv-3 | 10.0.30.23 | Manager | Swarm management, core services |
+| dkr-wrkr-1 | 10.0.30.24 | Worker | Application workloads |
+| dkr-wrkr-2 | 10.0.30.25 | Worker | Application workloads |
 
 ### Network Configuration
 
 - **VLAN 30**: Docker/Container network (10.0.30.0/24)
 - **VLAN 40**: Proxmox management (10.0.40.0/24)
-- **Tailscale**: Secure mesh overlay across all nodes
 
 ## 🔧 Common Tasks
 
@@ -259,6 +268,19 @@ A minimal, self-hosted wiki with Markdown and Git version control.
 
 **Required Doppler Secrets:** None (first registered user becomes admin)
 
+#### Linkwarden
+
+A collaborative bookmark manager that preserves webpages. Deployed on worker nodes.
+
+**URL:** `https://links.yourdomain.com`
+
+**Required Doppler Secrets:**
+| Secret | Description |
+|--------|-------------|
+| `LINKWARDEN_POSTGRES_PASSWORD` | PostgreSQL password for database |
+| `LINKWARDEN_NEXTAUTH_SECRET` | Secret for session encryption (generate with `openssl rand -base64 32`) |
+| `LINKWARDEN_MEILI_KEY` | Meilisearch master key for search (generate with `openssl rand -base64 32`) |
+
 #### Plex (QNAP Secondary Environment)
 
 Media server running on QNAP NAS, routed through Traefik on the primary swarm.
@@ -295,10 +317,8 @@ Metrics and logs collector for Grafana Cloud. Runs globally on all swarm nodes.
 
 | Secret | Purpose |
 |--------|---------|
-| `HCLOUD_TOKEN` | Hetzner Cloud API |
 | `PROXMOX_AUTH_TOKEN` | Proxmox VE API |
 | `CLOUDFLARE_API_TOKEN` | Cloudflare DNS |
-| `TAILSCALE_AUTH_KEY` | Tailscale network |
 | `GHOST_DB_PASSWORD` | MySQL password for Ghost database user |
 | `GHOST_DB_ROOT_PASSWORD` | MySQL root password for Ghost database |
 | `GHOST_MAIL_TRANSPORT` | Mail transport (e.g., `SMTP`) - optional |
@@ -314,6 +334,9 @@ Metrics and logs collector for Grafana Cloud. Runs globally on all swarm nodes.
 | `GRAFANA_CLOUD_LOKI_USERNAME` | Grafana Cloud Loki username |
 | `GRAFANA_CLOUD_API_KEY` | Grafana Cloud API key |
 | `BESZEL_AGENT_KEY` | Beszel agent key (get from Beszel hub UI) |
+| `LINKWARDEN_POSTGRES_PASSWORD` | PostgreSQL password for Linkwarden |
+| `LINKWARDEN_NEXTAUTH_SECRET` | NextAuth session secret for Linkwarden |
+| `LINKWARDEN_MEILI_KEY` | Meilisearch master key for Linkwarden |
 
 ## 🔄 Deployment Workflow
 

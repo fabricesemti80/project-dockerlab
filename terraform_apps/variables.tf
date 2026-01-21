@@ -215,3 +215,22 @@ variable "GRAFANA_CLOUD_API_KEY" {
   sensitive   = true
   default     = ""
 }
+
+# Linkwarden
+variable "LINKWARDEN_POSTGRES_PASSWORD" {
+  description = "PostgreSQL password for Linkwarden database"
+  type        = string
+  sensitive   = true
+}
+
+variable "LINKWARDEN_NEXTAUTH_SECRET" {
+  description = "NextAuth secret for Linkwarden session encryption"
+  type        = string
+  sensitive   = true
+}
+
+variable "LINKWARDEN_MEILI_KEY" {
+  description = "Meilisearch master key for Linkwarden search"
+  type        = string
+  sensitive   = true
+}

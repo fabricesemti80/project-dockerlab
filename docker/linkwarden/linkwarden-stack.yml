@@ -6,11 +6,11 @@ services:
     image: ghcr.io/linkwarden/linkwarden:latest
     environment:
       - TZ=${TZ}
-      - DATABASE_URL=postgresql://postgres:${LINKWARDEN_POSTGRES_PASSWORD}@linkwarden-postgres:5432/linkwarden
+      - DATABASE_URL=postgresql://postgres:${LINKWARDEN_POSTGRES_PASSWORD}@linkwarden_linkwarden-postgres:5432/linkwarden
       - NEXTAUTH_URL=https://links.${DOMAIN}/api/v1/auth
       - NEXTAUTH_SECRET=${LINKWARDEN_NEXTAUTH_SECRET}
       - MEILI_MASTER_KEY=${LINKWARDEN_MEILI_KEY}
-      - MEILI_HOST=http://linkwarden-meilisearch:7700
+      - MEILI_HOST=http://linkwarden_linkwarden-meilisearch:7700
     volumes:
       - /mnt/cephfs/docker-shared-data/linkwarden/data:/data/data
     networks:
@@ -64,7 +64,7 @@ services:
 
   linkwarden-postgres:
     image: postgres:16-alpine
-    hostname: linkwarden-postgres
+    hostname: linkwarden_linkwarden-postgres
     environment:
       - TZ=${TZ}
       - POSTGRES_USER=postgres
@@ -75,7 +75,7 @@ services:
     networks:
       linkwarden-internal:
         aliases:
-          - linkwarden-postgres
+          - linkwarden_linkwarden-postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d linkwarden"]
       interval: 30s
@@ -107,7 +107,7 @@ services:
 
   linkwarden-meilisearch:
     image: getmeili/meilisearch:v1.12.8
-    hostname: linkwarden-meilisearch
+    hostname: linkwarden_linkwarden-meilisearch
     environment:
       - TZ=${TZ}
       - MEILI_MASTER_KEY=${LINKWARDEN_MEILI_KEY}
@@ -117,7 +117,7 @@ services:
     networks:
       linkwarden-internal:
         aliases:
-          - linkwarden-meilisearch
+          - linkwarden_linkwarden-meilisearch
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:7700/health"]
       interval: 30s
