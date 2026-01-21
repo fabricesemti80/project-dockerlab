@@ -17,3 +17,10 @@ tasks:
     cmds:
       - task --list-all
     silent: true
+
+  deploy:
+    desc: "Run full deployment pipeline: infra provisioning, configuration, and app deployment"
+    cmds:
+      - task tf:apply
+      - task ansible:apply
+      - task tfa:apply

@@ -350,6 +350,16 @@ graph LR
     F -->|Form Cluster| G[Deploy Apps]
 ```
 
+## 🚀 Bonus: Automated Deployment Pipeline
+
+For those who want to loosely couple the deployment stages without a full CI/CD server, we've added automated pipeline options:
+
+- **One-command deployment**: `task deploy` runs the full Terraform → Ansible → Terraform pipeline sequentially
+- **Enhanced scripting**: `./scripts/deploy.sh` provides detailed logging and error handling
+- **Event-driven options**: Webhook receiver for external triggering
+
+See [Deployment Pipeline Plan](plans/deployment_pipeline_plan.md) for detailed implementation options and comparisons.
+
 ## 🛠️ Troubleshooting
 
 ### SSH Connection Issues

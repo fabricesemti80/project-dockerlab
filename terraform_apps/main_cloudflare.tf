@@ -116,7 +116,7 @@ resource "cloudflare_zero_trust_access_application" "beszel_access" {
   domain     = "beszel.${var.DOMAIN}"
   type       = "self_hosted"
 
-  session_duration          = "24h"
+  session_duration          = "720h"
   auto_redirect_to_identity = false
 
   policies = [
@@ -156,7 +156,7 @@ resource "cloudflare_zero_trust_access_application" "blog_access" {
   domain     = "blog.${var.DOMAIN}"
   type       = "self_hosted"
 
-  session_duration          = "24h"
+  session_duration          = "720h"
   auto_redirect_to_identity = false
 
   policies = [
@@ -180,7 +180,7 @@ resource "cloudflare_zero_trust_access_application" "otterwiki_git_bypass" {
   domain     = "wiki.${var.DOMAIN}/.git/*"
   type       = "self_hosted"
 
-  session_duration          = "0s"
+  session_duration          = "720h"
   auto_redirect_to_identity = false
 
   policies = [
