@@ -12,8 +12,8 @@ services:
       - proxy
     environment:
       - TZ=${TZ}
-      - PUID=1000
-      - PGID=1000
+      - PUID=${PUID}
+      - PGID=${PGID}
       - GIT_WEB_SERVER=True
     volumes:
       - /mnt/cephfs/docker-shared-data/otterwiki/app-data:/app-data

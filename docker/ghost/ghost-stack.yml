@@ -8,6 +8,7 @@ services:
   ghost:
     image: ghost:5-alpine
     environment:
+      - TZ=${TZ}
       - NODE_ENV=production
       - url=https://blog.${DOMAIN}
       - database__client=mysql
@@ -74,6 +75,7 @@ services:
     image: mysql:8.0
     hostname: ghost-db
     environment:
+      - TZ=${TZ}
       - MYSQL_ROOT_PASSWORD=${GHOST_DB_ROOT_PASSWORD}
       - MYSQL_DATABASE=ghost
       - MYSQL_USER=ghost

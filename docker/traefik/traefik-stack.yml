@@ -61,6 +61,7 @@ services:
       start_period: 10s
 
     environment:
+      - TZ=${TZ}
       - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
 
     ports:

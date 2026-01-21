@@ -5,6 +5,8 @@ version: "3.9"
 services:
   hub:
     image: henrygd/beszel:latest
+    environment:
+      - TZ=${TZ}
     volumes:
       - /mnt/cephfs/docker-shared-data/beszel/data:/beszel_data
     networks:
@@ -45,6 +47,7 @@ services:
   agent:
     image: henrygd/beszel-agent:latest
     environment:
+      - TZ=${TZ}
       - LISTEN=45876
       - "KEY=${BESZEL_AGENT_KEY}"
     volumes:

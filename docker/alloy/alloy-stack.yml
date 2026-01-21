@@ -9,6 +9,7 @@ services:
       - --storage.path=/var/lib/alloy/data
       - /etc/alloy/config.alloy
     environment:
+      - TZ=${TZ}
       - GRAFANA_CLOUD_PROMETHEUS_URL=${GRAFANA_CLOUD_PROMETHEUS_URL}
       - GRAFANA_CLOUD_PROMETHEUS_USERNAME=${GRAFANA_CLOUD_PROMETHEUS_USERNAME}
       - GRAFANA_CLOUD_LOKI_URL=${GRAFANA_CLOUD_LOKI_URL}

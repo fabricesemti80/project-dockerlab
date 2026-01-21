@@ -6,6 +6,7 @@ services:
     networks:
       - proxy
     environment:
+      - TZ=${TZ}
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
     command: tunnel run
     healthcheck:

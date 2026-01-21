@@ -3,6 +3,8 @@ version: "3.9"
 services:
   whoami:
     image: traefik/whoami
+    environment:
+      - TZ=${TZ}
     networks:
       - proxy
     deploy:

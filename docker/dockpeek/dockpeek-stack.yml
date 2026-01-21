@@ -8,6 +8,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
+      - TZ=${TZ}
       - SECRET_KEY=${SECRET_KEY}
       # If the app supports built-in auth via env vars:
       - USERNAME=${USERNAME}
