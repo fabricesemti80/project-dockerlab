@@ -4,14 +4,13 @@
 services:
   linkwarden:
     image: ghcr.io/linkwarden/linkwarden:latest
-    command: ["sh", "-c", "until curl -f http://linkwarden-meilisearch:7700/health > /dev/null 2>&1; do echo 'Waiting for MeiliSearch...'; sleep 5; done && npm run start"]
     environment:
       - TZ=${TZ}
-      - DATABASE_URL=postgresql://postgres:${LINKWARDEN_POSTGRES_PASSWORD}@linkwarden_linkwarden-postgres:5432/linkwarden
+      - DATABASE_URL=postgresql://postgres:${LINKWARDEN_POSTGRES_PASSWORD}@linkwarden_postgres:5432/postgres
       - NEXTAUTH_URL=https://links.${DOMAIN}/api/v1/auth
       - NEXTAUTH_SECRET=${LINKWARDEN_NEXTAUTH_SECRET}
       - MEILI_MASTER_KEY=${LINKWARDEN_MEILI_KEY}
-      - MEILI_HOST=http://linkwarden_linkwarden-meilisearch:7700
+      - MEILI_HOST=http://linkwarden_meilisearch:7700
     volumes:
       - /mnt/cephfs/docker-shared-data/linkwarden/data:/data/data
     networks:
@@ -60,16 +59,16 @@ services:
         - "homepage.href=https://links.${DOMAIN}"
         - "homepage.description=Bookmark Manager"
     depends_on:
-      - linkwarden-postgres
-      - linkwarden-meilisearch
+      - postgres
+      - meilisearch
 
-  linkwarden-postgres:
+  postgres:
     image: postgres:16-alpine
     environment:
       - TZ=${TZ}
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${LINKWARDEN_POSTGRES_PASSWORD}
-      - POSTGRES_DB=linkwarden
+      - POSTGRES_DB=postgres
     volumes:
       - /mnt/cephfs/docker-shared-data/linkwarden/postgres:/var/lib/postgresql/data
     networks:
@@ -103,7 +102,7 @@ services:
       rollback_config:
         parallelism: 1
 
-  linkwarden-meilisearch:
+  meilisearch:
     image: getmeili/meilisearch:v1.12.8
     environment:
       - TZ=${TZ}
