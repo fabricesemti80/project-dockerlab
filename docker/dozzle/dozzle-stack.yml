@@ -3,7 +3,6 @@ services:
     image: amir20/dozzle:latest
     labels:
       - "prometheus.io/scrape=false"
-    hostname: 'logs.${DOMAIN}'
     environment:
       - "TZ=${TZ}"
       - "DOZZLE_MODE=swarm"
