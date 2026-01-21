@@ -7,7 +7,7 @@ services:
   otterwiki:
     image: redimp/otterwiki:2
     labels:
-          - "prometheus.io/scrape=false" #! no metrics endpoint for this service 
+          - "prometheus.io/scrape=false" #! no metrics endpoint for this service
     networks:
       - proxy
     environment:
@@ -28,7 +28,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.role == worker
+          - node.role == worker #! you do have workers, right?!
       resources:
         limits:
           cpus: '0.5'
