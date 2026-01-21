@@ -6,22 +6,13 @@ services:
     hostname: 'logs.${DOMAIN}'
     environment:
       - "TZ=${TZ}"
-      - "DOZZLE_REMOTE_HOST=tcp://socket-proxy:2375"
+      - "DOZZLE_MODE=swarm"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - proxy
-      - socket-proxy
     deploy:
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-      update_config:
-        parallelism: 1
-        delay: 10s
-        failure_action: rollback
-        order: start-first
-      rollback_config:
-        parallelism: 1
+      mode: global
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.dozzle.rule=Host(`logs.${DOMAIN}`)"
@@ -38,6 +29,4 @@ services:
 
 networks:
   proxy:
-    external: true
-  socket-proxy:
     external: true
