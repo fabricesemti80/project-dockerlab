@@ -4,12 +4,10 @@ services:
   watchtower:
     image: containrrr/watchtower:1.7.1
     hostname: watchtower
-    networks:
-      - socket-proxy
-      - default
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - TZ=${TZ}
-      - DOCKER_HOST=tcp://socket-proxy:2375
       - DOCKER_API_VERSION=1.45
       - WATCHTOWER_SCHEDULE=0 0 8 * * *
       - WATCHTOWER_CLEANUP=true
@@ -61,5 +59,3 @@ services:
 networks:
   default:
     driver: overlay
-  socket-proxy:
-    external: true
