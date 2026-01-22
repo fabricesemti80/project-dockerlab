@@ -38,7 +38,7 @@ prometheus.exporter.unix "default" {
 prometheus.scrape "node" {
   targets    = prometheus.exporter.unix.default.targets
   forward_to = [prometheus.remote_write.grafana_cloud.receiver]
-  
+
   scrape_interval = "60s"
 }
 
@@ -89,7 +89,7 @@ discovery.relabel "docker" {
 prometheus.scrape "docker" {
   targets    = discovery.relabel.docker.output
   forward_to = [prometheus.remote_write.grafana_cloud.receiver]
-  
+
   scrape_interval = "60s"
 }
 

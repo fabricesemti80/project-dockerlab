@@ -42,7 +42,7 @@
 - name: Peer probe other nodes
   command: "gluster peer probe {{ item }}"
   loop: "{{ groups['proxmox_vms'] }}"
-  when: 
+  when:
     - inventory_hostname == groups['proxmox_vms'][0]
     - item != inventory_hostname
   register: peer_probe
@@ -66,14 +66,14 @@
     {% endfor %}
     force
   run_once: true
-  when: 
+  when:
     - inventory_hostname == groups['proxmox_vms'][0]
     - "'Volume Name: ' + glusterfs_volume_name not in volume_info.stdout"
 
 - name: Start GlusterFS volume
   command: "gluster volume start {{ glusterfs_volume_name }}"
   run_once: true
-  when: 
+  when:
     - inventory_hostname == groups['proxmox_vms'][0]
     - "'Status: Started' not in volume_info.stdout"
   ignore_errors: yes # If already started

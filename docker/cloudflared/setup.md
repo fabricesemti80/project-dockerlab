@@ -93,4 +93,3 @@ Configure the Tunnel to connect directly to Traefik's **HTTPS port (443)** and i
 2.  Edit the Public Hostname.
 3.  Change Service to **HTTPS** and URL to `traefik:443`.
 4.  Under **TLS** settings, enable **No TLS Verify**.
-

@@ -4,7 +4,7 @@
 
 - name: "Ensure required python libraries are installed"
   ansible.builtin.pip:
-    name: 
+    name:
       - docker
       - jsondiff
       - pyyaml
@@ -60,7 +60,7 @@
     port: "{{ portainer_http_port }}"
     host: 127.0.0.1
     timeout: 300
-  when: 
+  when:
     - not ansible_check_mode
     - stack_deploy.changed
   tags: [portainer]
@@ -71,17 +71,17 @@
   register: portainer_timeout_check
   failed_when: false
   changed_when: false
-  when: 
+  when:
     - not ansible_check_mode
     - stack_deploy.changed
   tags: [portainer]
 
 - name: "Restart Portainer to reset initialization timer if needed"
   ansible.builtin.command: docker service update --force portainer_portainer
-  when: 
+  when:
     - not ansible_check_mode
     - stack_deploy.changed
-    - portainer_timeout_check.stdout is defined 
+    - portainer_timeout_check.stdout is defined
     - "'initialization timeout' in portainer_timeout_check.stdout"
   tags: [portainer]
 
@@ -93,7 +93,7 @@
   retries: 30
   delay: 10
   changed_when: false
-  when: 
+  when:
     - not ansible_check_mode
     - stack_deploy.changed
   tags: [portainer]
@@ -106,7 +106,7 @@
 
 - name: "Debug Portainer password info"
   ansible.builtin.debug:
-    msg: 
+    msg:
       - "Admin user: {{ portainer_admin_user }}"
       - "Password length: {{ portainer_admin_password | length }}"
   tags: [portainer]
@@ -156,7 +156,7 @@
     status_code: [200, 422]
     use_proxy: no
   register: portainer_auth_default
-  when: 
+  when:
     - not ansible_check_mode
     - portainer_auth_doppler.status == 422
   tags: [portainer]
@@ -172,7 +172,7 @@
       newPassword: "{{ portainer_admin_password }}"
     status_code: 200
     use_proxy: no
-  when: 
+  when:
     - not ansible_check_mode
     - portainer_auth_default.status is defined
     - portainer_auth_default.status == 200
@@ -217,7 +217,7 @@
     status_code: [200, 201]
     use_proxy: no
   register: portainer_token
-  when: 
+  when:
     - not ansible_check_mode
     - existing_tokens.json is defined
     - "existing_tokens.json | selectattr('description', 'equalto', 'terraform') | list | length == 0"
@@ -227,10 +227,10 @@
   ansible.builtin.shell: "doppler secrets set PORTAINER_ACCESS_TOKEN={{ portainer_token.json.rawAPIKey }}"
   delegate_to: localhost
   become: false
-  when: 
+  when:
     - not ansible_check_mode
-    - portainer_token is defined 
-    - portainer_token.json is defined 
+    - portainer_token is defined
+    - portainer_token.json is defined
     - portainer_token.json.rawAPIKey is defined
   tags: [portainer, doppler]
 

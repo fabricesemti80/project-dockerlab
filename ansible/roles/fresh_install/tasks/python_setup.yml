@@ -27,6 +27,6 @@
   ansible.builtin.pip:
     name: "{{ item.name }}"
   loop: "{{ pip_install_packages | default([]) }}"
-  when: 
+  when:
     - pip_install_packages is defined
     - pip3_bin.stat.exists or not ansible_check_mode

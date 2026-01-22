@@ -26,7 +26,7 @@
     fstype: ceph
     opts: "name={{ cephfs_user }},secretfile=/etc/ceph/{{ cephfs_user }}.secret,fs={{ cephfs_name }},_netdev"
     state: mounted
-  when: 
+  when:
     - cephfs_monitors | length > 0
     - cephfs_secret_key | length > 0
     - not ansible_check_mode

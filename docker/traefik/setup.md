@@ -11,7 +11,7 @@ This guide covers the deployment and configuration of the Traefik Ingress Contro
 
 ## 2. Environment Variables
 
-When deploying stacks in Portainer, you must define the following environment variables in the **Environment variables** section of the stack configuration. 
+When deploying stacks in Portainer, you must define the following environment variables in the **Environment variables** section of the stack configuration.
 
 Refer to `.envrc_example` in this directory for a template.
 
@@ -64,6 +64,6 @@ This occurs when Cloudflare's SSL/TLS mode is set to **Flexible**. Cloudflare co
 ## 6. Verification
 
 ### Load Balancing
-Visit `https://whoami.yourdomain.com`. Refresh the page multiple times. 
+Visit `https://whoami.yourdomain.com`. Refresh the page multiple times.
 - You should see the **Hostname** and **IP** change.
 - This confirms that Traefik is successfully load balancing across the 3 replicas of the `whoami` service.

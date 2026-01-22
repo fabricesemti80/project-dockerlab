@@ -2,10 +2,20 @@
 extends: default
 rules:
   line-length:
-    max: 120
+    max: 250
+  indentation: disable
   document-start: disable
   document-end: disable
-  indentation:
-    spaces: 2
   new-lines:
     type: unix
+  comments:
+    require-starting-space: false
+    min-spaces-from-content: 1
+  comments-indentation: disable
+  truthy: disable
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+  trailing-spaces: disable
+  new-line-at-end-of-file: disable
+  empty-lines: disable

@@ -35,10 +35,10 @@ flowchart TB
     CFG2 --> HP
     CFG3 --> HP
     CFG4 --> HP
-    
+
     PROXY --> HP
     PTN --> HP
-    
+
     HP -.->|"Auto-discover"| SVC1
     HP -.->|"Auto-discover"| SVC2
     HP -.->|"Auto-discover"| SVC3

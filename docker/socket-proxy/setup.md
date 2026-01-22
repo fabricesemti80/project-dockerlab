@@ -11,7 +11,7 @@ flowchart LR
             SOCK["Docker Socket<br/>/var/run/docker.sock"]
             PROXY["Socket Proxy<br/>:2375"]
         end
-        
+
         subgraph "Applications"
             TRF["Traefik"]
             HP["Homepage"]

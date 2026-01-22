@@ -9,7 +9,7 @@
     # User Management
     primary_user: fs
     ssh_public_key_path: "~/.ssh/fs_home_rsa.pub"
-    
+
     # Feature Toggles
     install_docker: true
     install_zsh: true
@@ -18,13 +18,13 @@
     install_cephfs: true
     install_swarm: true
     install_portainer: true
-    
+
     # LVM Configuration
     lvm_volume_group_name: "data_vg"
     lvm_data_volume_name: "data_lv"
     lvm_data_volume_size: "80%VG"
     data_mount_point: "/data"
-    
+
     # CephFS Configuration
     cephfs_name: "cephfs-vm"
     cephfs_mount_point: "/mnt/cephfs"
@@ -33,7 +33,7 @@
       - 10.0.70.11
       - 10.0.70.12
     cephfs_user: "admin"
-    
+
     # Portainer Configuration
     portainer_admin_user: admin
     portainer_admin_password: "{{ lookup('env', 'PORTAINER_ADMIN_PASSWORD') }}"

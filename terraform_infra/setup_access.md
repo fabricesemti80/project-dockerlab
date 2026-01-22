@@ -27,5 +27,5 @@ The following emails are currently authorized in `terraform/main_access.tf`:
 - `fabrice@fabricesemti.com`
 
 ## 4. Troubleshooting Login
-- **"This account does not have access":** This means the email returned by the Identity Provider (e.g., GitHub) is **not** in the list above. 
+- **"This account does not have access":** This means the email returned by the Identity Provider (e.g., GitHub) is **not** in the list above.
 - **Check your IdP Email:** If logging in with GitHub, ensure your primary/public email matches one of the allowed emails.
