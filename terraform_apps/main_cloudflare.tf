@@ -136,6 +136,7 @@ resource "cloudflare_zero_trust_access_application" "beszel_access" {
         }
       ]
     },
+    #? Bypass for Beszel agents from local network (10.0.0.0/16)
     {
       name     = "Bypass for Agents"
       decision = "bypass"
@@ -160,6 +161,7 @@ resource "cloudflare_zero_trust_access_application" "blog_access" {
   auto_redirect_to_identity = false
 
   policies = [
+    #? Bypass for blog access from anywhere
     {
       name     = "Allow Everyone"
       decision = "bypass"
@@ -184,10 +186,57 @@ resource "cloudflare_zero_trust_access_application" "otterwiki_git_bypass" {
   auto_redirect_to_identity = false
 
   policies = [
+    #? Bypass for OtterWiki Git access for everyone
     {
       name     = "Bypass Git"
       decision = "bypass"
       include = [
+        {
+          everyone = {}
+        }
+      ]
+    }
+  ]
+}
+
+resource "cloudflare_zero_trust_access_application" "jellyfin_access" {
+  account_id = var.CLOUDFLARE_ACCOUNT_ID
+  name       = "Jellyfin Access"
+  domain     = "jelly.${var.DOMAIN}"
+  type       = "self_hosted"
+
+  session_duration          = "720h"
+  auto_redirect_to_identity = false
+
+  policies = [
+    {
+      name     = "Allow Admin"
+      decision = "allow"
+      include = [
+        for email in local.access_allowed_emails : {
+          email = {
+            email = email
+          }
+        }
+      ]
+    },
+
+
+    #? Bypass for Jellyfin from anywhere (includes local network and Tailscale)
+    {
+      name     = "Bypass from Local & Tailscale for everyone"
+      decision = "bypass"
+      include = [
+        {
+          ip = {
+            ip = "10.0.0.0/16"
+          }
+        },
+        {
+          ip = {
+            ip = "100.64.0.0/10"
+          }
+        },
         {
           everyone = {}
         }

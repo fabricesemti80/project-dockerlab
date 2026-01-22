@@ -32,10 +32,10 @@ services:
           - node.role == worker
       resources:
         limits:
-          cpus: '2.0'
-          memory: 4G
+          cpus: '4.0'
+          memory: 6G
         reservations:
-          memory: 1G
+          memory: 2G
       update_config:
         parallelism: 1
         delay: 10s
