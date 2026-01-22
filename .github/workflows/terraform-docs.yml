@@ -6,10 +6,12 @@ on:
     branches:
       - main
     paths:
-      - 'terraform/modules/**'
+      - 'terraform_infra/modules/**'
+      - 'terraform_apps/**'
   pull_request:
     paths:
-      - 'terraform/modules/**'
+      - 'terraform_infra/modules/**'
+      - 'terraform_apps/**'
 
 permissions:
   contents: write
@@ -25,7 +27,7 @@ jobs:
       - name: Terraform docs (hetzner-cloud)
         uses: terraform-docs/gh-actions@v1
         with:
-          working-dir: terraform/modules/hetzner-cloud
+          working-dir: terraform_infra/modules/hetzner-cloud
           output-file: README.md
           output-method: inject
           git-push: ${{ github.event_name == 'push' }}
@@ -34,7 +36,15 @@ jobs:
       - name: Terraform docs (proxmox-vm)
         uses: terraform-docs/gh-actions@v1
         with:
-          working-dir: terraform/modules/proxmox-vm
+          working-dir: terraform_infra/modules/proxmox-vm
+          output-file: README.md
+          output-method: inject
+          git-push: ${{ github.event_name == 'push' }}
+
+      - name: Terraform docs (terraform_apps)
+        uses: terraform-docs/gh-actions@v1
+        with:
+          working-dir: terraform_apps
           output-file: README.md
           output-method: inject
           git-push: ${{ github.event_name == 'push' }}
