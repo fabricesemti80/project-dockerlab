@@ -1,0 +1,11 @@
+---
+extends: default
+rules:
+  line-length:
+    max: 120
+  document-start: disable
+  document-end: disable
+  indentation:
+    spaces: 2
+  new-lines:
+    type: unix
