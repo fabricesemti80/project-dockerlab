@@ -1,0 +1,64 @@
+# Jellyfin - Media Server
+# https://jellyfin.org/
+
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - /mnt/cephfs/docker-shared-data/jellyfin/config:/config
+      - /mnt/cephfs/docker-shared-data/jellyfin/cache:/cache
+      - /share/media/movies:/data/movies
+      - /share/media/tv:/data/tv
+      - /share/media/xxx:/data/xxx
+    networks:
+      - proxy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8096/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    logging:
+      driver: json-file
+      options:
+        max-size: "12m"
+        max-file: "5"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          memory: 1G
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      rollback_config:
+        parallelism: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.jellyfin.rule=Host(`jelly.${DOMAIN}`)"
+        - "traefik.http.routers.jellyfin.entrypoints=websecure"
+        - "traefik.http.routers.jellyfin.tls.certresolver=cloudflare"
+        - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+
+        # Homepage Discovery
+        - "homepage.group=Media"
+        - "homepage.name=Jellyfin"
+        - "homepage.icon=jellyfin.png"
+        - "homepage.href=https://jelly.${DOMAIN}"
+        - "homepage.description=Media Server"
+
+networks:
+  proxy:
+    external: true
