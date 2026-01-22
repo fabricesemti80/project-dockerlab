@@ -21,11 +21,13 @@
 - name: Install role-specific pip packages
   ansible.builtin.pip:
     name: "{{ role_pip_packages }}"
+    extra_args: --root-user-action=ignore
   when: pip3_bin.stat.exists or not ansible_check_mode
 
 - name: Install external role pip packages
   ansible.builtin.pip:
     name: "{{ item.name }}"
+    extra_args: --root-user-action=ignore
   loop: "{{ pip_install_packages | default([]) }}"
   when:
     - pip_install_packages is defined

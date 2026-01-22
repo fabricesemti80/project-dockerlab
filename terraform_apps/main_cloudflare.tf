@@ -7,6 +7,134 @@ locals {
     "fabrice.semti@gmail.com",
     "fabrice@fabricesemti.com"
   ]
+
+  bypass_local_networks = [
+    {
+      ip = {
+        ip = "10.0.0.0/16"
+      }
+    },
+    {
+      ip = {
+        ip = "100.64.0.0/10"
+      }
+    }
+  ]
+
+  bypass_everyone = [
+    {
+      everyone = {}
+    }
+  ]
+
+  bypass_anywhere = [
+    {
+      ip = {
+        ip = "0.0.0.0/0"
+      }
+    }
+  ]
+
+  access_applications = {
+    homelab = {
+      name                      = "${var.DOMAIN} - default access"
+      domain                    = "*.${var.DOMAIN}"
+      type                      = "self_hosted"
+      session_duration          = "720h"
+      auto_redirect_to_identity = false
+      policies = [
+        {
+          name     = "Allow Admin"
+          decision = "allow"
+          include = [
+            for email in local.access_allowed_emails : {
+              email = {
+                email = email
+              }
+            }
+          ]
+        }
+      ]
+    }
+    beszel = {
+      name                      = "${var.DOMAIN} - Beszel access"
+      domain                    = "beszel.${var.DOMAIN}"
+      type                      = "self_hosted"
+      session_duration          = "720h"
+      auto_redirect_to_identity = false
+      policies = [
+        {
+          name     = "Allow Admin"
+          decision = "allow"
+          include = [
+            for email in local.access_allowed_emails : {
+              email = {
+                email = email
+              }
+            }
+          ]
+        },
+        {
+          name     = "${var.DOMAIN} - Beszel agent bypass"
+          decision = "bypass"
+          include  = local.bypass_local_networks
+        }
+      ]
+    }
+    blog = {
+      name                      = "Blog Access"
+      domain                    = "blog.${var.DOMAIN}"
+      type                      = "self_hosted"
+      session_duration          = "720h"
+      auto_redirect_to_identity = false
+      policies = [
+        {
+          name     = "Allow Everyone"
+          decision = "bypass"
+          include  = local.bypass_anywhere
+        }
+      ]
+    }
+    otterwiki_git = {
+      name                      = "${var.DOMAIN} - OtterWiki Git Bypass"
+      domain                    = "wiki.${var.DOMAIN}/.git/*"
+      type                      = "self_hosted"
+      session_duration          = "720h"
+      auto_redirect_to_identity = false
+      policies = [
+        {
+          name     = "Bypass Git"
+          decision = "bypass"
+          include  = local.bypass_everyone
+        }
+      ]
+    }
+    jellyfin = {
+      name                      = "${var.DOMAIN} - Jellyfin access"
+      domain                    = "jelly.${var.DOMAIN}"
+      type                      = "self_hosted"
+      session_duration          = "720h"
+      auto_redirect_to_identity = false
+      policies = [
+        {
+          name     = "Allow Admin"
+          decision = "allow"
+          include = [
+            for email in local.access_allowed_emails : {
+              email = {
+                email = email
+              }
+            }
+          ]
+        },
+        {
+          name     = "Bypass from Anywhere"
+          decision = "bypass"
+          include  = concat(local.bypass_local_networks, local.bypass_everyone)
+        }
+      ]
+    }
+  }
 }
 
 data "cloudflare_zone" "main" {
@@ -83,166 +211,19 @@ resource "cloudflare_dns_record" "beszel" {
   ttl     = 1
 }
 
-# 5. Cloudflare Access Application
-resource "cloudflare_zero_trust_access_application" "homelab_access" {
+# 5. Cloudflare Access Applications
+resource "cloudflare_zero_trust_access_application" "apps" {
+  for_each = local.access_applications
+
   account_id = var.CLOUDFLARE_ACCOUNT_ID
-  name       = "Main Access"
-  domain     = "*.${var.DOMAIN}"
-  type       = "self_hosted"
+  name       = each.value.name
+  domain     = each.value.domain
+  type       = each.value.type
 
-  session_duration          = "720h"
-  auto_redirect_to_identity = false
+  session_duration          = each.value.session_duration
+  auto_redirect_to_identity = each.value.auto_redirect_to_identity
 
-  policies = [
-    {
-      name     = "Allow Admin"
-      decision = "allow"
-
-      include = [
-        for email in local.access_allowed_emails : {
-          email = {
-            email = email
-          }
-        }
-      ]
-    }
-  ]
-}
-
-
-resource "cloudflare_zero_trust_access_application" "beszel_access" {
-  account_id = var.CLOUDFLARE_ACCOUNT_ID
-  name       = "Beszel Access"
-  domain     = "beszel.${var.DOMAIN}"
-  type       = "self_hosted"
-
-  session_duration          = "720h"
-  auto_redirect_to_identity = false
-
-  policies = [
-    {
-      name     = "Allow Admin"
-      decision = "allow"
-      include = [
-        {
-          email = {
-            email = var.ACCESS_EMAIL
-          }
-        },
-        {
-          email = {
-            email = "fabrice.semti@gmail.com"
-          }
-        }
-      ]
-    },
-    #? Bypass for Beszel agents from local network (10.0.0.0/16)
-    {
-      name     = "Bypass for Agents"
-      decision = "bypass"
-      include = [
-        {
-          ip = {
-            ip = "10.0.0.0/16"
-          }
-        }
-      ]
-    }
-  ]
-}
-
-resource "cloudflare_zero_trust_access_application" "blog_access" {
-  account_id = var.CLOUDFLARE_ACCOUNT_ID
-  name       = "Blog Access"
-  domain     = "blog.${var.DOMAIN}"
-  type       = "self_hosted"
-
-  session_duration          = "720h"
-  auto_redirect_to_identity = false
-
-  policies = [
-    #? Bypass for blog access from anywhere
-    {
-      name     = "Allow Everyone"
-      decision = "bypass"
-      include = [
-        {
-          ip = {
-            ip = "0.0.0.0/0" # Allow from anywhere
-          }
-        }
-      ]
-    }
-  ]
-}
-
-resource "cloudflare_zero_trust_access_application" "otterwiki_git_bypass" {
-  account_id = var.CLOUDFLARE_ACCOUNT_ID
-  name       = "OtterWiki Git Bypass"
-  domain     = "wiki.${var.DOMAIN}/.git/*"
-  type       = "self_hosted"
-
-  session_duration          = "720h"
-  auto_redirect_to_identity = false
-
-  policies = [
-    #? Bypass for OtterWiki Git access for everyone
-    {
-      name     = "Bypass Git"
-      decision = "bypass"
-      include = [
-        {
-          everyone = {}
-        }
-      ]
-    }
-  ]
-}
-
-resource "cloudflare_zero_trust_access_application" "jellyfin_access" {
-  account_id = var.CLOUDFLARE_ACCOUNT_ID
-  name       = "Jellyfin Access"
-  domain     = "jelly.${var.DOMAIN}"
-  type       = "self_hosted"
-
-  session_duration          = "720h"
-  auto_redirect_to_identity = false
-
-  policies = [
-    {
-      name     = "Allow Admin"
-      decision = "allow"
-      include = [
-        for email in local.access_allowed_emails : {
-          email = {
-            email = email
-          }
-        }
-      ]
-    },
-
-
-    #? Bypass for Jellyfin from anywhere (includes local network and Tailscale)
-    {
-      name     = "Bypass from Local & Tailscale for everyone"
-      decision = "bypass"
-      include = [
-        {
-          ip = {
-            ip = "10.0.0.0/16"
-          }
-        },
-        {
-          ip = {
-            ip = "100.64.0.0/10"
-          }
-        },
-        {
-          everyone = {}
-        }
-      ]
-    }
-  ]
+  policies = each.value.policies
 }
 
 # 6. Generate Tunnel Token for deployment

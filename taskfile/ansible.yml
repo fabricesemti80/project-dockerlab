@@ -19,3 +19,21 @@ tasks:
     dir: ansible
     cmds:
       - doppler run -- ansible-playbook site.yml {{.CLI_ARGS}}
+
+  cmd:all:
+    desc: "Run ad-hoc Ansible command on all hosts (use CMD=<command>)"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible all -a "{{.CMD}}" {{.CLI_ARGS}}
+
+  cmd:mgr:
+    desc: "Run ad-hoc Ansible command on swarm managers (use CMD=<command>)"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible swarm_managers -a "{{.CMD}}" {{.CLI_ARGS}}
+
+  cmd:wrkr:
+    desc: "Run ad-hoc Ansible command on swarm workers (use CMD=<command>)"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible swarm_workers -a "{{.CMD}}" {{.CLI_ARGS}}
