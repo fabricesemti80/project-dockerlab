@@ -46,6 +46,7 @@ No modules.
 | [portainer_stack.gatus](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.glance](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.homepage](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
+| [portainer_stack.jellyfin](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.linkwarden](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.maintenance](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.otterwiki](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
