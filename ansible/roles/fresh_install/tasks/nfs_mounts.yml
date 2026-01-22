@@ -1,0 +1,28 @@
+---
+# NFS mount setup for media shares
+
+- name: Install NFS client packages
+  ansible.builtin.apt:
+    name:
+      - nfs-common
+    state: present
+    update_cache: yes
+  when: install_nfs_mounts | default(false) | bool
+
+- name: Create media mount point
+  ansible.builtin.file:
+    path: /mnt/media
+    state: directory
+    owner: "{{ default_puid }}"
+    group: "{{ default_pgid }}"
+    mode: '0755'
+  when: install_nfs_mounts | default(false) | bool
+
+- name: Mount NFS media share
+  ansible.posix.mount:
+    path: /mnt/media
+    src: "{{ nfs_media_server }}:{{ nfs_media_path }}"
+    fstype: nfs
+    opts: "rw,soft,intr,timeo=30,retrans=3"
+    state: mounted
+  when: install_nfs_mounts | default(false) | bool

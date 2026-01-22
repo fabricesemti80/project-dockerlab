@@ -52,3 +52,8 @@
   include_tasks: app_data_setup.yml
   tags: [storage, apps]
   when: install_cephfs | default(false) | bool
+
+- name: NFS mount setup
+  include_tasks: nfs_mounts.yml
+  tags: [storage, nfs]
+  when: install_nfs_mounts | default(false) | bool

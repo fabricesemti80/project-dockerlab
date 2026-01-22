@@ -281,6 +281,14 @@ A collaborative bookmark manager that preserves webpages. Deployed on worker nod
 | `LINKWARDEN_NEXTAUTH_SECRET` | Secret for session encryption (generate with `openssl rand -base64 32`) |
 | `LINKWARDEN_MEILI_KEY` | Meilisearch master key for search (generate with `openssl rand -base64 32`) |
 
+#### Jellyfin
+
+Open-source media server. Deployed on worker nodes with access to shared media library.
+
+**URL:** `https://jelly.yourdomain.com`
+
+**Required Doppler Secrets:** None (first user becomes admin)
+
 #### Plex (QNAP Secondary Environment)
 
 Media server running on QNAP NAS, routed through Traefik on the primary swarm.

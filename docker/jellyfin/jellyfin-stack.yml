@@ -11,7 +11,7 @@ services:
     volumes:
       - /mnt/cephfs/docker-shared-data/jellyfin/config:/config
       - /mnt/cephfs/docker-shared-data/jellyfin/cache:/cache
-      - /share/media:/data
+      - /mnt/media:/data
     networks:
       - proxy
     healthcheck:

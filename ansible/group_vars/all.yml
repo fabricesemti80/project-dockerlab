@@ -13,6 +13,10 @@ wallos_gid: "82"
 backrest_uid: "0"
 backrest_gid: "0"
 
+# NFS media share settings
+nfs_media_server: "10.0.40.2"
+nfs_media_path: "/media"
+
 # list of packages to be installed
 install_packages:
   - apt-transport-https

@@ -149,3 +149,15 @@
     - postgres
     - meilisearch
   when: install_cephfs | default(false) | bool
+
+- name: Ensure Jellyfin data directories exist
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/jellyfin/{{ item }}"
+    state: directory
+    owner: "{{ jellyfin_uid | default(default_puid) }}"
+    group: "{{ jellyfin_gid | default(default_pgid) }}"
+    mode: '0755'
+  loop:
+    - config
+    - cache
+  when: install_cephfs | default(false) | bool
