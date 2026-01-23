@@ -1,6 +1,0 @@
----
-glusterfs_disk_device: "/dev/sda"
-glusterfs_mount_dir: "/mnt/gluster_bricks"
-glusterfs_brick_name: "brick1"
-glusterfs_volume_name: "gfs_data"
-glusterfs_client_mount_point: "/mnt/gfs_data"

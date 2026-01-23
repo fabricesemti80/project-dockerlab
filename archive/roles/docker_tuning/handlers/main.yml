@@ -1,8 +1,0 @@
----
-# Handlers for the docker_tuning role
-
-- name: "Restart Docker service"
-  ansible.builtin.systemd:
-    name: docker
-    state: restarted
-    enabled: true

@@ -1,6 +1,0 @@
----
-- name: Setup GlusterFS
-  hosts: proxmox_vms
-  become: true
-  roles:
-    - glusterfs
