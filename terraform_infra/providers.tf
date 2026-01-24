@@ -16,16 +16,16 @@ terraform {
 }
 
 provider "hcloud" {
-  token = var.HCLOUD_TOKEN
+  token = var.hcloud_token
 }
 
 provider "cloudflare" {
-  api_token = var.CLOUDFLARE_API_TOKEN
+  api_token = var.cloudflare_api_token
 }
 
 provider "proxmox" {
   endpoint  = "https://10.0.40.10:8006/"
-  api_token = var.PROXMOX_AUTH_TOKEN
+  api_token = var.proxmox_auth_token
   insecure  = true
   ssh {
     username    = "root"

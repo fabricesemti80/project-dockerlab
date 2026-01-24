@@ -4,8 +4,8 @@ resource "portainer_stack" "socket-proxy" {
   method          = "repository"
   endpoint_id     = data.portainer_environment.local_swarm.id
 
-  repository_url            = var.REPO_URL
-  repository_reference_name = var.REPO_BRANCH
+  repository_url            = var.repo_url
+  repository_reference_name = var.repo_branch
   file_path_in_repository   = "docker/socket-proxy/socket-proxy-stack.yml"
 
   force_update    = true
@@ -16,6 +16,6 @@ resource "portainer_stack" "socket-proxy" {
 
   env {
     name  = "TZ"
-    value = var.TZ
+    value = var.tz
   }
 }

@@ -4,8 +4,8 @@ resource "portainer_stack" "gatus" {
   method          = "repository"
   endpoint_id     = data.portainer_environment.local_swarm.id
 
-  repository_url            = var.REPO_URL
-  repository_reference_name = var.REPO_BRANCH
+  repository_url            = var.repo_url
+  repository_reference_name = var.repo_branch
   file_path_in_repository   = "docker/gatus/gatus-stack.yml"
 
   force_update    = true
@@ -16,11 +16,11 @@ resource "portainer_stack" "gatus" {
 
   env {
     name  = "TZ"
-    value = var.TZ
+    value = var.tz
   }
 
   env {
     name  = "DOMAIN"
-    value = var.DOMAIN
+    value = var.domain
   }
 }

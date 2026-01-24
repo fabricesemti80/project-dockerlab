@@ -1,12 +1,12 @@
-resource "portainer_stack" "linkwarden" {
-  name            = "linkwarden"
+resource "portainer_stack" "nzbget" {
+  name            = "nzbget"
   deployment_type = "swarm"
   method          = "repository"
   endpoint_id     = data.portainer_environment.local_swarm.id
 
   repository_url            = var.repo_url
   repository_reference_name = var.repo_branch
-  file_path_in_repository   = "docker/linkwarden/linkwarden-stack.yml"
+  file_path_in_repository   = "docker/nzbget/nzbget-stack.yml"
 
   force_update    = true
   pull_image      = true
@@ -25,18 +25,23 @@ resource "portainer_stack" "linkwarden" {
   }
 
   env {
-    name  = "LINKWARDEN_POSTGRES_PASSWORD"
-    value = var.linkwarden_postgres_password
+    name  = "PUID"
+    value = var.puid
   }
 
   env {
-    name  = "LINKWARDEN_NEXTAUTH_SECRET"
-    value = var.linkwarden_nextauth_secret
+    name  = "PGID"
+    value = var.pgid
   }
 
   env {
-    name  = "LINKWARDEN_MEILI_KEY"
-    value = var.linkwarden_meili_key
+    name  = "NZBGET_USER"
+    value = var.nzbget_user
+  }
+
+  env {
+    name  = "NZBGET_PASS"
+    value = var.nzbget_pass
   }
 
   depends_on = [portainer_stack.traefik]

@@ -4,8 +4,8 @@ resource "portainer_stack" "alloy" {
   method          = "repository"
   endpoint_id     = data.portainer_environment.local_swarm.id
 
-  repository_url            = var.REPO_URL
-  repository_reference_name = var.REPO_BRANCH
+  repository_url            = var.repo_url
+  repository_reference_name = var.repo_branch
   file_path_in_repository   = "docker/alloy/alloy-stack.yml"
 
   force_update    = true
@@ -16,26 +16,26 @@ resource "portainer_stack" "alloy" {
 
   env {
     name  = "GRAFANA_CLOUD_PROMETHEUS_URL"
-    value = var.GRAFANA_CLOUD_PROMETHEUS_URL
+    value = var.grafana_cloud_prometheus_url
   }
 
   env {
     name  = "GRAFANA_CLOUD_PROMETHEUS_USERNAME"
-    value = var.GRAFANA_CLOUD_PROMETHEUS_USERNAME
+    value = var.grafana_cloud_prometheus_username
   }
 
   env {
     name  = "GRAFANA_CLOUD_LOKI_URL"
-    value = var.GRAFANA_CLOUD_LOKI_URL
+    value = var.grafana_cloud_loki_url
   }
 
   env {
     name  = "GRAFANA_CLOUD_LOKI_USERNAME"
-    value = var.GRAFANA_CLOUD_LOKI_USERNAME
+    value = var.grafana_cloud_loki_username
   }
 
   env {
     name  = "GRAFANA_CLOUD_API_KEY"
-    value = var.GRAFANA_CLOUD_API_KEY
+    value = var.grafana_cloud_api_key
   }
 }

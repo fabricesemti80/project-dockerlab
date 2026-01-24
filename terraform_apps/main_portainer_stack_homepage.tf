@@ -4,8 +4,8 @@ resource "portainer_stack" "homepage" {
   method          = "repository"
   endpoint_id     = data.portainer_environment.local_swarm.id
 
-  repository_url            = var.REPO_URL
-  repository_reference_name = var.REPO_BRANCH
+  repository_url            = var.repo_url
+  repository_reference_name = var.repo_branch
   file_path_in_repository   = "docker/homepage/homepage-stack.yml"
 
   force_update    = true
@@ -16,32 +16,32 @@ resource "portainer_stack" "homepage" {
 
   env {
     name  = "DOMAIN"
-    value = var.DOMAIN
+    value = var.domain
   }
 
   env {
     name  = "TZ"
-    value = var.TZ
+    value = var.tz
   }
 
   env {
     name  = "PUID"
-    value = var.PUID
+    value = var.puid
   }
 
   env {
     name  = "PGID"
-    value = var.PGID
+    value = var.pgid
   }
 
   env {
     name  = "PORTAINER_ACCESS_TOKEN"
-    value = var.PORTAINER_TOKEN
+    value = var.portainer_token
   }
 
   env {
     name  = "FILEBROWSER_ADMIN_PASSWORD"
-    value = var.FILEBROWSER_ADMIN_PASSWORD
+    value = var.filebrowser_admin_password
   }
 
   depends_on = [portainer_stack.socket-proxy]

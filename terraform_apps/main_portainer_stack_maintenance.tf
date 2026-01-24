@@ -4,8 +4,8 @@ resource "portainer_stack" "maintenance" {
   method          = "repository"
   endpoint_id     = data.portainer_environment.local_swarm.id
 
-  repository_url            = var.REPO_URL
-  repository_reference_name = var.REPO_BRANCH
+  repository_url            = var.repo_url
+  repository_reference_name = var.repo_branch
   file_path_in_repository   = "docker/maintenance/maintenance-stack.yml"
 
   force_update    = true
@@ -16,12 +16,12 @@ resource "portainer_stack" "maintenance" {
 
   env {
     name  = "TZ"
-    value = var.TZ
+    value = var.tz
   }
 
   env {
     name  = "DISCORD_WATCHTOWER_WEBHOOK"
-    value = var.DISCORD_WATCHTOWER_WEBHOOK
+    value = var.discord_watchtower_webhook
   }
 
   env {

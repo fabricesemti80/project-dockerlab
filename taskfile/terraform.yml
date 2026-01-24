@@ -3,34 +3,36 @@ version: '3'
 tasks:
 
   fmt:
-    desc: "Format and validate Hetzner Terraform"
-    dir: terraform_infra_infra
+    desc: "Format and validate Infra Terraform"
+    dir: terraform_infra
     cmds:
       - doppler run -- terraform fmt
       - doppler run -- terraform validate
 
   init:
-    desc: "Initialize Hetzner Terraform"
+    desc: "Initialize Infra Terraform"
     dir: terraform_infra
     cmds:
       - doppler run -- terraform init --upgrade {{.CLI_ARGS}}
 
   plan:
-    desc: "Create a Hetzner Terraform execution plan"
+    desc: "Create an Infra Terraform execution plan"
     dir: terraform_infra
     cmds:
       - task: fmt
-      - doppler run -- terraform plan -out=tfplan
+      - task: init
+      - doppler run --name-transformer tf-var -- terraform plan {{.CLI_ARGS}} -out=tfplan
 
   apply:
-    desc: "Apply the Hetzner Terraform plan"
+    desc: "Apply the Infra Terraform plan"
     dir: terraform_infra
     cmds:
       - task: plan
-      - doppler run -- terraform apply tfplan
+        vars: { CLI_ARGS: "{{.CLI_ARGS}}" }
+      - doppler run --name-transformer tf-var -- terraform apply tfplan
 
   destroy:
-    desc: "Destroy the Hetzner Terraform-managed infrastructure"
+    desc: "Destroy the Infra Terraform-managed infrastructure"
     dir: terraform_infra
     cmds:
-      - doppler run -- terraform destroy -auto-approve
+      - doppler run --name-transformer tf-var -- terraform destroy -auto-approve {{.CLI_ARGS}}

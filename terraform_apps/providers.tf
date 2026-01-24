@@ -20,18 +20,18 @@ terraform {
 }
 
 provider "cloudflare" {
-  api_token = var.CLOUDFLARE_API_TOKEN
+  api_token = var.cloudflare_api_token
 }
 
 provider "doppler" {
-  doppler_token = var.DOPPLER_TOKEN
+  doppler_token = var.doppler_token
 }
 
 provider "portainer" {
   endpoint = "https://10.0.30.21:9443"
 
   # API key authentication
-  api_key = var.PORTAINER_TOKEN
+  api_key = var.portainer_token
 
   skip_ssl_verify = true # Skip TLS verification
 }

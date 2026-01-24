@@ -6,14 +6,14 @@ tasks:
     desc: "Format and validate Apps Terraform"
     dir: terraform_apps
     cmds:
-      - doppler run -- terraform fmt
+      - doppler run  -- terraform fmt
       - doppler run -- terraform validate
 
   init:
     desc: "Initialize Apps Terraform"
     dir: terraform_apps
     cmds:
-      - doppler run -- terraform init --upgrade {{.CLI_ARGS}}
+      - doppler run --name-transformer tf-var -- terraform init   --upgrade {{.CLI_ARGS}}
 
   create-network:
     desc: "Create the external traefik-public network"
@@ -26,7 +26,7 @@ tasks:
     cmds:
       - task: fmt
       - task: init
-      - doppler run -- terraform plan {{.CLI_ARGS}} -out=tfplan
+      - doppler run --name-transformer tf-var -- terraform plan {{.CLI_ARGS}} -out=tfplan
 
   apply:
     desc: "Apply the Apps Terraform plan"
@@ -34,7 +34,7 @@ tasks:
     cmds:
       - task: plan
         vars: { CLI_ARGS: "{{.CLI_ARGS}}" }
-      - doppler run -- terraform apply tfplan
+      - doppler run --name-transformer tf-var -- terraform apply tfplan
 
   replace:
     desc: "Force replace a specific resource"
@@ -44,11 +44,11 @@ tasks:
     cmds:
       - task: fmt
       - task: init
-      - doppler run -- terraform plan -replace="{{.RESOURCE}}" -out=tfplan
-      - doppler run -- terraform apply tfplan
+      - doppler run --name-transformer tf-var -- terraform plan -replace="{{.RESOURCE}}" -out=tfplan
+      - doppler run --name-transformer tf-var -- terraform apply tfplan
 
   destroy:
     desc: "Destroy the Apps Terraform-managed stacks"
     dir: terraform_apps
     cmds:
-      - doppler run -- terraform destroy -auto-approve {{.CLI_ARGS}}
+      - doppler run --name-transformer tf-var -- terraform destroy -auto-approve {{.CLI_ARGS}}

@@ -4,8 +4,8 @@ resource "portainer_stack" "plex" {
   method          = "repository"
   endpoint_id     = portainer_environment.remote_qnap.id
 
-  repository_url            = var.REPO_URL
-  repository_reference_name = var.REPO_BRANCH
+  repository_url            = var.repo_url
+  repository_reference_name = var.repo_branch
   file_path_in_repository   = "docker/plex/plex-stack.yml"
 
   force_update    = true
@@ -16,11 +16,11 @@ resource "portainer_stack" "plex" {
 
   env {
     name  = "TZ"
-    value = var.TZ
+    value = var.tz
   }
 
   env {
     name  = "PLEX_CLAIM"
-    value = var.PLEX_CLAIM
+    value = var.plex_claim
   }
 }

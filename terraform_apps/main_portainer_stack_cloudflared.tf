@@ -4,8 +4,8 @@ resource "portainer_stack" "cloudflared" {
   method          = "repository"
   endpoint_id     = data.portainer_environment.local_swarm.id
 
-  repository_url            = var.REPO_URL
-  repository_reference_name = var.REPO_BRANCH
+  repository_url            = var.repo_url
+  repository_reference_name = var.repo_branch
   file_path_in_repository   = "docker/cloudflared/cloudflared-stack.yml"
 
   force_update    = true

@@ -8,7 +8,7 @@ variable "proxmox_ssh_private_key_file" {
 
 # --- Hetzner Cloud ---
 
-variable "HCLOUD_TOKEN" {
+variable "hcloud_token" {
   description = "Hetzner Cloud API Token"
   type        = string
   sensitive   = true
@@ -16,7 +16,7 @@ variable "HCLOUD_TOKEN" {
 
 # --- Proxmox ---
 
-variable "PROXMOX_AUTH_TOKEN" {
+variable "proxmox_auth_token" {
   description = "Proxmox VE API Token (terraform@pve!provider=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)"
   type        = string
   sensitive   = true
@@ -24,31 +24,31 @@ variable "PROXMOX_AUTH_TOKEN" {
 
 # --- Cloudflare ---
 
-variable "CLOUDFLARE_API_TOKEN" {
+variable "cloudflare_api_token" {
   description = "Cloudflare API Token"
   type        = string
   sensitive   = true
 }
 
-variable "CLOUDFLARE_ACCOUNT_ID" {
+variable "cloudflare_account_id" {
   description = "Cloudflare Account ID"
   type        = string
   sensitive   = true
 }
 
-variable "CLOUDFLARE_ZONE_ID" {
+variable "cloudflare_zone_id" {
   description = "Cloudflare Zone ID for krapulax.dev"
   type        = string
   sensitive   = true
 }
 
-variable "ACCESS_EMAIL" {
+variable "access_email" {
   description = "The email address allowed to access the lab services"
   type        = string
   default     = "emilfabrice@gmail.com"
 }
 
-variable "DOMAIN" {
+variable "domain" {
   description = "The root domain for the lab"
   type        = string
 }

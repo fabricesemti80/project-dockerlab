@@ -17,7 +17,7 @@
     dest: /tmp/portainer-stack.yml
     mode: '0644'
   vars:
-    portainer_access_token: "{{ lookup('env', 'PORTAINER_ACCESS_TOKEN') }}"
+    PORTAINER_TOKEN: "{{ lookup('env', 'PORTAINER_TOKEN') }}"
   tags: [portainer]
 
 - name: "Ensure 'proxy' overlay network exists"
@@ -224,7 +224,7 @@
   tags: [portainer]
 
 - name: "Save fresh Portainer token to Doppler"
-  ansible.builtin.shell: "doppler secrets set PORTAINER_ACCESS_TOKEN={{ portainer_token.json.rawAPIKey }}"
+  ansible.builtin.shell: "doppler secrets set PORTAINER_TOKEN={{ portainer_token.json.rawAPIKey }}"
   delegate_to: localhost
   become: false
   when:
@@ -235,7 +235,7 @@
   tags: [portainer, doppler]
 
 - name: "Ensure Terraform alias exists in Doppler"
-  ansible.builtin.shell: "doppler secrets set TF_VAR_PORTAINER_TOKEN='${PORTAINER_ACCESS_TOKEN}'"
+  ansible.builtin.shell: "doppler secrets set TF_VAR_PORTAINER_TOKEN='${PORTAINER_TOKEN}'"
   delegate_to: localhost
   become: false
   when: not ansible_check_mode
@@ -251,7 +251,7 @@
       - "URL (Domain): https://portainer.{{ apps_domain }}"
       - "Admin User: {{ portainer_admin_user }}"
       - "Admin Password: {{ portainer_admin_password }}"
-      - "API Token: {{ portainer_token.json.rawAPIKey if (portainer_token is defined and portainer_token.json is defined and portainer_token.json.rawAPIKey is defined) else 'Stored in Doppler (PORTAINER_ACCESS_TOKEN)' }}"
+      - "API Token: {{ portainer_token.json.rawAPIKey if (portainer_token is defined and portainer_token.json is defined and portainer_token.json.rawAPIKey is defined) else 'Stored in Doppler (PORTAINER_TOKEN)' }}"
       - "============================================================"
   when: not ansible_check_mode
   tags: [portainer, summary]

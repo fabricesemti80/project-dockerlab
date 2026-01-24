@@ -4,8 +4,8 @@ resource "portainer_stack" "wallos" {
   method          = "repository"
   endpoint_id     = 1
 
-  repository_url            = var.REPO_URL
-  repository_reference_name = var.REPO_BRANCH
+  repository_url            = var.repo_url
+  repository_reference_name = var.repo_branch
   file_path_in_repository   = "docker/wallos/wallos-stack.yml"
 
   force_update    = true
@@ -16,16 +16,16 @@ resource "portainer_stack" "wallos" {
 
   env {
     name  = "TZ"
-    value = var.TZ
+    value = var.tz
   }
 
   env {
     name  = "BASE_URL"
-    value = "https://wallos.${var.DOMAIN}"
+    value = "https://wallos.${var.domain}"
   }
 
   env {
     name  = "DOMAIN"
-    value = var.DOMAIN
+    value = var.domain
   }
 }

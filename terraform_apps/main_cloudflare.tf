@@ -37,8 +37,8 @@ locals {
 
   access_applications = {
     homelab = {
-      name                      = "${var.DOMAIN} - default access"
-      domain                    = "*.${var.DOMAIN}"
+      name                      = "${var.domain} - default access"
+      domain                    = "*.${var.domain}"
       type                      = "self_hosted"
       session_duration          = "720h"
       auto_redirect_to_identity = false
@@ -57,8 +57,8 @@ locals {
       ]
     }
     beszel = {
-      name                      = "${var.DOMAIN} - Beszel access"
-      domain                    = "beszel.${var.DOMAIN}"
+      name                      = "${var.domain} - Beszel access"
+      domain                    = "beszel.${var.domain}"
       type                      = "self_hosted"
       session_duration          = "720h"
       auto_redirect_to_identity = false
@@ -75,7 +75,7 @@ locals {
           ]
         },
         {
-          name     = "${var.DOMAIN} - Beszel agent bypass"
+          name     = "${var.domain} - Beszel agent bypass"
           decision = "bypass"
           include  = local.bypass_local_networks
         }
@@ -83,7 +83,7 @@ locals {
     }
     blog = {
       name                      = "Blog Access"
-      domain                    = "blog.${var.DOMAIN}"
+      domain                    = "blog.${var.domain}"
       type                      = "self_hosted"
       session_duration          = "720h"
       auto_redirect_to_identity = false
@@ -96,8 +96,8 @@ locals {
       ]
     }
     otterwiki_git = {
-      name                      = "${var.DOMAIN} - OtterWiki Git Bypass"
-      domain                    = "wiki.${var.DOMAIN}/.git/*"
+      name                      = "${var.domain} - OtterWiki Git Bypass"
+      domain                    = "wiki.${var.domain}/.git/*"
       type                      = "self_hosted"
       session_duration          = "720h"
       auto_redirect_to_identity = false
@@ -110,8 +110,8 @@ locals {
       ]
     }
     jellyfin = {
-      name                      = "${var.DOMAIN} - Jellyfin access"
-      domain                    = "jelly.${var.DOMAIN}"
+      name                      = "${var.domain} - Jellyfin access"
+      domain                    = "jelly.${var.domain}"
       type                      = "self_hosted"
       session_duration          = "720h"
       auto_redirect_to_identity = false
@@ -138,7 +138,7 @@ locals {
 }
 
 data "cloudflare_zone" "main" {
-  zone_id = var.CLOUDFLARE_ZONE_ID
+  zone_id = var.cloudflare_zone_id
 }
 
 # 1. Tunnel Secret
@@ -148,27 +148,27 @@ resource "random_id" "tunnel_secret" {
 
 # 2. Create the Tunnel
 resource "cloudflare_zero_trust_tunnel_cloudflared" "homelab" {
-  account_id    = var.CLOUDFLARE_ACCOUNT_ID
+  account_id    = var.cloudflare_account_id
   name          = replace(data.cloudflare_zone.main.name, ".", "_")
   tunnel_secret = random_id.tunnel_secret.b64_std
 }
 
 # 3. Tunnel Configuration (Ingress Rules)
 resource "cloudflare_zero_trust_tunnel_cloudflared_config" "homelab" {
-  account_id = var.CLOUDFLARE_ACCOUNT_ID
+  account_id = var.cloudflare_account_id
   tunnel_id  = cloudflare_zero_trust_tunnel_cloudflared.homelab.id
 
   config = {
     ingress = [
       {
-        hostname = "*.${var.DOMAIN}"     # Serves *.krapulax.net
+        hostname = "*.${var.domain}"     # Serves *.krapulax.net
         service  = "https://traefik:443" # Point to Traefik service name on the 'proxy' network
         origin_request = {
           no_tls_verify = true
         }
       },
       {
-        hostname = var.DOMAIN            # Serves krapulax.net
+        hostname = var.domain            # Serves krapulax.net
         service  = "https://traefik:443" # Point to Traefik service name
         origin_request = {
           no_tls_verify = true
@@ -183,7 +183,7 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "homelab" {
 
 # 4. DNS Records for the new domain
 resource "cloudflare_dns_record" "homelab_wildcard" {
-  zone_id = var.CLOUDFLARE_ZONE_ID
+  zone_id = var.cloudflare_zone_id
   name    = "*"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.homelab.id}.cfargotunnel.com"
   type    = "CNAME"
@@ -193,7 +193,7 @@ resource "cloudflare_dns_record" "homelab_wildcard" {
 }
 
 resource "cloudflare_dns_record" "homelab_root" {
-  zone_id = var.CLOUDFLARE_ZONE_ID
+  zone_id = var.cloudflare_zone_id
   name    = "@"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.homelab.id}.cfargotunnel.com"
   type    = "CNAME"
@@ -203,7 +203,7 @@ resource "cloudflare_dns_record" "homelab_root" {
 }
 
 resource "cloudflare_dns_record" "beszel" {
-  zone_id = var.CLOUDFLARE_ZONE_ID
+  zone_id = var.cloudflare_zone_id
   name    = "beszel"
   content = "${cloudflare_zero_trust_tunnel_cloudflared.homelab.id}.cfargotunnel.com"
   type    = "CNAME"
@@ -215,7 +215,7 @@ resource "cloudflare_dns_record" "beszel" {
 resource "cloudflare_zero_trust_access_application" "apps" {
   for_each = local.access_applications
 
-  account_id = var.CLOUDFLARE_ACCOUNT_ID
+  account_id = var.cloudflare_account_id
   name       = each.value.name
   domain     = each.value.domain
   type       = each.value.type
@@ -229,7 +229,7 @@ resource "cloudflare_zero_trust_access_application" "apps" {
 # 6. Generate Tunnel Token for deployment
 locals {
   tunnel_token = base64encode(jsonencode({
-    a = var.CLOUDFLARE_ACCOUNT_ID
+    a = var.cloudflare_account_id
     t = cloudflare_zero_trust_tunnel_cloudflared.homelab.id
     s = random_id.tunnel_secret.b64_std
   }))
@@ -238,8 +238,8 @@ locals {
 # 7. Sync the Tunnel Token to Doppler
 # This ensures Doppler remains the source of truth for all secrets
 resource "doppler_secret" "tunnel_token" {
-  project = var.DOPPLER_PROJECT
-  config  = var.DOPPLER_CONFIG
+  project = var.doppler_project
+  config  = var.doppler_config
   name    = "TUNNEL_TOKEN"
   value   = local.tunnel_token
 }

@@ -161,3 +161,15 @@
     - config
     - cache
   when: install_cephfs | default(false) | bool
+
+- name: Ensure NZBGet data directories exist
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/nzbget/{{ item }}"
+    state: directory
+    owner: "{{ nzbget_uid | default(default_puid) }}"
+    group: "{{ nzbget_gid | default(default_pgid) }}"
+    mode: '0755'
+  loop:
+    - config
+    - downloads
+  when: install_cephfs | default(false) | bool
