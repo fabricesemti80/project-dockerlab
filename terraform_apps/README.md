@@ -46,6 +46,7 @@ No modules.
 | [portainer_stack.jellyfin](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.linkwarden](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.maintenance](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
+| [portainer_stack.nzbget](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.otterwiki](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.plex](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.socket-proxy](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
@@ -60,45 +61,47 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_ACCESS_EMAIL"></a> [ACCESS\_EMAIL](#input\_ACCESS\_EMAIL) | The email address allowed to access the lab services | `string` | `"emilfabrice@gmail.com"` | no |
-| <a name="input_ACME_EMAIL"></a> [ACME\_EMAIL](#input\_ACME\_EMAIL) | The email address for Let's Encrypt | `string` | n/a | yes |
-| <a name="input_BESZEL_AGENT_KEY"></a> [BESZEL\_AGENT\_KEY](#input\_BESZEL\_AGENT\_KEY) | The agent key for Beszel | `string` | `""` | no |
-| <a name="input_CLOUDFLARE_ACCOUNT_ID"></a> [CLOUDFLARE\_ACCOUNT\_ID](#input\_CLOUDFLARE\_ACCOUNT\_ID) | Cloudflare Account ID | `string` | n/a | yes |
-| <a name="input_CLOUDFLARE_API_TOKEN"></a> [CLOUDFLARE\_API\_TOKEN](#input\_CLOUDFLARE\_API\_TOKEN) | Cloudflare API Token | `string` | n/a | yes |
-| <a name="input_CLOUDFLARE_ZONE_ID"></a> [CLOUDFLARE\_ZONE\_ID](#input\_CLOUDFLARE\_ZONE\_ID) | Cloudflare Zone ID | `string` | n/a | yes |
-| <a name="input_DISCORD_WATCHTOWER_WEBHOOK"></a> [DISCORD\_WATCHTOWER\_WEBHOOK](#input\_DISCORD\_WATCHTOWER\_WEBHOOK) | Discord Webhook URL for Watchtower notifications | `string` | n/a | yes |
-| <a name="input_DOCMOST_APP_SECRET"></a> [DOCMOST\_APP\_SECRET](#input\_DOCMOST\_APP\_SECRET) | App secret for Docmost | `string` | n/a | yes |
-| <a name="input_DOCMOST_POSTGRES_PASSWORD"></a> [DOCMOST\_POSTGRES\_PASSWORD](#input\_DOCMOST\_POSTGRES\_PASSWORD) | Postgres password for Docmost | `string` | n/a | yes |
-| <a name="input_DOMAIN"></a> [DOMAIN](#input\_DOMAIN) | The domain name | `string` | `"krapulax.dev"` | no |
-| <a name="input_DOPPLER_CONFIG"></a> [DOPPLER\_CONFIG](#input\_DOPPLER\_CONFIG) | The Doppler config name | `string` | n/a | yes |
-| <a name="input_DOPPLER_PROJECT"></a> [DOPPLER\_PROJECT](#input\_DOPPLER\_PROJECT) | The Doppler project name | `string` | n/a | yes |
-| <a name="input_DOPPLER_TOKEN"></a> [DOPPLER\_TOKEN](#input\_DOPPLER\_TOKEN) | The Doppler token for authentication | `string` | n/a | yes |
-| <a name="input_FILEBROWSER_ADMIN_PASSWORD"></a> [FILEBROWSER\_ADMIN\_PASSWORD](#input\_FILEBROWSER\_ADMIN\_PASSWORD) | Admin password for Filebrowser | `string` | n/a | yes |
-| <a name="input_GHOST_DB_PASSWORD"></a> [GHOST\_DB\_PASSWORD](#input\_GHOST\_DB\_PASSWORD) | MySQL password for Ghost database user | `string` | n/a | yes |
-| <a name="input_GHOST_DB_ROOT_PASSWORD"></a> [GHOST\_DB\_ROOT\_PASSWORD](#input\_GHOST\_DB\_ROOT\_PASSWORD) | MySQL root password for Ghost database | `string` | n/a | yes |
-| <a name="input_GHOST_MAIL_FROM"></a> [GHOST\_MAIL\_FROM](#input\_GHOST\_MAIL\_FROM) | From address for Ghost emails | `string` | `"noreply@krapulax.net"` | no |
-| <a name="input_GHOST_MAIL_HOST"></a> [GHOST\_MAIL\_HOST](#input\_GHOST\_MAIL\_HOST) | SMTP host for Ghost mail | `string` | `"smtp.gmail.com"` | no |
-| <a name="input_GHOST_MAIL_PASSWORD"></a> [GHOST\_MAIL\_PASSWORD](#input\_GHOST\_MAIL\_PASSWORD) | SMTP password for Ghost mail | `string` | `""` | no |
-| <a name="input_GHOST_MAIL_PORT"></a> [GHOST\_MAIL\_PORT](#input\_GHOST\_MAIL\_PORT) | SMTP port for Ghost mail | `string` | `"587"` | no |
-| <a name="input_GHOST_MAIL_TRANSPORT"></a> [GHOST\_MAIL\_TRANSPORT](#input\_GHOST\_MAIL\_TRANSPORT) | Mail transport for Ghost (e.g., SMTP) | `string` | `"SMTP"` | no |
-| <a name="input_GHOST_MAIL_USER"></a> [GHOST\_MAIL\_USER](#input\_GHOST\_MAIL\_USER) | SMTP username for Ghost mail | `string` | `""` | no |
-| <a name="input_GRAFANA_CLOUD_API_KEY"></a> [GRAFANA\_CLOUD\_API\_KEY](#input\_GRAFANA\_CLOUD\_API\_KEY) | Grafana Cloud API key with MetricsPublisher and LogsPublisher permissions | `string` | `""` | no |
-| <a name="input_GRAFANA_CLOUD_LOKI_URL"></a> [GRAFANA\_CLOUD\_LOKI\_URL](#input\_GRAFANA\_CLOUD\_LOKI\_URL) | Grafana Cloud Loki push URL (e.g., https://logs-prod-xxx.grafana.net/loki/api/v1/push) | `string` | `""` | no |
-| <a name="input_GRAFANA_CLOUD_LOKI_USERNAME"></a> [GRAFANA\_CLOUD\_LOKI\_USERNAME](#input\_GRAFANA\_CLOUD\_LOKI\_USERNAME) | Grafana Cloud Loki username (numeric ID) | `string` | `""` | no |
-| <a name="input_GRAFANA_CLOUD_PROMETHEUS_URL"></a> [GRAFANA\_CLOUD\_PROMETHEUS\_URL](#input\_GRAFANA\_CLOUD\_PROMETHEUS\_URL) | Grafana Cloud Prometheus remote write URL (e.g., https://prometheus-prod-xx-xxx.grafana.net/api/prom/push) | `string` | `""` | no |
-| <a name="input_GRAFANA_CLOUD_PROMETHEUS_USERNAME"></a> [GRAFANA\_CLOUD\_PROMETHEUS\_USERNAME](#input\_GRAFANA\_CLOUD\_PROMETHEUS\_USERNAME) | Grafana Cloud Prometheus username (numeric ID) | `string` | `""` | no |
-| <a name="input_LINKWARDEN_MEILI_KEY"></a> [LINKWARDEN\_MEILI\_KEY](#input\_LINKWARDEN\_MEILI\_KEY) | Meilisearch master key for Linkwarden search | `string` | n/a | yes |
-| <a name="input_LINKWARDEN_NEXTAUTH_SECRET"></a> [LINKWARDEN\_NEXTAUTH\_SECRET](#input\_LINKWARDEN\_NEXTAUTH\_SECRET) | NextAuth secret for Linkwarden session encryption | `string` | n/a | yes |
-| <a name="input_LINKWARDEN_POSTGRES_PASSWORD"></a> [LINKWARDEN\_POSTGRES\_PASSWORD](#input\_LINKWARDEN\_POSTGRES\_PASSWORD) | PostgreSQL password for Linkwarden database | `string` | n/a | yes |
-| <a name="input_PGID"></a> [PGID](#input\_PGID) | The group ID | `string` | `"1000"` | no |
-| <a name="input_PLEX_CLAIM"></a> [PLEX\_CLAIM](#input\_PLEX\_CLAIM) | Plex claim token from https://plex.tv/claim | `string` | `""` | no |
-| <a name="input_PORTAINER_TOKEN"></a> [PORTAINER\_TOKEN](#input\_PORTAINER\_TOKEN) | Portainer API Key for authentication | `string` | n/a | yes |
-| <a name="input_PUID"></a> [PUID](#input\_PUID) | The user ID | `string` | `"1000"` | no |
-| <a name="input_REPO_BRANCH"></a> [REPO\_BRANCH](#input\_REPO\_BRANCH) | The branch of the Git repository | `string` | `"refs/heads/main"` | no |
-| <a name="input_REPO_URL"></a> [REPO\_URL](#input\_REPO\_URL) | The URL of the Git repository | `string` | `"https://github.com/fabricesemti80/project-dockerlab.git"` | no |
-| <a name="input_S3_ACCESS_KEY_ID"></a> [S3\_ACCESS\_KEY\_ID](#input\_S3\_ACCESS\_KEY\_ID) | Access key for S3-compatible storage (Cloudflare R2, AWS S3, Wasabi, MinIO) | `string` | n/a | yes |
-| <a name="input_S3_SECRET_ACCESS_KEY"></a> [S3\_SECRET\_ACCESS\_KEY](#input\_S3\_SECRET\_ACCESS\_KEY) | Secret key for S3-compatible storage (Cloudflare R2, AWS S3, Wasabi, MinIO) | `string` | n/a | yes |
-| <a name="input_TZ"></a> [TZ](#input\_TZ) | The timezone | `string` | `"Europe/London"` | no |
+| <a name="input_access_email"></a> [access\_email](#input\_access\_email) | The email address allowed to access the lab services | `string` | `"emilfabrice@gmail.com"` | no |
+| <a name="input_acme_email"></a> [acme\_email](#input\_acme\_email) | The email address for Let's Encrypt | `string` | n/a | yes |
+| <a name="input_beszel_agent_key"></a> [beszel\_agent\_key](#input\_beszel\_agent\_key) | The agent key for Beszel | `string` | `""` | no |
+| <a name="input_cloudflare_account_id"></a> [cloudflare\_account\_id](#input\_cloudflare\_account\_id) | Cloudflare Account ID | `string` | n/a | yes |
+| <a name="input_cloudflare_api_token"></a> [cloudflare\_api\_token](#input\_cloudflare\_api\_token) | Cloudflare API Token | `string` | n/a | yes |
+| <a name="input_cloudflare_zone_id"></a> [cloudflare\_zone\_id](#input\_cloudflare\_zone\_id) | Cloudflare Zone ID | `string` | n/a | yes |
+| <a name="input_discord_watchtower_webhook"></a> [discord\_watchtower\_webhook](#input\_discord\_watchtower\_webhook) | Discord Webhook URL for Watchtower notifications | `string` | n/a | yes |
+| <a name="input_docmost_app_secret"></a> [docmost\_app\_secret](#input\_docmost\_app\_secret) | App secret for Docmost | `string` | n/a | yes |
+| <a name="input_docmost_postgres_password"></a> [docmost\_postgres\_password](#input\_docmost\_postgres\_password) | Postgres password for Docmost | `string` | n/a | yes |
+| <a name="input_domain"></a> [domain](#input\_domain) | The domain name | `string` | `"krapulax.dev"` | no |
+| <a name="input_doppler_config"></a> [doppler\_config](#input\_doppler\_config) | The Doppler config name | `string` | n/a | yes |
+| <a name="input_doppler_project"></a> [doppler\_project](#input\_doppler\_project) | The Doppler project name | `string` | n/a | yes |
+| <a name="input_doppler_token"></a> [doppler\_token](#input\_doppler\_token) | The Doppler token for authentication | `string` | n/a | yes |
+| <a name="input_filebrowser_admin_password"></a> [filebrowser\_admin\_password](#input\_filebrowser\_admin\_password) | Admin password for Filebrowser | `string` | n/a | yes |
+| <a name="input_ghost_db_password"></a> [ghost\_db\_password](#input\_ghost\_db\_password) | MySQL password for Ghost database user | `string` | n/a | yes |
+| <a name="input_ghost_db_root_password"></a> [ghost\_db\_root\_password](#input\_ghost\_db\_root\_password) | MySQL root password for Ghost database | `string` | n/a | yes |
+| <a name="input_ghost_mail_from"></a> [ghost\_mail\_from](#input\_ghost\_mail\_from) | From address for Ghost emails | `string` | `"noreply@krapulax.net"` | no |
+| <a name="input_ghost_mail_host"></a> [ghost\_mail\_host](#input\_ghost\_mail\_host) | SMTP host for Ghost mail | `string` | `"smtp.gmail.com"` | no |
+| <a name="input_ghost_mail_password"></a> [ghost\_mail\_password](#input\_ghost\_mail\_password) | SMTP password for Ghost mail | `string` | `""` | no |
+| <a name="input_ghost_mail_port"></a> [ghost\_mail\_port](#input\_ghost\_mail\_port) | SMTP port for Ghost mail | `string` | `"587"` | no |
+| <a name="input_ghost_mail_transport"></a> [ghost\_mail\_transport](#input\_ghost\_mail\_transport) | Mail transport for Ghost (e.g., SMTP) | `string` | `"SMTP"` | no |
+| <a name="input_ghost_mail_user"></a> [ghost\_mail\_user](#input\_ghost\_mail\_user) | SMTP username for Ghost mail | `string` | `""` | no |
+| <a name="input_grafana_cloud_api_key"></a> [grafana\_cloud\_api\_key](#input\_grafana\_cloud\_api\_key) | Grafana Cloud API key with MetricsPublisher and LogsPublisher permissions | `string` | `""` | no |
+| <a name="input_grafana_cloud_loki_url"></a> [grafana\_cloud\_loki\_url](#input\_grafana\_cloud\_loki\_url) | Grafana Cloud Loki push URL (e.g., https://logs-prod-xxx.grafana.net/loki/api/v1/push) | `string` | `""` | no |
+| <a name="input_grafana_cloud_loki_username"></a> [grafana\_cloud\_loki\_username](#input\_grafana\_cloud\_loki\_username) | Grafana Cloud Loki username (numeric ID) | `string` | `""` | no |
+| <a name="input_grafana_cloud_prometheus_url"></a> [grafana\_cloud\_prometheus\_url](#input\_grafana\_cloud\_prometheus\_url) | Grafana Cloud Prometheus remote write URL (e.g., https://prometheus-prod-xx-xxx.grafana.net/api/prom/push) | `string` | `""` | no |
+| <a name="input_grafana_cloud_prometheus_username"></a> [grafana\_cloud\_prometheus\_username](#input\_grafana\_cloud\_prometheus\_username) | Grafana Cloud Prometheus username (numeric ID) | `string` | `""` | no |
+| <a name="input_linkwarden_meili_key"></a> [linkwarden\_meili\_key](#input\_linkwarden\_meili\_key) | Meilisearch master key for Linkwarden search | `string` | n/a | yes |
+| <a name="input_linkwarden_nextauth_secret"></a> [linkwarden\_nextauth\_secret](#input\_linkwarden\_nextauth\_secret) | NextAuth secret for Linkwarden session encryption | `string` | n/a | yes |
+| <a name="input_linkwarden_postgres_password"></a> [linkwarden\_postgres\_password](#input\_linkwarden\_postgres\_password) | PostgreSQL password for Linkwarden database | `string` | n/a | yes |
+| <a name="input_nzbget_pass"></a> [nzbget\_pass](#input\_nzbget\_pass) | NZBGet web interface password | `string` | n/a | yes |
+| <a name="input_nzbget_user"></a> [nzbget\_user](#input\_nzbget\_user) | NZBGet web interface username | `string` | `"nzbget"` | no |
+| <a name="input_pgid"></a> [pgid](#input\_pgid) | The group ID | `string` | `"1000"` | no |
+| <a name="input_plex_claim"></a> [plex\_claim](#input\_plex\_claim) | Plex claim token from https://plex.tv/claim | `string` | `""` | no |
+| <a name="input_portainer_token"></a> [portainer\_token](#input\_portainer\_token) | Portainer API Key for authentication | `string` | n/a | yes |
+| <a name="input_puid"></a> [puid](#input\_puid) | The user ID | `string` | `"1000"` | no |
+| <a name="input_repo_branch"></a> [repo\_branch](#input\_repo\_branch) | The branch of the Git repository | `string` | `"refs/heads/main"` | no |
+| <a name="input_repo_url"></a> [repo\_url](#input\_repo\_url) | The URL of the Git repository | `string` | `"https://github.com/fabricesemti80/project-dockerlab.git"` | no |
+| <a name="input_s3_access_key_id"></a> [s3\_access\_key\_id](#input\_s3\_access\_key\_id) | Access key for S3-compatible storage (Cloudflare R2, AWS S3, Wasabi, MinIO) | `string` | n/a | yes |
+| <a name="input_s3_secret_access_key"></a> [s3\_secret\_access\_key](#input\_s3\_secret\_access\_key) | Secret key for S3-compatible storage (Cloudflare R2, AWS S3, Wasabi, MinIO) | `string` | n/a | yes |
+| <a name="input_tz"></a> [tz](#input\_tz) | The timezone | `string` | `"Europe/London"` | no |
 
 ## Outputs
 
