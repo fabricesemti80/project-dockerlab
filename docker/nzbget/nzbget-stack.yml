@@ -1,0 +1,64 @@
+# NZBGet - Usenet Downloader
+# https://nzbget.net/
+
+services:
+  nzbget:
+    image: lscr.io/linuxserver/nzbget:${NZBGET_VERSION:-latest}
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - NZBGET_USER=${NZBGET_USER:-nzbget}
+      - NZBGET_PASS=${NZBGET_PASS}
+    volumes:
+      - /mnt/cephfs/docker-shared-data/nzbget/config:/config
+      - /mnt/cephfs/docker-shared-data/nzbget/downloads:/downloads
+      - /mnt/media:/media
+    networks:
+      - proxy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6789"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "12m"
+        max-file: "5"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+      resources:
+        limits:
+          cpus: '${NZBGET_CPU_LIMIT:-2.0}'
+          memory: ${NZBGET_MEM_LIMIT:-2G}
+        reservations:
+          memory: ${NZBGET_MEM_RESERVATION:-512M}
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      rollback_config:
+        parallelism: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.nzbget.rule=Host(`nzbget.${DOMAIN}`)"
+        - "traefik.http.routers.nzbget.entrypoints=websecure"
+        - "traefik.http.routers.nzbget.tls.certresolver=cloudflare"
+        - "traefik.http.services.nzbget.loadbalancer.server.port=6789"
+
+        # Homepage Discovery
+        - "homepage.group=Downloads"
+        - "homepage.name=NZBGet"
+        - "homepage.icon=nzbget.png"
+        - "homepage.href=https://nzbget.${DOMAIN}"
+        - "homepage.description=Usenet Downloader"
+
+networks:
+  proxy:
+    external: true
