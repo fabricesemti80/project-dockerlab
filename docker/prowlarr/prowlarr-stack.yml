@@ -1,0 +1,60 @@
+# Prowlarr - Indexer Manager for *arr Apps
+# https://prowlarr.com/
+
+services:
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:${PROWLARR_VERSION:-latest}
+    environment:
+      - TZ=${TZ}
+      - PUID=${PUID}
+      - PGID=${PGID}
+    volumes:
+      - /mnt/cephfs/docker-shared-data/prowlarr/config:/config
+    networks:
+      - proxy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9696/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "12m"
+        max-file: "5"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+      resources:
+        limits:
+          cpus: '${PROWLARR_CPU_LIMIT:-1.0}'
+          memory: ${PROWLARR_MEM_LIMIT:-1G}
+        reservations:
+          memory: ${PROWLARR_MEM_RESERVATION:-256M}
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      rollback_config:
+        parallelism: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)"
+        - "traefik.http.routers.prowlarr.entrypoints=websecure"
+        - "traefik.http.routers.prowlarr.tls.certresolver=cloudflare"
+        - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+
+        # Homepage Discovery
+        - "homepage.group=Downloads"
+        - "homepage.name=Prowlarr"
+        - "homepage.icon=prowlarr.png"
+        - "homepage.href=https://prowlarr.${DOMAIN}"
+        - "homepage.description=Indexer Manager"
+
+networks:
+  proxy:
+    external: true
