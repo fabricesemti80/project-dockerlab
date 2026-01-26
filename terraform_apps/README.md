@@ -49,6 +49,7 @@ No modules.
 | [portainer_stack.nzbget](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.otterwiki](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.plex](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
+| [portainer_stack.prowlarr](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.socket-proxy](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.traefik](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.wallos](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
