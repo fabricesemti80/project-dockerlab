@@ -173,3 +173,14 @@
     - config
     - downloads
   when: install_cephfs | default(false) | bool
+
+- name: Ensure Prowlarr data directories exist
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/prowlarr/{{ item }}"
+    state: directory
+    owner: "{{ prowlarr_uid | default(default_puid) }}"
+    group: "{{ prowlarr_gid | default(default_pgid) }}"
+    mode: '0755'
+  loop:
+    - config
+  when: install_cephfs | default(false) | bool
