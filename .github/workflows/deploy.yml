@@ -37,7 +37,7 @@ jobs:
         run: pre-commit run --all-files --show-diff-on-failure
 
       - name: Lint GitHub Actions Workflows
-        uses: reviewdog/action-actionlint@a5524e1c19e62881d79c1f1b9b6f09f16356e281
+        uses: reviewdog/action-actionlint@f4bb4d50c4c9e45cc64f413d2bc438ea1cf2d9d5
         with:
           reporter: github-pr-check
           fail_level: error
