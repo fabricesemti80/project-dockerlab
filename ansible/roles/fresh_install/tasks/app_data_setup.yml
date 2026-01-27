@@ -184,3 +184,25 @@
   loop:
     - config
   when: install_cephfs | default(false) | bool
+
+- name: Ensure Sonarr data directories exist
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/sonarr/{{ item }}"
+    state: directory
+    owner: "{{ sonarr_uid | default(default_puid) }}"
+    group: "{{ sonarr_gid | default(default_pgid) }}"
+    mode: '0755'
+  loop:
+    - config
+  when: install_cephfs | default(false) | bool
+
+- name: Ensure Radarr data directories exist
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/radarr/{{ item }}"
+    state: directory
+    owner: "{{ radarr_uid | default(default_puid) }}"
+    group: "{{ radarr_gid | default(default_pgid) }}"
+    mode: '0755'
+  loop:
+    - config
+  when: install_cephfs | default(false) | bool
