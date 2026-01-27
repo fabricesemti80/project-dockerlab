@@ -46,15 +46,15 @@ variable "tz" {
 }
 
 variable "puid" {
-  description = "The user ID"
+  description = "The user ID (1000 = QNAP admin-fabrice)"
   type        = string
   default     = "1000"
 }
 
 variable "pgid" {
-  description = "The group ID"
+  description = "The group ID (100 = users group on QNAP)"
   type        = string
-  default     = "1000"
+  default     = "100"
 }
 
 variable "repo_url" {
@@ -246,4 +246,17 @@ variable "nzbget_pass" {
   description = "NZBGet web interface password"
   type        = string
   sensitive   = true
+}
+
+# Media stack overrides (run as root for NFS compatibility)
+variable "media_puid" {
+  description = "PUID for media apps (Sonarr, Radarr, Prowlarr, NZBGet)"
+  type        = string
+  default     = "0"
+}
+
+variable "media_pgid" {
+  description = "PGID for media apps (Sonarr, Radarr, Prowlarr, NZBGet)"
+  type        = string
+  default     = "0"
 }

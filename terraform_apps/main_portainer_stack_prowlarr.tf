@@ -26,12 +26,12 @@ resource "portainer_stack" "prowlarr" {
 
   env {
     name  = "PUID"
-    value = var.puid
+    value = var.media_puid
   }
 
   env {
     name  = "PGID"
-    value = var.pgid
+    value = var.media_pgid
   }
 
   depends_on = [portainer_stack.traefik]

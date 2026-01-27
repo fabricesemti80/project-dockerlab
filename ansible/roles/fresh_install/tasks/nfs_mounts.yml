@@ -23,6 +23,6 @@
     path: /mnt/media
     src: "{{ nfs_media_server }}:{{ nfs_media_path }}"
     fstype: nfs
-    opts: "rw,soft,intr,timeo=30,retrans=3"
+    opts: "rw,soft,intr,timeo=30,retrans=3,nfsvers=3"
     state: mounted
   when: install_nfs_mounts | default(false) | bool

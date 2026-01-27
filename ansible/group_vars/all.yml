@@ -4,14 +4,25 @@ sudo_nopasswd: true
 domain_name: krapulax.dev
 
 # Default container user/group IDs (can be overridden per-app)
+# Use 1000/100 to match QNAP admin-fabrice:users
 default_puid: "1000"
-default_pgid: "1000"
+default_pgid: "100"
 
 # App-specific overrides (www-data = 82, root = 0)
 wallos_uid: "82"
 wallos_gid: "82"
 backrest_uid: "0"
 backrest_gid: "0"
+
+# Media apps (run as root for NFS compatibility)
+sonarr_uid: "0"
+sonarr_gid: "0"
+radarr_uid: "0"
+radarr_gid: "0"
+prowlarr_uid: "0"
+prowlarr_gid: "0"
+nzbget_uid: "0"
+nzbget_gid: "0"
 
 # NFS media share settings
 nfs_media_server: "10.0.40.2"
