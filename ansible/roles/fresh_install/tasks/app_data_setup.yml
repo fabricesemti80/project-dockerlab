@@ -172,6 +172,9 @@
   loop:
     - config
     - downloads
+    - downloads/completed
+    - downloads/completed/sonarr
+    - downloads/completed/radarr
   when: install_cephfs | default(false) | bool
 
 - name: Ensure Prowlarr data directories exist
