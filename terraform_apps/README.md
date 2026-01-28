@@ -44,6 +44,7 @@ No modules.
 | [portainer_stack.glance](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.homepage](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.jellyfin](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
+| [portainer_stack.jellyseerr](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.linkwarden](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.maintenance](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.nzbget](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
@@ -94,12 +95,14 @@ No modules.
 | <a name="input_linkwarden_meili_key"></a> [linkwarden\_meili\_key](#input\_linkwarden\_meili\_key) | Meilisearch master key for Linkwarden search | `string` | n/a | yes |
 | <a name="input_linkwarden_nextauth_secret"></a> [linkwarden\_nextauth\_secret](#input\_linkwarden\_nextauth\_secret) | NextAuth secret for Linkwarden session encryption | `string` | n/a | yes |
 | <a name="input_linkwarden_postgres_password"></a> [linkwarden\_postgres\_password](#input\_linkwarden\_postgres\_password) | PostgreSQL password for Linkwarden database | `string` | n/a | yes |
+| <a name="input_media_pgid"></a> [media\_pgid](#input\_media\_pgid) | PGID for media apps (Sonarr, Radarr, Prowlarr, NZBGet) | `string` | `"0"` | no |
+| <a name="input_media_puid"></a> [media\_puid](#input\_media\_puid) | PUID for media apps (Sonarr, Radarr, Prowlarr, NZBGet) | `string` | `"0"` | no |
 | <a name="input_nzbget_pass"></a> [nzbget\_pass](#input\_nzbget\_pass) | NZBGet web interface password | `string` | n/a | yes |
 | <a name="input_nzbget_user"></a> [nzbget\_user](#input\_nzbget\_user) | NZBGet web interface username | `string` | `"nzbget"` | no |
-| <a name="input_pgid"></a> [pgid](#input\_pgid) | The group ID | `string` | `"1000"` | no |
+| <a name="input_pgid"></a> [pgid](#input\_pgid) | The group ID (100 = users group on QNAP) | `string` | `"100"` | no |
 | <a name="input_plex_claim"></a> [plex\_claim](#input\_plex\_claim) | Plex claim token from https://plex.tv/claim | `string` | `""` | no |
 | <a name="input_portainer_token"></a> [portainer\_token](#input\_portainer\_token) | Portainer API Key for authentication | `string` | n/a | yes |
-| <a name="input_puid"></a> [puid](#input\_puid) | The user ID | `string` | `"1000"` | no |
+| <a name="input_puid"></a> [puid](#input\_puid) | The user ID (1000 = QNAP admin-fabrice) | `string` | `"1000"` | no |
 | <a name="input_repo_branch"></a> [repo\_branch](#input\_repo\_branch) | The branch of the Git repository | `string` | `"refs/heads/main"` | no |
 | <a name="input_repo_url"></a> [repo\_url](#input\_repo\_url) | The URL of the Git repository | `string` | `"https://github.com/fabricesemti80/project-dockerlab.git"` | no |
 | <a name="input_s3_access_key_id"></a> [s3\_access\_key\_id](#input\_s3\_access\_key\_id) | Access key for S3-compatible storage (Cloudflare R2, AWS S3, Wasabi, MinIO) | `string` | n/a | yes |
