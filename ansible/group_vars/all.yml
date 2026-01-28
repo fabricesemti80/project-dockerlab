@@ -23,6 +23,8 @@ prowlarr_uid: "0"
 prowlarr_gid: "0"
 nzbget_uid: "0"
 nzbget_gid: "0"
+jellyseerr_uid: "0"
+jellyseerr_gid: "0"
 
 # NFS media share settings
 nfs_media_server: "10.0.40.2"

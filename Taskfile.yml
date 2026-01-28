@@ -11,6 +11,7 @@ includes:
   ansible: ./taskfile/ansible.yml
   tf: ./taskfile/terraform.yml
   tfa: ./taskfile/terraform_apps.yml
+  swarm: ./taskfile/swarm.yml
 
 tasks:
   default:

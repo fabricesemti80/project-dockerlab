@@ -1,0 +1,246 @@
+version: '3'
+
+vars:
+  SSH_CMD: ssh -o StrictHostKeyChecking=no -i ~/.ssh/fs_home_rsa
+  MANAGER_IPS: "10.0.30.21 10.0.30.22 10.0.30.23"
+
+tasks:
+  status:
+    desc: "📊 Show full swarm status with leader and service health"
+    cmds:
+      - |
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "🐝 DOCKER SWARM STATUS"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+
+        # Find a responsive manager
+        for ip in {{.MANAGER_IPS}}; do
+          if {{.SSH_CMD}} fs@$ip "docker node ls" 2>/dev/null; then
+            LEADER_IP=$ip
+            break
+          fi
+        done
+
+        if [ -z "$LEADER_IP" ]; then
+          echo "❌ No responsive manager found!"
+          exit 1
+        fi
+    silent: true
+
+  nodes:
+    desc: "🖥️  Show node status with visual indicators"
+    cmds:
+      - |
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "🖥️  NODE STATUS"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+
+        for ip in {{.MANAGER_IPS}}; do
+          result=$({{.SSH_CMD}} fs@$ip "docker node ls --format '{{`{{.Hostname}}`}}\t{{`{{.Status}}`}}\t{{`{{.Availability}}`}}\t{{`{{.ManagerStatus}}`}}'" 2>/dev/null)
+          if [ -n "$result" ]; then
+            echo "$result" | while read line; do
+              hostname=$(echo "$line" | cut -f1)
+              status=$(echo "$line" | cut -f2)
+              avail=$(echo "$line" | cut -f3)
+              manager=$(echo "$line" | cut -f4)
+
+              if [ "$status" = "Ready" ] && [ "$avail" = "Active" ]; then
+                icon="✅"
+              else
+                icon="❌"
+              fi
+
+              if [ "$manager" = "Leader" ]; then
+                role="👑 Leader"
+              elif [ -n "$manager" ]; then
+                role="🔷 Manager"
+              else
+                role="⚙️  Worker"
+              fi
+
+              printf "%s %-12s %s\n" "$icon" "$hostname" "$role"
+            done
+            break
+          fi
+        done
+        echo ""
+    silent: true
+
+  services:
+    desc: "📦 Show service status with health indicators"
+    cmds:
+      - |
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "📦 SERVICE STATUS"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+
+        for ip in {{.MANAGER_IPS}}; do
+          result=$({{.SSH_CMD}} fs@$ip "docker service ls --format '{{`{{.Name}}`}}\t{{`{{.Replicas}}`}}'" 2>/dev/null)
+          if [ -n "$result" ]; then
+            healthy=0
+            unhealthy=0
+
+            echo "$result" | while read line; do
+              name=$(echo "$line" | cut -f1)
+              replicas=$(echo "$line" | cut -f2)
+              current=$(echo "$replicas" | cut -d'/' -f1)
+              desired=$(echo "$replicas" | cut -d'/' -f2)
+
+              if [ "$current" = "$desired" ] && [ "$current" != "0" ]; then
+                icon="✅"
+              elif [ "$current" = "0" ]; then
+                icon="❌"
+              else
+                icon="🔄"
+              fi
+
+              printf "%s %-35s %s\n" "$icon" "$name" "$replicas"
+            done
+            break
+          fi
+        done
+        echo ""
+    silent: true
+
+  unhealthy:
+    desc: "🚨 Show only unhealthy services"
+    cmds:
+      - |
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "🚨 UNHEALTHY SERVICES"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+
+        for ip in {{.MANAGER_IPS}}; do
+          result=$({{.SSH_CMD}} fs@$ip "docker service ls --format '{{`{{.Name}}`}}\t{{`{{.Replicas}}`}}'" 2>/dev/null | grep -E '0/[0-9]|[0-9]/0' || true)
+          if [ -n "$result" ]; then
+            echo "$result" | while read line; do
+              name=$(echo "$line" | cut -f1)
+              replicas=$(echo "$line" | cut -f2)
+              printf "❌ %-35s %s\n" "$name" "$replicas"
+            done
+          else
+            echo "✅ All services healthy!"
+          fi
+          break
+        done
+        echo ""
+    silent: true
+
+  watch:
+    desc: "👀 Watch services until all are healthy (poll every 5s)"
+    cmds:
+      - |
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "👀 WATCHING SERVICES (Ctrl+C to stop)"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+
+        while true; do
+          clear
+          echo "🕐 $(date '+%H:%M:%S') - Checking service health..."
+          echo ""
+
+          for ip in {{.MANAGER_IPS}}; do
+            unhealthy=$({{.SSH_CMD}} fs@$ip "docker service ls --format '{{`{{.Name}}`}} {{`{{.Replicas}}`}}' | grep -E '0/[0-9]' | wc -l" 2>/dev/null)
+
+            if [ "$unhealthy" = "0" ]; then
+              echo "✅ All services are healthy!"
+              echo ""
+              {{.SSH_CMD}} fs@$ip "docker service ls --format '{{`{{.Name}}`}}\t{{`{{.Replicas}}`}}'" 2>/dev/null | while read line; do
+                name=$(echo "$line" | cut -f1)
+                replicas=$(echo "$line" | cut -f2)
+                printf "✅ %-35s %s\n" "$name" "$replicas"
+              done
+              exit 0
+            else
+              echo "⏳ $unhealthy service(s) still starting..."
+              echo ""
+              {{.SSH_CMD}} fs@$ip "docker service ls --format '{{`{{.Name}}`}}\t{{`{{.Replicas}}`}}'" 2>/dev/null | while read line; do
+                name=$(echo "$line" | cut -f1)
+                replicas=$(echo "$line" | cut -f2)
+                current=$(echo "$replicas" | cut -d'/' -f1)
+                desired=$(echo "$replicas" | cut -d'/' -f2)
+
+                if [ "$current" = "$desired" ]; then
+                  icon="✅"
+                elif [ "$current" = "0" ]; then
+                  icon="❌"
+                else
+                  icon="🔄"
+                fi
+                printf "%s %-35s %s\n" "$icon" "$name" "$replicas"
+              done
+            fi
+            break
+          done
+
+          sleep 5
+        done
+    silent: true
+
+  restart:
+    desc: "🔄 Force restart a specific service"
+    requires:
+      vars: [SERVICE]
+    cmds:
+      - |
+        echo ""
+        echo "🔄 Restarting {{.SERVICE}}..."
+        for ip in {{.MANAGER_IPS}}; do
+          if {{.SSH_CMD}} fs@$ip "docker service update --force {{.SERVICE}}" 2>/dev/null; then
+            echo "✅ {{.SERVICE}} restarted successfully"
+            break
+          fi
+        done
+    silent: true
+
+  restart-all:
+    desc: "🔄 Force restart all unhealthy services"
+    cmds:
+      - |
+        echo ""
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "🔄 RESTARTING UNHEALTHY SERVICES"
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo ""
+
+        for ip in {{.MANAGER_IPS}}; do
+          services=$({{.SSH_CMD}} fs@$ip "docker service ls --format '{{`{{.Name}}`}} {{`{{.Replicas}}`}}' | grep -E '0/[0-9]' | cut -d' ' -f1" 2>/dev/null)
+
+          if [ -z "$services" ]; then
+            echo "✅ No unhealthy services to restart"
+            exit 0
+          fi
+
+          for svc in $services; do
+            echo "🔄 Restarting $svc..."
+            {{.SSH_CMD}} fs@$ip "docker service update --force $svc" >/dev/null 2>&1
+            echo "   ✅ Done"
+          done
+          break
+        done
+        echo ""
+        echo "⏳ Services restarting. Run 'task swarm:watch' to monitor."
+    silent: true
+
+  logs:
+    desc: "📜 Show logs for a service"
+    requires:
+      vars: [SERVICE]
+    cmds:
+      - |
+        for ip in {{.MANAGER_IPS}}; do
+          if {{.SSH_CMD}} fs@$ip "docker service logs {{.SERVICE}} --tail 50" 2>/dev/null; then
+            break
+          fi
+        done
+    silent: true
