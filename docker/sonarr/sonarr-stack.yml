@@ -51,7 +51,7 @@ services:
         - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
 
         # Homepage Discovery
-        - "homepage.group=Downloads"
+        - "homepage.group=Media"
         - "homepage.name=Sonarr"
         - "homepage.icon=sonarr.png"
         - "homepage.href=https://sonarr.${DOMAIN}"

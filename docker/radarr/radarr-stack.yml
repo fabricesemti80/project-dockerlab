@@ -51,7 +51,7 @@ services:
         - "traefik.http.services.radarr.loadbalancer.server.port=7878"
 
         # Homepage Discovery
-        - "homepage.group=Downloads"
+        - "homepage.group=Media"
         - "homepage.name=Radarr"
         - "homepage.icon=radarr.png"
         - "homepage.href=https://radarr.${DOMAIN}"
