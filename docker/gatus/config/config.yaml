@@ -21,13 +21,6 @@ endpoints:
     conditions:
       - "[CONNECTED] == true"
 
-  - name: "Cloudflared"
-    group: "Infrastructure"
-    url: "tcp://cloudflared_cloudflared:2000"
-    interval: 5m
-    conditions:
-      - "[CONNECTED] == true"
-
   - name: "Backrest"
     group: "Infrastructure"
     url: "http://backup_backrest:9898"
