@@ -20,7 +20,7 @@ services:
         - "traefik.http.services.dozzle.loadbalancer.server.port=8080"
 
         # Homepage Discovery
-        - "homepage.group=Management"
+        - "homepage.group=Infrastructure"
         - "homepage.name=Dozzle"
         - "homepage.icon=dozzle.png"
         - "homepage.href=https://logs.${DOMAIN}"

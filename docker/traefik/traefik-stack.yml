@@ -112,7 +112,7 @@ services:
         - "traefik.http.routers.traefik.service=api@internal"
 
         # Homepage Discovery
-        - "homepage.group=Management"
+        - "homepage.group=Infrastructure"
         - "homepage.name=Traefik"
         - "homepage.icon=traefik.png"
         - "homepage.href=https://traefik.${DOMAIN}"
