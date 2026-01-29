@@ -1,4 +1,5 @@
 endpoints:
+  # Infrastructure
   - name: "Portainer"
     group: "Infrastructure"
     url: "tcp://portainer_portainer:9000"
@@ -13,13 +14,43 @@ endpoints:
     conditions:
       - "[CONNECTED] == true"
 
-  - name: "FileBrowser"
-    group: "Storage"
-    url: "http://filebrowser_filebrowser:80/login"
+  - name: "Socket Proxy"
+    group: "Infrastructure"
+    url: "tcp://socket-proxy_socket-proxy:2375"
+    interval: 5m
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: "Cloudflared"
+    group: "Infrastructure"
+    url: "tcp://cloudflared_cloudflared:2000"
+    interval: 5m
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: "Backrest"
+    group: "Infrastructure"
+    url: "http://backup_backrest:9898"
     interval: 5m
     conditions:
       - "[STATUS] == 200"
 
+  # Monitoring
+  - name: "Beszel"
+    group: "Monitoring"
+    url: "https://beszel.${DOMAIN}"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "Dozzle"
+    group: "Monitoring"
+    url: "http://dozzle_dozzle:8080"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  # Dashboard
   - name: "Homepage"
     group: "Dashboard"
     url: "http://homepage_homepage:3000"
@@ -34,25 +65,69 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
 
-  - name: "Docmost"
-    group: "Development"
-    url: "http://docmost_docmost:3000/"
+  # Media
+  - name: "Jellyfin"
+    group: "Media"
+    url: "http://jellyfin_jellyfin:8096/health"
     interval: 5m
     conditions:
       - "[STATUS] == 200"
 
-  - name: "Watchtower"
-    group: "Infrastructure"
-    url: "http://maintenance_watchtower:8080/v1/metrics"
+  - name: "Jellyseerr"
+    group: "Media"
+    url: "http://jellyseerr_jellyseerr:5055"
     interval: 5m
-    headers:
-      Authorization: "Bearer ${WATCHTOWER_HTTP_API_TOKEN}"
     conditions:
       - "[STATUS] == 200"
 
-  - name: "Beszel"
-    group: "Monitoring"
-    url: "https://beszel.${DOMAIN}"
+  # Downloads
+  - name: "Sonarr"
+    group: "Downloads"
+    url: "http://sonarr_sonarr:8989/ping"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "Radarr"
+    group: "Downloads"
+    url: "http://radarr_radarr:7878/ping"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "Prowlarr"
+    group: "Downloads"
+    url: "http://prowlarr_prowlarr:9696/ping"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "NZBGet"
+    group: "Downloads"
+    url: "tcp://nzbget_nzbget:6789"
+    interval: 5m
+    conditions:
+      - "[CONNECTED] == true"
+
+  # Storage
+  - name: "FileBrowser"
+    group: "Storage"
+    url: "http://filebrowser_filebrowser:80/login"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  # Utilities
+  - name: "OtterWiki"
+    group: "Utilities"
+    url: "http://otterwiki_otterwiki:80"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
+  - name: "Linkwarden"
+    group: "Utilities"
+    url: "http://linkwarden_linkwarden:3000"
     interval: 5m
     conditions:
       - "[STATUS] == 200"
@@ -64,34 +139,7 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
 
-  - name: "Socket Proxy"
-    group: "Infrastructure"
-    url: "tcp://socket-proxy_socket-proxy:2375"
-    interval: 5m
-    conditions:
-      - "[CONNECTED] == true"
-
-  - name: "Ghost Blog"
-    group: "Publishing"
-    url: "https://blog.${DOMAIN}"
-    interval: 5m
-    conditions:
-      - "[STATUS] == 200"
-
-  - name: "OtterWiki"
-    group: "Utilities"
-    url: "http://otterwiki_otterwiki:80"
-    interval: 5m
-    conditions:
-      - "[STATUS] == 200"
-
-  - name: "Backrest"
-    group: "Infrastructure"
-    url: "http://backrest_backrest:9898"
-    interval: 5m
-    conditions:
-      - "[STATUS] == 200"
-
+  # Test
   - name: "Whoami"
     group: "Test"
     url: "http://whoami_whoami:80"
