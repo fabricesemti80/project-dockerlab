@@ -134,6 +134,20 @@ locals {
         }
       ]
     }
+    linkwarden = {
+      name                      = "${var.domain} - Linkwarden access"
+      domain                    = "links.${var.domain}"
+      type                      = "self_hosted"
+      session_duration          = "720h"
+      auto_redirect_to_identity = false
+      policies = [
+        {
+          name     = "Allow Everyone"
+          decision = "bypass"
+          include  = local.bypass_anywhere
+        }
+      ]
+    }
   }
 }
 
