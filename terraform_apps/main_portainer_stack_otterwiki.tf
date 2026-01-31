@@ -23,4 +23,14 @@ resource "portainer_stack" "otterwiki" {
     name  = "TZ"
     value = var.tz
   }
+
+  env {
+    name  = "PUID"
+    value = var.puid
+  }
+
+  env {
+    name  = "PGID"
+    value = var.pgid
+  }
 }

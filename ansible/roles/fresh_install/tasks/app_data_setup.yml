@@ -231,6 +231,14 @@
   loop:
     - config
     - postgres
-    - redis
     - model-cache
+  when: install_cephfs | default(false) | bool
+
+- name: Ensure Immich Redis directory exists with correct permissions
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/immich/redis"
+    state: directory
+    owner: "999"
+    group: "999"
+    mode: '0755'
   when: install_cephfs | default(false) | bool
