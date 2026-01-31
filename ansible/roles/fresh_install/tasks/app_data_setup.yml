@@ -220,3 +220,17 @@
   loop:
     - config
   when: install_cephfs | default(false) | bool
+
+- name: Ensure Immich data directories exist
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/immich/{{ item }}"
+    state: directory
+    owner: "{{ immich_uid | default(default_puid) }}"
+    group: "{{ immich_gid | default(default_pgid) }}"
+    mode: '0755'
+  loop:
+    - config
+    - postgres
+    - redis
+    - model-cache
+  when: install_cephfs | default(false) | bool

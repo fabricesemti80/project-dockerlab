@@ -99,7 +99,36 @@ This section describes how to deploy Traefik and Homepage using Docker Swarm, Tr
 *   Verify that the Traefik and Homepage services are running correctly in the Docker Swarm cluster.
 *   Access Homepage using the internal domain in your browser.
 *  Check the traefik logs to see if the certs are ok
-=======
+
+## Immich Deployment
+
+Immich is a self-hosted photo and video management solution.
+
+### Storage Configuration
+
+| Volume | Mount Point | Description |
+|--------|-------------|-------------|
+| NFS Media | `/mnt/media/immich` | Photo/video upload storage (large media files) |
+| CephFS Config | `/mnt/cephfs/docker-shared-data/immich/config` | Application configuration |
+| CephFS Postgres | `/mnt/cephfs/docker-shared-data/immich/postgres` | PostgreSQL database |
+| CephFS Redis | `/mnt/cephfs/docker-shared-data/immich/redis` | Redis cache |
+| CephFS Model Cache | `/mnt/cephfs/docker-shared-data/immich/model-cache` | ML model cache |
+
+### Environment Variables
+
+| Variable | Description | Stored In |
+|----------|-------------|-----------|
+| `TZ` | Timezone | Stack env |
+| `DOMAIN` | Base domain for Traefik | Stack env |
+| `IMMICH_DB_PASSWORD` | PostgreSQL password | Doppler |
+
+### Access
+
+* URL: `https://photos.${DOMAIN}`
+* Cloudflare Access: Configured with admin email allowlist + local network bypass
+
+---
+
 This setup provides a streamlined GitOps workflow for deploying applications to Docker Swarm using Portainer Business Edition.
 
 ## Traefik and Homepage Deployment

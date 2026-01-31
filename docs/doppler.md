@@ -38,6 +38,15 @@ The following secrets are stored in Doppler:
 |--------|-------------|---------|
 | `TAILSCALE_AUTH_KEY` | Tailscale authentication key | Terraform, Ansible |
 
+### Application Secrets
+
+| Secret | Description | Used By |
+|--------|-------------|---------|
+| `IMMICH_DB_PASSWORD` | Immich PostgreSQL database password | Docker Stack |
+| `LINKWARDEN_POSTGRES_PASSWORD` | Linkwarden PostgreSQL database password | Docker Stack |
+| `LINKWARDEN_NEXTAUTH_SECRET` | Linkwarden NextAuth secret | Docker Stack |
+| `LINKWARDEN_MEILI_KEY` | Linkwarden Meilisearch master key | Docker Stack |
+
 ## Setup
 
 ### Install Doppler CLI

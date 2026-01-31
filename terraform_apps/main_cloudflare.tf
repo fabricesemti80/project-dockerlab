@@ -148,6 +148,31 @@ locals {
         }
       ]
     }
+    immich = {
+      name                      = "${var.domain} - Immich access"
+      domain                    = "photos.${var.domain}"
+      type                      = "self_hosted"
+      session_duration          = "720h"
+      auto_redirect_to_identity = false
+      policies = [
+        {
+          name     = "Allow Admin"
+          decision = "allow"
+          include = [
+            for email in local.access_allowed_emails : {
+              email = {
+                email = email
+              }
+            }
+          ]
+        },
+        {
+          name     = "Bypass from Local"
+          decision = "bypass"
+          include  = local.bypass_local_networks
+        }
+      ]
+    }
   }
 }
 

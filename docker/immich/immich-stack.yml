@@ -14,7 +14,7 @@ services:
       - IMMICH_MACHINE_LEARNING_URL=http://machine-learning:3003
       - UPLOAD_LOCATION=/usr/src/app/upload
     volumes:
-      - /mnt/nfs/media/immich:/usr/src/app/upload
+      - /mnt/media/immich:/usr/src/app/upload
       - /mnt/cephfs/docker-shared-data/immich/config:/config
       - /etc/localtime:/etc/localtime:ro
     networks:

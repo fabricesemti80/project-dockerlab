@@ -260,3 +260,10 @@ variable "media_pgid" {
   type        = string
   default     = "0"
 }
+
+# Immich
+variable "immich_db_password" {
+  description = "PostgreSQL password for Immich database"
+  type        = string
+  sensitive   = true
+}
