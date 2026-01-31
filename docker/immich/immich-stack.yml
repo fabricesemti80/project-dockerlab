@@ -6,12 +6,12 @@ services:
     image: ghcr.io/immich-app/immich-server:release
     environment:
       - TZ=${TZ}
-      - DB_HOSTNAME=immich_postgres
+      - DB_HOSTNAME=postgres
       - DB_USERNAME=postgres
       - DB_PASSWORD=${IMMICH_DB_PASSWORD}
       - DB_DATABASE_NAME=immich
-      - REDIS_HOSTNAME=immich_redis
-      - IMMICH_MACHINE_LEARNING_URL=http://immich_machine_learning:3003
+      - REDIS_HOSTNAME=redis
+      - IMMICH_MACHINE_LEARNING_URL=http://machine-learning:3003
       - UPLOAD_LOCATION=/usr/src/app/upload
     volumes:
       - /mnt/nfs/media/immich:/usr/src/app/upload
@@ -148,7 +148,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=${IMMICH_DB_PASSWORD}
       - POSTGRES_DB=immich
-      - POSTGRES_INITDB_ARGS="--data-checksums"
+      - POSTGRES_INITDB_ARGS=--data-checksums
     volumes:
       - /mnt/cephfs/docker-shared-data/immich/postgres:/var/lib/postgresql/data
     networks:
