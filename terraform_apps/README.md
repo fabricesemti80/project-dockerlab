@@ -43,6 +43,7 @@ No modules.
 | [portainer_stack.gatus](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.glance](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.homepage](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
+| [portainer_stack.immich](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.jellyfin](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.jellyseerr](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
 | [portainer_stack.linkwarden](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
@@ -92,6 +93,7 @@ No modules.
 | <a name="input_grafana_cloud_loki_username"></a> [grafana\_cloud\_loki\_username](#input\_grafana\_cloud\_loki\_username) | Grafana Cloud Loki username (numeric ID) | `string` | `""` | no |
 | <a name="input_grafana_cloud_prometheus_url"></a> [grafana\_cloud\_prometheus\_url](#input\_grafana\_cloud\_prometheus\_url) | Grafana Cloud Prometheus remote write URL (e.g., https://prometheus-prod-xx-xxx.grafana.net/api/prom/push) | `string` | `""` | no |
 | <a name="input_grafana_cloud_prometheus_username"></a> [grafana\_cloud\_prometheus\_username](#input\_grafana\_cloud\_prometheus\_username) | Grafana Cloud Prometheus username (numeric ID) | `string` | `""` | no |
+| <a name="input_immich_db_password"></a> [immich\_db\_password](#input\_immich\_db\_password) | PostgreSQL password for Immich database | `string` | n/a | yes |
 | <a name="input_linkwarden_meili_key"></a> [linkwarden\_meili\_key](#input\_linkwarden\_meili\_key) | Meilisearch master key for Linkwarden search | `string` | n/a | yes |
 | <a name="input_linkwarden_nextauth_secret"></a> [linkwarden\_nextauth\_secret](#input\_linkwarden\_nextauth\_secret) | NextAuth secret for Linkwarden session encryption | `string` | n/a | yes |
 | <a name="input_linkwarden_postgres_password"></a> [linkwarden\_postgres\_password](#input\_linkwarden\_postgres\_password) | PostgreSQL password for Linkwarden database | `string` | n/a | yes |
