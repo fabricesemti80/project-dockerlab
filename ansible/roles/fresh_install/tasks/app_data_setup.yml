@@ -242,3 +242,12 @@
     group: "999"
     mode: '0755'
   when: install_cephfs | default(false) | bool
+
+- name: Ensure Immich Tailscale directory exists
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/immich/tailscale"
+    state: directory
+    owner: "{{ immich_uid | default(default_puid) }}"
+    group: "{{ immich_gid | default(default_pgid) }}"
+    mode: '0755'
+  when: install_cephfs | default(false) | bool
