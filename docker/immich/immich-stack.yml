@@ -1,3 +1,4 @@
+#! WARNING: Services are pinned to dkr-wrkr-1 to avoid NFS I/O errors and DNS issues
 # Immich - Self-hosted Photo and Video Management
 # https://immich.app/
 
