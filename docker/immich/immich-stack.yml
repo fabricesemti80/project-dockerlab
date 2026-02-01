@@ -73,53 +73,53 @@ services:
       - postgres
       - redis
       - machine-learning
-    # Tailscale sidecar configuration
-    sidecar:
-      image: tailscale/tailscale:latest
-      command: tailscaled --state=/tailscale/state --socks5-server=0.0.0.0:1055 --outbound-http-proxy-listen=0.0.0.0:1055
-      environment:
-        - TS_AUTH_KEY=${TAILSCALE_AUTH_KEY}
-        - TS_ROUTES=0.0.0.0/0
-        - TS_HOSTNAME=photos
-      volumes:
-        - /mnt/cephfs/docker-shared-data/immich/tailscale:/tailscale
-        - /var/run/docker.sock:/var/run/docker.sock
-      networks:
-        - immich-internal
-      healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:1055"]
-        interval: 30s
-        timeout: 10s
-        retries: 3
-        start_period: 60s
-      logging:
-        driver: json-file
-        options:
-          max-size: "12m"
-          max-file: "5"
-      deploy:
-        replicas: 1
-        placement:
-          constraints:
-            - node.role == worker
-        resources:
-          limits:
-            cpus: '0.1'
-            memory: 128M
-          reservations:
-            memory: 64M
-        update_config:
-          parallelism: 1
-          delay: 10s
-          failure_action: rollback
-        rollback_config:
-          parallelism: 1
-    # Expose Immich through Tailscale
-    ports:
-      - target: 2283
-        published: 2283
-        protocol: tcp
-        mode: host
+    # # Tailscale sidecar configuration
+    # sidecar:
+    #   image: tailscale/tailscale:latest
+    #   command: tailscaled --state=/tailscale/state --socks5-server=0.0.0.0:1055 --outbound-http-proxy-listen=0.0.0.0:1055
+    #   environment:
+    #     - TS_AUTH_KEY=${TAILSCALE_AUTH_KEY}
+    #     - TS_ROUTES=0.0.0.0/0
+    #     - TS_HOSTNAME=photos
+    #   volumes:
+    #     - /mnt/cephfs/docker-shared-data/immich/tailscale:/tailscale
+    #     - /var/run/docker.sock:/var/run/docker.sock
+    #   networks:
+    #     - immich-internal
+    #   healthcheck:
+    #     test: ["CMD", "curl", "-f", "http://localhost:1055"]
+    #     interval: 30s
+    #     timeout: 10s
+    #     retries: 3
+    #     start_period: 60s
+    #   logging:
+    #     driver: json-file
+    #     options:
+    #       max-size: "12m"
+    #       max-file: "5"
+    #   deploy:
+    #     replicas: 1
+    #     placement:
+    #       constraints:
+    #         - node.role == worker
+    #     resources:
+    #       limits:
+    #         cpus: '0.1'
+    #         memory: 128M
+    #       reservations:
+    #         memory: 64M
+    #     update_config:
+    #       parallelism: 1
+    #       delay: 10s
+    #       failure_action: rollback
+    #     rollback_config:
+    #       parallelism: 1
+    # # Expose Immich through Tailscale
+    # ports:
+    #   - target: 2283
+    #     published: 2283
+    #     protocol: tcp
+    #     mode: host
 
   machine-learning:
     image: ghcr.io/immich-app/immich-machine-learning:release
