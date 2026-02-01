@@ -42,7 +42,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.role == worker
+          - node.hostname == dkr-wrkr-1
       resources:
         limits:
           cpus: '4.0'
@@ -185,7 +185,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.role == worker
+          - node.hostname == dkr-wrkr-1
       resources:
         limits:
           cpus: '1.0'
