@@ -132,6 +132,14 @@ endpoints:
     conditions:
       - "[STATUS] == 200"
 
+  # Media
+  - name: "Immich"
+    group: "Media"
+    url: "https://photos.${DOMAIN}"
+    interval: 5m
+    conditions:
+      - "[STATUS] == 200"
+
   # Test
   - name: "Whoami"
     group: "Test"
