@@ -55,6 +55,9 @@ services:
         - "traefik.http.routers.immich.entrypoints=websecure"
         - "traefik.http.routers.immich.tls.certresolver=cloudflare"
         - "traefik.http.services.immich.loadbalancer.server.port=2283"
+        # Required for mobile app uploads and large file transfers
+        - "traefik.http.middlewares.immich-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+        - "traefik.http.routers.immich.middlewares=immich-headers"
 
         # Homepage Discovery
         - "homepage.group=Media"
