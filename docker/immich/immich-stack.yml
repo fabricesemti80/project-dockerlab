@@ -51,6 +51,7 @@ services:
         parallelism: 1
       labels:
         - "traefik.enable=true"
+        - "traefik.docker.network=proxy"
         - "traefik.http.routers.immich.rule=Host(`photos.${DOMAIN}`)"
         - "traefik.http.routers.immich.entrypoints=websecure"
         - "traefik.http.routers.immich.tls.certresolver=cloudflare"
@@ -61,7 +62,6 @@ services:
         # Headers for mobile app
         - "traefik.http.middlewares.immich-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
         # Increase timeouts for large file uploads
-        - "traefik.http.services.immich.loadbalancer.server.timeout=600s"
         - "traefik.http.services.immich.loadbalancer.responseforwarding.flushinterval=100ms"
         # Apply middlewares
         - "traefik.http.routers.immich.middlewares=immich-buffering,immich-headers"
