@@ -152,23 +152,32 @@ tasks:
           for ip in {{.MANAGER_IPS}}; do
             unhealthy=$({{.SSH_CMD}} fs@$ip "docker service ls --format '{{`{{.Name}}`}} {{`{{.Replicas}}`}}' | grep -E '0/[0-9]' | wc -l" 2>/dev/null)
 
+            # Get node info for each service
+            node_info=$({{.SSH_CMD}} fs@$ip "docker service ls -q | xargs -I {} docker service ps {} --filter 'desired-state=running' --format '{{`{{.Name}}`}}\t{{`{{.Node}}`}}' 2>/dev/null" 2>/dev/null)
+
             if [ "$unhealthy" = "0" ]; then
               echo "✅ All services are healthy!"
               echo ""
+              printf "%-3s %-35s %-8s %s\n" "" "SERVICE" "REPLICAS" "NODE"
+              printf "%-3s %-35s %-8s %s\n" "" "───────" "────────" "────"
               {{.SSH_CMD}} fs@$ip "docker service ls --format '{{`{{.Name}}`}}\t{{`{{.Replicas}}`}}'" 2>/dev/null | while read line; do
                 name=$(echo "$line" | cut -f1)
                 replicas=$(echo "$line" | cut -f2)
-                printf "✅ %-35s %s\n" "$name" "$replicas"
+                node=$(echo "$node_info" | grep "^${name}\." | head -1 | cut -f2)
+                printf "✅ %-35s %-8s %s\n" "$name" "$replicas" "$node"
               done
               exit 0
             else
               echo "⏳ $unhealthy service(s) still starting..."
               echo ""
+              printf "%-3s %-35s %-8s %s\n" "" "SERVICE" "REPLICAS" "NODE"
+              printf "%-3s %-35s %-8s %s\n" "" "───────" "────────" "────"
               {{.SSH_CMD}} fs@$ip "docker service ls --format '{{`{{.Name}}`}}\t{{`{{.Replicas}}`}}'" 2>/dev/null | while read line; do
                 name=$(echo "$line" | cut -f1)
                 replicas=$(echo "$line" | cut -f2)
                 current=$(echo "$replicas" | cut -d'/' -f1)
                 desired=$(echo "$replicas" | cut -d'/' -f2)
+                node=$(echo "$node_info" | grep "^${name}\." | head -1 | cut -f2)
 
                 if [ "$current" = "$desired" ]; then
                   icon="✅"
@@ -177,7 +186,7 @@ tasks:
                 else
                   icon="🔄"
                 fi
-                printf "%s %-35s %s\n" "$icon" "$name" "$replicas"
+                printf "%s %-35s %-8s %s\n" "$icon" "$name" "$replicas" "$node"
               done
             fi
             break
