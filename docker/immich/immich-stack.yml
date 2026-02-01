@@ -82,10 +82,6 @@ services:
         - "homepage.icon=immich.png"
         - "homepage.href=https://photos.${DOMAIN}"
         - "homepage.description=Photo Management"
-    depends_on:
-      - postgres
-      - redis
-      - machine-learning
 
   machine-learning:
     image: ghcr.io/immich-app/immich-machine-learning:release
