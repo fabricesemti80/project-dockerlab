@@ -15,6 +15,7 @@ services:
       - UPLOAD_LOCATION=/usr/src/app/upload
     volumes:
       - /mnt/media/immich:/usr/src/app/upload
+      - /mnt/media/immich/library:/external-library:ro
       - /mnt/cephfs/docker-shared-data/immich/config:/config
       - /etc/localtime:/etc/localtime:ro
     ports:
