@@ -16,6 +16,7 @@ ${module.dkr_srv_3.vm_name}
 [swarm_workers]
 ${module.dkr_wrkr_1.vm_name}
 ${module.dkr_wrkr_2.vm_name}
+${module.dkr_wrkr_3.vm_name}
 
 [vms:children]
 proxmox_vms

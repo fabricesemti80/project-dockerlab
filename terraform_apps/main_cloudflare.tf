@@ -173,6 +173,21 @@ locals {
         }
       ]
     }
+    # Immich API bypass for mobile app authentication
+    immich_api = {
+      name                      = "${var.domain} - Immich API bypass"
+      domain                    = "photos.${var.domain}/api/*"
+      type                      = "self_hosted"
+      session_duration          = "720h"
+      auto_redirect_to_identity = false
+      policies = [
+        {
+          name     = "Bypass API for mobile app"
+          decision = "bypass"
+          include  = local.bypass_anywhere
+        }
+      ]
+    }
   }
 }
 
@@ -199,6 +214,17 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "homelab" {
 
   config = {
     ingress = [
+      # Immich - needs longer timeouts for photo/video uploads
+      {
+        hostname = "photos.${var.domain}"
+        service  = "https://traefik:443"
+        origin_request = {
+          no_tls_verify            = true
+          connect_timeout          = 30
+          keep_alive_timeout       = 90
+          disable_chunked_encoding = true
+        }
+      },
       {
         hostname = "*.${var.domain}"     # Serves *.krapulax.net
         service  = "https://traefik:443" # Point to Traefik service name on the 'proxy' network

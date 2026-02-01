@@ -43,6 +43,9 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
 
+      # Transport timeouts for large uploads (photos, videos)
+      - "--serversTransport.responseHeaderTimeout=600s"
+
       # HTTP → HTTPS
       - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"

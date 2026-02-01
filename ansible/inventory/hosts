@@ -13,6 +13,7 @@ dkr-srv-3
 [swarm_workers]
 dkr-wrkr-1
 dkr-wrkr-2
+dkr-wrkr-3
 
 [vms:children]
 proxmox_vms
