@@ -17,6 +17,12 @@ services:
       - /mnt/media/immich:/usr/src/app/upload
       - /mnt/cephfs/docker-shared-data/immich/config:/config
       - /etc/localtime:/etc/localtime:ro
+    ports:
+      #? Local-only access for uploads (use http://<any-swarm-node-ip>:2283 in Immich app's local network setting)
+      - target: 2283
+        published: 2283
+        protocol: tcp
+        mode: ingress
     networks:
       - proxy
       - immich-internal
@@ -76,13 +82,6 @@ services:
         - "homepage.icon=immich.png"
         - "homepage.href=https://photos.${DOMAIN}"
         - "homepage.description=Photo Management"
-    ports:
-
-      #? Local-only access for uploads (use http://<any-swarm-node-ip>:2283 in Immich app's local network setting)
-      - target: 2283
-        published: 2283
-        protocol: tcp
-        mode: ingress
     depends_on:
       - postgres
       - redis
