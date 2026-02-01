@@ -60,6 +60,9 @@ services:
         - "traefik.http.middlewares.immich-buffering.buffering.memRequestBodyBytes=0"
         # Headers for mobile app
         - "traefik.http.middlewares.immich-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
+        # Increase timeouts for large file uploads
+        - "traefik.http.services.immich.loadbalancer.server.timeout=600s"
+        - "traefik.http.services.immich.loadbalancer.responseforwarding.flushinterval=100ms"
         # Apply middlewares
         - "traefik.http.routers.immich.middlewares=immich-buffering,immich-headers"
 
@@ -69,6 +72,12 @@ services:
         - "homepage.icon=immich.png"
         - "homepage.href=https://photos.${DOMAIN}"
         - "homepage.description=Photo Management"
+    ports:
+      # Local-only access for uploads (use http://<any-swarm-node-ip>:2283 in Immich app's local network setting)
+      - target: 2283
+        published: 2283
+        protocol: tcp
+        mode: ingress
     depends_on:
       - postgres
       - redis
