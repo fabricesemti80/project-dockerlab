@@ -55,9 +55,13 @@ services:
         - "traefik.http.routers.immich.entrypoints=websecure"
         - "traefik.http.routers.immich.tls.certresolver=cloudflare"
         - "traefik.http.services.immich.loadbalancer.server.port=2283"
-        # Required for mobile app uploads and large file transfers
+        # Disable buffering for large uploads (photos/videos)
+        - "traefik.http.middlewares.immich-buffering.buffering.maxRequestBodyBytes=0"
+        - "traefik.http.middlewares.immich-buffering.buffering.memRequestBodyBytes=0"
+        # Headers for mobile app
         - "traefik.http.middlewares.immich-headers.headers.customrequestheaders.X-Forwarded-Proto=https"
-        - "traefik.http.routers.immich.middlewares=immich-headers"
+        # Apply middlewares
+        - "traefik.http.routers.immich.middlewares=immich-buffering,immich-headers"
 
         # Homepage Discovery
         - "homepage.group=Media"
