@@ -17,14 +17,14 @@
 │       └───────────────┘    └───────────────┘    └───────────────┘      │
 │                                                                         │
 │  Workers:                                                               │
-│       ┌───────────────┐    ┌───────────────┐                           │
-│       │  dkr-wrkr-1   │    │  dkr-wrkr-2   │                           │
-│       │   (Worker)    │    │   (Worker)    │                           │
-│       │  10.0.30.24   │    │  10.0.30.25   │                           │
-│       └───────────────┘    └───────────────┘                           │
+│       ┌───────────────┐    ┌───────────────┐    ┌───────────────┐      │
+│       │  dkr-wrkr-1   │    │  dkr-wrkr-2   │    │  dkr-wrkr-3   │      │
+│       │   (Worker)    │    │   (Worker)    │    │   (Worker)    │      │
+│       │  10.0.30.31   │    │  10.0.30.32   │    │  10.0.30.33   │      │
+│       └───────────────┘    └───────────────┘    └───────────────┘      │
 │                                                                         │
 │                         Docker Swarm Cluster                            │
-│                        (3 Managers + 2 Workers)                         │
+│                        (3 Managers + 3 Workers)                         │
 │                                                                         │
 │       ┌─────────────────────────────────────────────────────────┐      │
 │       │                    Shared Storage                        │      │
@@ -150,8 +150,9 @@ docker stack deploy -c traefik-stack.yml traefik
 | dkr-srv-1 | 10.0.30.21 | Manager | Swarm management, core services |
 | dkr-srv-2 | 10.0.30.22 | Manager | Swarm management, core services |
 | dkr-srv-3 | 10.0.30.23 | Manager | Swarm management, core services |
-| dkr-wrkr-1 | 10.0.30.24 | Worker | Application workloads |
-| dkr-wrkr-2 | 10.0.30.25 | Worker | Application workloads |
+| dkr-wrkr-1 | 10.0.30.31 | Worker | Application workloads |
+| dkr-wrkr-2 | 10.0.30.32 | Worker | Application workloads |
+| dkr-wrkr-3 | 10.0.30.33 | Worker | Application workloads |
 
 ### Network Configuration
 

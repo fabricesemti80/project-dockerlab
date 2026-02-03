@@ -7,6 +7,7 @@ ${module.dkr_srv_2.vm_name} ansible_host=${split("/", module.dkr_srv_2.vm_ipv4_a
 ${module.dkr_srv_3.vm_name} ansible_host=${split("/", module.dkr_srv_3.vm_ipv4_address)[0]}
 ${module.dkr_wrkr_1.vm_name} ansible_host=${split("/", module.dkr_wrkr_1.vm_ipv4_address)[0]}
 ${module.dkr_wrkr_2.vm_name} ansible_host=${split("/", module.dkr_wrkr_2.vm_ipv4_address)[0]}
+${module.dkr_wrkr_3.vm_name} ansible_host=${split("/", module.dkr_wrkr_3.vm_ipv4_address)[0]}
 
 [swarm_servers]
 ${module.dkr_srv_1.vm_name}

@@ -1,0 +1,7 @@
+---
+# CephFS shared data directory
+install_cephfs: false
+cephfs_mount_point: "/mnt/cephfs"
+
+# User that owns the shared data directory
+primary_user: "fs"
