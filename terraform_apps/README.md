@@ -93,7 +93,11 @@ No modules.
 | <a name="input_grafana_cloud_loki_username"></a> [grafana\_cloud\_loki\_username](#input\_grafana\_cloud\_loki\_username) | Grafana Cloud Loki username (numeric ID) | `string` | `""` | no |
 | <a name="input_grafana_cloud_prometheus_url"></a> [grafana\_cloud\_prometheus\_url](#input\_grafana\_cloud\_prometheus\_url) | Grafana Cloud Prometheus remote write URL (e.g., https://prometheus-prod-xx-xxx.grafana.net/api/prom/push) | `string` | `""` | no |
 | <a name="input_grafana_cloud_prometheus_username"></a> [grafana\_cloud\_prometheus\_username](#input\_grafana\_cloud\_prometheus\_username) | Grafana Cloud Prometheus username (numeric ID) | `string` | `""` | no |
+| <a name="input_immich_api_key"></a> [immich\_api\_key](#input\_immich\_api\_key) | Immich API key for Homepage widget | `string` | `""` | no |
 | <a name="input_immich_db_password"></a> [immich\_db\_password](#input\_immich\_db\_password) | PostgreSQL password for Immich database | `string` | n/a | yes |
+| <a name="input_jellyfin_api_key"></a> [jellyfin\_api\_key](#input\_jellyfin\_api\_key) | Jellyfin API key for Homepage widget | `string` | `""` | no |
+| <a name="input_jellyseerr_api_key"></a> [jellyseerr\_api\_key](#input\_jellyseerr\_api\_key) | Jellyseerr API key for Homepage widget | `string` | `""` | no |
+| <a name="input_linkwarden_api_key"></a> [linkwarden\_api\_key](#input\_linkwarden\_api\_key) | Linkwarden API key for Homepage widget | `string` | `""` | no |
 | <a name="input_linkwarden_meili_key"></a> [linkwarden\_meili\_key](#input\_linkwarden\_meili\_key) | Meilisearch master key for Linkwarden search | `string` | n/a | yes |
 | <a name="input_linkwarden_nextauth_secret"></a> [linkwarden\_nextauth\_secret](#input\_linkwarden\_nextauth\_secret) | NextAuth secret for Linkwarden session encryption | `string` | n/a | yes |
 | <a name="input_linkwarden_postgres_password"></a> [linkwarden\_postgres\_password](#input\_linkwarden\_postgres\_password) | PostgreSQL password for Linkwarden database | `string` | n/a | yes |
@@ -104,12 +108,16 @@ No modules.
 | <a name="input_pgid"></a> [pgid](#input\_pgid) | The group ID (100 = users group on QNAP) | `string` | `"100"` | no |
 | <a name="input_plex_claim"></a> [plex\_claim](#input\_plex\_claim) | Plex claim token from https://plex.tv/claim | `string` | `""` | no |
 | <a name="input_portainer_token"></a> [portainer\_token](#input\_portainer\_token) | Portainer API Key for authentication | `string` | n/a | yes |
+| <a name="input_prowlarr_api_key"></a> [prowlarr\_api\_key](#input\_prowlarr\_api\_key) | Prowlarr API key for Homepage widget | `string` | `""` | no |
 | <a name="input_puid"></a> [puid](#input\_puid) | The user ID (1000 = QNAP admin-fabrice) | `string` | `"1000"` | no |
+| <a name="input_radarr_api_key"></a> [radarr\_api\_key](#input\_radarr\_api\_key) | Radarr API key for Homepage widget | `string` | `""` | no |
 | <a name="input_repo_branch"></a> [repo\_branch](#input\_repo\_branch) | The branch of the Git repository | `string` | `"refs/heads/main"` | no |
 | <a name="input_repo_url"></a> [repo\_url](#input\_repo\_url) | The URL of the Git repository | `string` | `"https://github.com/fabricesemti80/project-dockerlab.git"` | no |
 | <a name="input_s3_access_key_id"></a> [s3\_access\_key\_id](#input\_s3\_access\_key\_id) | Access key for S3-compatible storage (Cloudflare R2, AWS S3, Wasabi, MinIO) | `string` | n/a | yes |
 | <a name="input_s3_secret_access_key"></a> [s3\_secret\_access\_key](#input\_s3\_secret\_access\_key) | Secret key for S3-compatible storage (Cloudflare R2, AWS S3, Wasabi, MinIO) | `string` | n/a | yes |
+| <a name="input_sonarr_api_key"></a> [sonarr\_api\_key](#input\_sonarr\_api\_key) | Sonarr API key for Homepage widget | `string` | `""` | no |
 | <a name="input_tz"></a> [tz](#input\_tz) | The timezone | `string` | `"Europe/London"` | no |
+| <a name="input_wallos_api_key"></a> [wallos\_api\_key](#input\_wallos\_api\_key) | Wallos API key for Homepage widget | `string` | `""` | no |
 
 ## Outputs
 
