@@ -28,6 +28,7 @@ services:
       # API / Dashboard
       - "--api=true"
       - "--api.dashboard=true"
+      - "--api.insecure=true"  # Exposes API on :8080 for internal access (Homepage widget)
 
       # Swarm provider
       - "--providers.swarm=true"
