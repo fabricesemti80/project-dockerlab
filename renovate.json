@@ -1,6 +1,14 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
-  ]
+    "config:recommended",
+    "docker:enableMajor"
+  ],
+  "docker-compose": {
+    "fileMatch": ["docker/.*-stack\\.yml$"]
+  },
+  "major": {
+    "labels": ["major-update", "review-required"],
+    "prPriority": -1
+  }
 }
