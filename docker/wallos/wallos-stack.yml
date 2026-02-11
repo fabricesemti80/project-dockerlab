@@ -6,7 +6,7 @@ version: "3.9"
 
 services:
   wallos:
-    image: bellamy/wallos:4.6.0
+    image: bellamy/wallos:4.6.1
     environment:
       - TZ=${TZ}
       - BASE_URL=https://wallos.${DOMAIN}
