@@ -17,7 +17,7 @@ version: "3.9"
 
 services:
   traefik:
-    image: traefik:v3.6.7
+    image: traefik:v3.6.8
     command:
       # Ping (for healthcheck)
       - "--ping=true"
