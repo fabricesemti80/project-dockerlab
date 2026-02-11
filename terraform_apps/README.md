@@ -5,7 +5,7 @@
 |------|---------|
 | <a name="requirement_cloudflare"></a> [cloudflare](#requirement\_cloudflare) | ~> 5.0 |
 | <a name="requirement_doppler"></a> [doppler](#requirement\_doppler) | ~> 1.3 |
-| <a name="requirement_portainer"></a> [portainer](#requirement\_portainer) | 1.21.0 |
+| <a name="requirement_portainer"></a> [portainer](#requirement\_portainer) | 1.24.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.6 |
 
 ## Providers
@@ -14,7 +14,7 @@
 |------|---------|
 | <a name="provider_cloudflare"></a> [cloudflare](#provider\_cloudflare) | ~> 5.0 |
 | <a name="provider_doppler"></a> [doppler](#provider\_doppler) | ~> 1.3 |
-| <a name="provider_portainer"></a> [portainer](#provider\_portainer) | 1.21.0 |
+| <a name="provider_portainer"></a> [portainer](#provider\_portainer) | 1.24.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | ~> 3.6 |
 
 ## Modules
@@ -32,35 +32,35 @@ No modules.
 | [cloudflare_zero_trust_tunnel_cloudflared.homelab](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/zero_trust_tunnel_cloudflared) | resource |
 | [cloudflare_zero_trust_tunnel_cloudflared_config.homelab](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/zero_trust_tunnel_cloudflared_config) | resource |
 | [doppler_secret.tunnel_token](https://registry.terraform.io/providers/dopplerhq/doppler/latest/docs/resources/secret) | resource |
-| [portainer_environment.remote_qnap](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/environment) | resource |
-| [portainer_stack.alloy](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.backup](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.beszel](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.beszel_agent_qnap](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.cloudflared](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.dozzle](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.filebrowser](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.gatus](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.glance](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.homepage](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.immich](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.jellyfin](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.jellyseerr](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.linkwarden](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.maintenance](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.nzbget](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.otterwiki](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.plex](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.prowlarr](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.radarr](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.socket-proxy](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.sonarr](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.traefik](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.wallos](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
-| [portainer_stack.whoami](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/resources/stack) | resource |
+| [portainer_environment.remote_qnap](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/environment) | resource |
+| [portainer_stack.alloy](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.backup](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.beszel](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.beszel_agent_qnap](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.cloudflared](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.dozzle](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.filebrowser](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.gatus](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.glance](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.homepage](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.immich](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.jellyfin](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.jellyseerr](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.linkwarden](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.maintenance](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.nzbget](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.otterwiki](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.plex](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.prowlarr](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.radarr](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.socket-proxy](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.sonarr](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.traefik](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.wallos](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
+| [portainer_stack.whoami](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
 | [random_id.tunnel_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 | [cloudflare_zone.main](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/data-sources/zone) | data source |
-| [portainer_environment.local_swarm](https://registry.terraform.io/providers/portainer/portainer/1.21.0/docs/data-sources/environment) | data source |
+| [portainer_environment.local_swarm](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/data-sources/environment) | data source |
 
 ## Inputs
 
