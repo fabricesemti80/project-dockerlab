@@ -38,10 +38,10 @@ endpoints:
 
   - name: "Dozzle"
     group: "Monitoring"
-    url: "http://dozzle_dozzle:8080"
+    url: "tcp://dozzle_dozzle:8080"
     interval: 5m
     conditions:
-      - "[STATUS] == 200"
+      - "[CONNECTED] == true"
 
   # Dashboard
   - name: "Homepage"
