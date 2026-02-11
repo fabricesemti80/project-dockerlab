@@ -1,3 +1,6 @@
+#! ANSIBLE DEPENDENCY: ansible/roles/fresh_install/tasks/app_data_setup.yml
+#! - Creates /mnt/cephfs/docker-shared-data/diun directory (owner: 0:0)
+
 version: "3.9"
 
 services:
@@ -55,6 +58,42 @@ services:
           memory: 32M
     environment:
       - TZ=${TZ}
+
+  # Diun - Docker Image Update Notifier
+  # https://github.com/crazy-max/diun
+  #
+  # Monitors Docker images for updates and sends notifications
+  # Does NOT auto-update - just notifies when updates are available
+  diun:
+    image: crazymax/diun:latest
+    hostname: diun
+    environment:
+      - TZ=${TZ}
+      - DIUN_WATCH_SCHEDULE=0 0 6 * * *
+      - DIUN_WATCH_FIRSTCHECKNOTIF=false
+      - DIUN_PROVIDERS_SWARM=true
+      - DIUN_PROVIDERS_SWARM_WATCHBYDEFAULT=true
+      - DIUN_NOTIF_DISCORD_WEBHOOKURL=${DISCORD_WATCHTOWER_WEBHOOK}
+    volumes:
+      - /mnt/cephfs/docker-shared-data/diun:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 64M
+        reservations:
+          memory: 32M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      rollback_config:
+        parallelism: 1
 
 networks:
   default:

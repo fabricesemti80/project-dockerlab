@@ -39,6 +39,15 @@
     - cache
   when: install_cephfs | default(false) | bool
 
+- name: Ensure Diun data directory exists
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/diun"
+    state: directory
+    owner: "{{ diun_uid | default(default_puid) }}"
+    group: "{{ diun_gid | default(default_pgid) }}"
+    mode: '0755'
+  when: install_cephfs | default(false) | bool
+
 - name: Ensure OtterWiki data directories exist
   ansible.builtin.file:
     path: "{{ cephfs_mount_point }}/docker-shared-data/otterwiki/{{ item }}"
