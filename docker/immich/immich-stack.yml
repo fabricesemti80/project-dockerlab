@@ -84,6 +84,9 @@ services:
         - "homepage.icon=immich.png"
         - "homepage.href=https://photos.${DOMAIN}"
         - "homepage.description=Photo Management"
+        - "homepage.widget.type=immich"
+        - "homepage.widget.url=http://immich_immich-server:2283"
+        - "homepage.widget.key={{HOMEPAGE_VAR_IMMICH_API_KEY}}"
 
   machine-learning:
     image: ghcr.io/immich-app/immich-machine-learning:release

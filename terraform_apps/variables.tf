@@ -267,3 +267,60 @@ variable "immich_db_password" {
   type        = string
   sensitive   = true
 }
+
+# Homepage Widget API Keys
+variable "sonarr_api_key" {
+  description = "Sonarr API key for Homepage widget"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "radarr_api_key" {
+  description = "Radarr API key for Homepage widget"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "prowlarr_api_key" {
+  description = "Prowlarr API key for Homepage widget"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "jellyfin_api_key" {
+  description = "Jellyfin API key for Homepage widget"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "jellyseerr_api_key" {
+  description = "Jellyseerr API key for Homepage widget"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "immich_api_key" {
+  description = "Immich API key for Homepage widget"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "wallos_api_key" {
+  description = "Wallos API key for Homepage widget"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "linkwarden_api_key" {
+  description = "Linkwarden API key for Homepage widget"
+  type        = string
+  sensitive   = true
+  default     = ""
+}

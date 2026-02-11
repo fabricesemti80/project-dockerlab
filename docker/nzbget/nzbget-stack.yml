@@ -58,6 +58,10 @@ services:
         - "homepage.icon=nzbget.png"
         - "homepage.href=https://nzbget.${DOMAIN}"
         - "homepage.description=Usenet Downloader"
+        - "homepage.widget.type=nzbget"
+        - "homepage.widget.url=http://nzbget_nzbget:6789"
+        - "homepage.widget.username={{HOMEPAGE_VAR_NZBGET_USER}}"
+        - "homepage.widget.password={{HOMEPAGE_VAR_NZBGET_PASS}}"
 
 networks:
   proxy:

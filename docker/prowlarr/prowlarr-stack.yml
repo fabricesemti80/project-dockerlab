@@ -54,6 +54,9 @@ services:
         - "homepage.icon=prowlarr.png"
         - "homepage.href=https://prowlarr.${DOMAIN}"
         - "homepage.description=Indexer Manager"
+        - "homepage.widget.type=prowlarr"
+        - "homepage.widget.url=http://prowlarr_prowlarr:9696"
+        - "homepage.widget.key={{HOMEPAGE_VAR_PROWLARR_API_KEY}}"
 
 networks:
   proxy:

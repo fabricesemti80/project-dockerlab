@@ -57,6 +57,10 @@ services:
         - "homepage.icon=jellyfin.png"
         - "homepage.href=https://jelly.${DOMAIN}"
         - "homepage.description=Media Server"
+        - "homepage.widget.type=jellyfin"
+        - "homepage.widget.url=http://jellyfin_jellyfin:8096"
+        - "homepage.widget.key={{HOMEPAGE_VAR_JELLYFIN_API_KEY}}"
+        - "homepage.widget.enableBlocks=true"
 
 networks:
   proxy:

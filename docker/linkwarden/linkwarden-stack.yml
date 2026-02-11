@@ -59,6 +59,9 @@ services:
         - "homepage.icon=linkwarden.png"
         - "homepage.href=https://links.${DOMAIN}"
         - "homepage.description=Bookmark Manager"
+        - "homepage.widget.type=linkwarden"
+        - "homepage.widget.url=http://linkwarden_linkwarden:3000"
+        - "homepage.widget.key={{HOMEPAGE_VAR_LINKWARDEN_API_KEY}}"
     depends_on:
       - postgres
       - meilisearch

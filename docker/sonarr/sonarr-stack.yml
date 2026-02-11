@@ -56,6 +56,9 @@ services:
         - "homepage.icon=sonarr.png"
         - "homepage.href=https://sonarr.${DOMAIN}"
         - "homepage.description=TV Series Management"
+        - "homepage.widget.type=sonarr"
+        - "homepage.widget.url=http://sonarr_sonarr:8989"
+        - "homepage.widget.key={{HOMEPAGE_VAR_SONARR_API_KEY}}"
 
 networks:
   proxy:

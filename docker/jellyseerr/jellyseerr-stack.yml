@@ -54,6 +54,9 @@ services:
         - "homepage.icon=jellyseerr.png"
         - "homepage.href=https://requests.${DOMAIN}"
         - "homepage.description=Media Requests"
+        - "homepage.widget.type=jellyseerr"
+        - "homepage.widget.url=http://jellyseerr_jellyseerr:5055"
+        - "homepage.widget.key={{HOMEPAGE_VAR_JELLYSEERR_API_KEY}}"
 
 networks:
   proxy:

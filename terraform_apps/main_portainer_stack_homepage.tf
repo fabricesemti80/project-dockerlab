@@ -44,5 +44,56 @@ resource "portainer_stack" "homepage" {
     value = var.filebrowser_admin_password
   }
 
+  # Homepage Widget API Keys
+  env {
+    name  = "SONARR_API_KEY"
+    value = var.sonarr_api_key
+  }
+
+  env {
+    name  = "RADARR_API_KEY"
+    value = var.radarr_api_key
+  }
+
+  env {
+    name  = "PROWLARR_API_KEY"
+    value = var.prowlarr_api_key
+  }
+
+  env {
+    name  = "JELLYFIN_API_KEY"
+    value = var.jellyfin_api_key
+  }
+
+  env {
+    name  = "JELLYSEERR_API_KEY"
+    value = var.jellyseerr_api_key
+  }
+
+  env {
+    name  = "IMMICH_API_KEY"
+    value = var.immich_api_key
+  }
+
+  env {
+    name  = "NZBGET_USER"
+    value = var.nzbget_user
+  }
+
+  env {
+    name  = "NZBGET_PASS"
+    value = var.nzbget_pass
+  }
+
+  env {
+    name  = "WALLOS_API_KEY"
+    value = var.wallos_api_key
+  }
+
+  env {
+    name  = "LINKWARDEN_API_KEY"
+    value = var.linkwarden_api_key
+  }
+
   depends_on = [portainer_stack.socket-proxy]
 }

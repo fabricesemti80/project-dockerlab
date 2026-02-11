@@ -56,6 +56,9 @@ services:
         - "homepage.icon=radarr.png"
         - "homepage.href=https://radarr.${DOMAIN}"
         - "homepage.description=Movie Management"
+        - "homepage.widget.type=radarr"
+        - "homepage.widget.url=http://radarr_radarr:7878"
+        - "homepage.widget.key={{HOMEPAGE_VAR_RADARR_API_KEY}}"
 
 networks:
   proxy:

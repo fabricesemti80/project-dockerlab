@@ -37,8 +37,8 @@ services:
         - "homepage.icon=gatus.png"
         - "homepage.href=https://status.${DOMAIN}"
         - "homepage.description=System Status Monitoring"
-        # - "homepage.widget.type=gatus"
-        # - "homepage.widget.url=https://status.${DOMAIN}"
+        - "homepage.widget.type=gatus"
+        - "homepage.widget.url=http://gatus_gatus:8080"
 
 configs:
   gatus_config_v6:
