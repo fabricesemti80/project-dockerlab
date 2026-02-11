@@ -12,8 +12,7 @@ services:
       retries: 3
       start_period: 10s
     deploy:
-      mode: replicated
-      replicas: 1
+      mode: global
       placement:
         constraints:
           - node.role == manager
