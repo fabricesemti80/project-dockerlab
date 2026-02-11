@@ -347,6 +347,20 @@ Metrics and logs collector for Grafana Cloud. Runs globally on all swarm nodes.
 | `LINKWARDEN_NEXTAUTH_SECRET` | NextAuth session secret for Linkwarden |
 | `LINKWARDEN_MEILI_KEY` | Meilisearch master key for Linkwarden |
 
+## 🔄 Container Image Updates
+
+Docker image updates are managed via [Renovate](https://docs.renovatebot.com/), configured in `renovate.json`:
+
+- **Automatic PRs**: Renovate scans all `docker/*-stack.yml` files and creates PRs when new image versions are available
+- **Minor/Patch updates**: Created as normal PRs for easy merging
+- **Major updates**: Labeled with `major-update` and `review-required` for careful review
+
+After merging a Renovate PR, redeploy the affected stack:
+
+```bash
+docker stack deploy -c docker/<app>/<app>-stack.yml <app>
+```
+
 ## 🔄 Deployment Workflow
 
 ```mermaid
