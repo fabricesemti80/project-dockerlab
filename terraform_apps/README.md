@@ -72,7 +72,8 @@ No modules.
 | <a name="input_cloudflare_account_id"></a> [cloudflare\_account\_id](#input\_cloudflare\_account\_id) | Cloudflare Account ID | `string` | n/a | yes |
 | <a name="input_cloudflare_api_token"></a> [cloudflare\_api\_token](#input\_cloudflare\_api\_token) | Cloudflare API Token | `string` | n/a | yes |
 | <a name="input_cloudflare_zone_id"></a> [cloudflare\_zone\_id](#input\_cloudflare\_zone\_id) | Cloudflare Zone ID | `string` | n/a | yes |
-| <a name="input_discord_watchtower_webhook"></a> [discord\_watchtower\_webhook](#input\_discord\_watchtower\_webhook) | Discord Webhook URL for Watchtower notifications | `string` | n/a | yes |
+| <a name="input_discord_diun_webhook"></a> [discord\_diun\_webhook](#input\_discord\_diun\_webhook) | Discord Webhook URL for Diun notifications (native Discord format, no /slack suffix) | `string` | `""` | no |
+| <a name="input_discord_watchtower_webhook"></a> [discord\_watchtower\_webhook](#input\_discord\_watchtower\_webhook) | Discord Webhook URL for Watchtower notifications (must end with /slack) | `string` | n/a | yes |
 | <a name="input_docmost_app_secret"></a> [docmost\_app\_secret](#input\_docmost\_app\_secret) | App secret for Docmost | `string` | n/a | yes |
 | <a name="input_docmost_postgres_password"></a> [docmost\_postgres\_password](#input\_docmost\_postgres\_password) | Postgres password for Docmost | `string` | n/a | yes |
 | <a name="input_domain"></a> [domain](#input\_domain) | The domain name | `string` | `"krapulax.dev"` | no |
