@@ -95,9 +95,16 @@ variable "docmost_postgres_password" {
 }
 
 variable "discord_watchtower_webhook" {
-  description = "Discord Webhook URL for Watchtower notifications"
+  description = "Discord Webhook URL for Watchtower notifications (must end with /slack)"
   type        = string
   sensitive   = true
+}
+
+variable "discord_diun_webhook" {
+  description = "Discord Webhook URL for Diun notifications (native Discord format, no /slack suffix)"
+  type        = string
+  sensitive   = true
+  default     = ""
 }
 
 variable "doppler_token" {

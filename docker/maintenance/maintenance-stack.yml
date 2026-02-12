@@ -73,7 +73,7 @@ services:
       - DIUN_WATCH_FIRSTCHECKNOTIF=false
       - DIUN_PROVIDERS_SWARM=true
       - DIUN_PROVIDERS_SWARM_WATCHBYDEFAULT=true
-      - DIUN_NOTIF_DISCORD_WEBHOOKURL=${DISCORD_WATCHTOWER_WEBHOOK}
+      - DIUN_NOTIF_DISCORD_WEBHOOKURL=${DISCORD_DIUN_WEBHOOK}
     volumes:
       - /mnt/cephfs/docker-shared-data/diun:/data
       - /var/run/docker.sock:/var/run/docker.sock:ro

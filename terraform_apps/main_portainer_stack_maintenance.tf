@@ -25,6 +25,11 @@ resource "portainer_stack" "maintenance" {
   }
 
   env {
+    name  = "DISCORD_DIUN_WEBHOOK"
+    value = var.discord_diun_webhook
+  }
+
+  env {
     name  = "FORCE_UPDATE"
     value = "1"
   }
