@@ -91,7 +91,7 @@ services:
         parallelism: 1
 
   redis:
-    image: redis:7.4-alpine
+    image: redis:8.6-alpine
     networks:
       - docmost-net
     volumes:
