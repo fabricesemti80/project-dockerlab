@@ -6,7 +6,7 @@ version: "3.9"
 
 services:
   ghost:
-    image: ghost:5-alpine
+    image: ghost:6-alpine
     environment:
       - TZ=${TZ}
       - NODE_ENV=production
