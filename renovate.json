@@ -5,10 +5,15 @@
     "docker:enableMajor"
   ],
   "docker-compose": {
-    "fileMatch": ["docker/.*-stack\\.yml$"]
+    "managerFilePatterns": [
+      "/docker/.*-stack\\.yml$/"
+    ]
   },
   "major": {
-    "labels": ["major-update", "review-required"],
+    "labels": [
+      "major-update",
+      "review-required"
+    ],
     "prPriority": -1
   }
 }
