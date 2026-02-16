@@ -95,6 +95,56 @@ services:
       rollback_config:
         parallelism: 1
 
+  # Swarm DNS Health Check
+  # Fixes known Docker Swarm overlay DNS bug where service DNS entries become stale.
+  # Runs daily at 05:00 - iterates all services on the proxy network and force-updates
+  # any whose DNS cannot be resolved. Must be on the proxy network to test DNS correctly.
+  dns-healthcheck:
+    image: docker:cli
+    networks:
+      - default
+      - proxy
+    command: >
+      sh -c "
+      cat > /dns-check.sh << 'SCRIPT'
+      #!/bin/sh
+      echo \"[dns-healthcheck] $$(date) - Starting DNS health check\"
+      PROXY_ID=$$(docker network inspect -f '{{.Id}}' proxy)
+      FIXED=0
+      CHECKED=0
+      for SVC in $$(docker service ls --format '{{.Name}}'); do
+        HAS_PROXY=$$(docker service inspect -f '{{range .Endpoint.VirtualIPs}}{{if eq .NetworkID \"'$$PROXY_ID'\"}}yes{{end}}{{end}}' $$SVC 2>/dev/null)
+        [ \"$$HAS_PROXY\" = \"yes\" ] || continue
+        CHECKED=$$((CHECKED+1))
+        if ! getent hosts $$SVC >/dev/null 2>&1; then
+          echo \"[dns-healthcheck] $$SVC - DNS FAILED, force-updating...\"
+          docker service update --force $$SVC >/dev/null 2>&1
+          FIXED=$$((FIXED+1))
+        fi
+      done
+      echo \"[dns-healthcheck] Done. Checked $$CHECKED services, fixed $$FIXED.\"
+      SCRIPT
+      chmod +x /dns-check.sh &&
+      echo '0 5 * * * /dns-check.sh >> /proc/1/fd/1 2>&1' | crontab - &&
+      crond -f"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 64M
+        reservations:
+          memory: 32M
+    environment:
+      - TZ=${TZ}
+
 networks:
   default:
     driver: overlay
+  proxy:
+    external: true
