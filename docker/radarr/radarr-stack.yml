@@ -13,9 +13,7 @@ services:
       - /mnt/cephfs/docker-shared-data/nzbget/downloads:/downloads
       - /mnt/media:/media
     networks:
-      - proxy:
-          aliases:
-            - radarr
+      - proxy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:7878/ping"]
       interval: 30s
@@ -59,7 +57,7 @@ services:
         - "homepage.href=https://radarr.${DOMAIN}"
         - "homepage.description=Movie Management"
         - "homepage.widget.type=radarr"
-        - "homepage.widget.url=http://radarr:7878"
+        - "homepage.widget.url=http://radarr_radarr:7878"
         - "homepage.widget.key={{HOMEPAGE_VAR_RADARR_API_KEY}}"
 
 networks:
