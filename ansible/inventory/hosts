@@ -5,6 +5,7 @@ dkr-srv-3 ansible_host=10.0.30.23
 dkr-wrkr-1 ansible_host=10.0.30.31
 dkr-wrkr-2 ansible_host=10.0.30.32
 dkr-wrkr-3 ansible_host=10.0.30.33
+gh-runner-1 ansible_host=10.0.30.40
 
 [swarm_servers]
 dkr-srv-1
@@ -15,6 +16,9 @@ dkr-srv-3
 dkr-wrkr-1
 dkr-wrkr-2
 dkr-wrkr-3
+
+[github_runners]
+gh-runner-1
 
 [vms:children]
 proxmox_vms

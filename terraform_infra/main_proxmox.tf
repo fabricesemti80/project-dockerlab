@@ -184,6 +184,14 @@ locals {
       }
     ]
   }
+
+  gh_runner_1 = {
+    name         = "gh-runner-1"
+    vm_id        = 3040
+    node_name    = "pve-0"
+    ipv4_address = "10.0.30.40/24"
+    ipv4_gateway = "10.0.30.1"
+  }
 }
 
 module "dkr_srv_1" {
@@ -586,6 +594,68 @@ module "dkr_wrkr_3" {
   ipv4_gateway                = local.dkr_wrkr_3.ipv4_gateway
   additional_network_devices  = local.dkr_wrkr_3.additional_network_devices
   additional_ipv4_configs     = local.dkr_wrkr_3.additional_ipv4_configs
+
+  # VM Lifecycle Settings
+  on_boot             = local.vm_common.on_boot
+  reboot_after_update = local.vm_common.reboot_after_update
+  started             = local.vm_common.started
+
+  # EFI and TPM
+  efi_disk_enabled  = local.vm_common.efi_disk_enabled
+  tpm_state_enabled = local.vm_common.tpm_state_enabled
+}
+
+module "gh_runner_1" {
+  source = "./modules/proxmox-vm"
+
+  # Basic Configuration
+  name        = local.gh_runner_1.name
+  description = "Terraform Managed GitHub Actions Self-Hosted Runner"
+  tags        = ["debian13", "github-runner", "terraform", "ci-cd"]
+  node_name   = local.gh_runner_1.node_name
+  vm_id       = local.gh_runner_1.vm_id
+
+  # Clone Configuration
+  template_vm_id     = local.vm_common.template_vm_id
+  template_node_name = local.vm_common.template_node_name
+  full_clone         = local.vm_common.full_clone
+
+  # Agent Configuration
+  agent_enabled = local.vm_common.agent_enabled
+  agent_timeout = local.vm_common.agent_timeout
+
+  # Hardware Configuration
+  memory_dedicated = 2048
+  cpu_cores        = 2
+  cpu_sockets      = local.vm_common.cpu_sockets
+  scsi_hardware    = local.vm_common.scsi_hardware
+
+  # Disk Configuration
+  disk_datastore_id = local.vm_common.disk_datastore_id
+  disk_interface    = local.vm_common.disk_interface
+  disk_size         = local.vm_common.disk_size
+  disk_iothread     = local.vm_common.disk_iothread
+
+  # Network Configuration
+  network_bridge   = local.vm_common.network_bridge
+  network_model    = local.vm_common.network_model
+  network_vlan_id  = local.vm_common.network_vlan_id
+  network_firewall = local.vm_common.network_firewall
+
+  # SSH Keys
+  ssh_keys = [
+    local.ssh_public_key_rsa,
+    local.ssh_public_key_ed25519
+  ]
+
+  # User Configuration
+  username = local.username
+
+  # Initialization Configuration
+  initialization_datastore_id = local.vm_common.initialization_datastore_id
+  dns_servers                 = local.vm_common.dns_servers
+  ipv4_address                = local.gh_runner_1.ipv4_address
+  ipv4_gateway                = local.gh_runner_1.ipv4_gateway
 
   # VM Lifecycle Settings
   on_boot             = local.vm_common.on_boot

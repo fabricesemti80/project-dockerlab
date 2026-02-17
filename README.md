@@ -153,6 +153,7 @@ docker stack deploy -c traefik-stack.yml traefik
 | dkr-wrkr-1 | 10.0.30.31 | Worker | Application workloads |
 | dkr-wrkr-2 | 10.0.30.32 | Worker | Application workloads |
 | dkr-wrkr-3 | 10.0.30.33 | Worker | Application workloads |
+| gh-runner-1 | 10.0.30.40 | CI/CD | GitHub Actions self-hosted runner |
 
 ### Network Configuration
 

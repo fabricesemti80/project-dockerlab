@@ -91,3 +91,4 @@ data/tailscale.md
 # Ansible inventory files (contain sensitive information)
 ansible/inventory.yml
 docker/beszel/config.sample.yaml
+CLAUDE.md

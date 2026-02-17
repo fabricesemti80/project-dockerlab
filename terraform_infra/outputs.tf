@@ -83,3 +83,28 @@ output "dkr_srv_3_vm_node" {
   description = "The Proxmox node where dkr-srv-3 is running"
   value       = module.dkr_srv_3.vm_node_name
 }
+
+output "gh_runner_1_vm_id" {
+  description = "The ID of the gh-runner-1 VM"
+  value       = module.gh_runner_1.vm_id
+}
+
+output "gh_runner_1_vm_name" {
+  description = "The name of the gh-runner-1 VM"
+  value       = module.gh_runner_1.vm_name
+}
+
+output "gh_runner_1_vm_node" {
+  description = "The Proxmox node where gh-runner-1 is running"
+  value       = module.gh_runner_1.vm_node_name
+}
+
+output "gh_runner_1_ipv4_address" {
+  description = "IPv4 address of gh-runner-1"
+  value       = local.gh_runner_1.ipv4_address
+}
+
+output "gh_runner_1_hostname" {
+  description = "Hostname of gh-runner-1"
+  value       = local.gh_runner_1.name
+}
