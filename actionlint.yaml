@@ -1,0 +1,7 @@
+self-hosted-runner:
+  # Labels of your self-hosted runner
+  labels:
+    - self-hosted
+    - homelab
+    - linux
+    - x64
