@@ -12,9 +12,9 @@ env:
   REPO_PATH: /home/sysops/homelab
 
 jobs:
-  #TODO: changeme
   lint-and-test:
     runs-on: [self-hosted, homelab]
+    if: github.event_name == 'push' || (github.event.pull_request.merged == true)
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -75,188 +75,188 @@ jobs:
           restore-keys: trufflehog-
 
       - name: Secret Scanning with TruffleHog
-        uses: trufflesecurity/trufflehog@main
+        uses: trufflesecurity/trufflehog@3.93.3
         with:
           extra_args: --log-level=2 --results=verified,unknown
 
-  deploy:
-    needs: [lint-and-test, security-scan]
-    if: github.event_name == 'push' || (github.event.pull_request.merged == true)
-    runs-on: [self-hosted, homelab]
-    environment: production
-    env:
-      GITHUB_USERNAME: ${{ secrets.GIT_USERNAME }}
-      DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+  # deploy:
+  #   needs: [lint-and-test, security-scan]
+  #   if: github.event_name == 'push' || (github.event.pull_request.merged == true)
+  #   runs-on: [self-hosted, homelab]
+  #   environment: production
+  #   env:
+  #     GITHUB_USERNAME: ${{ secrets.GIT_USERNAME }}
+  #     DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
-    steps:
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+  #   steps:
+  #     - name: Setup SSH
+  #       uses: webfactory/ssh-agent@v0.9.0
+  #       with:
+  #         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Add GitHub to known hosts
-        run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
+  #     - name: Add GitHub to known hosts
+  #       run: |
+  #         mkdir -p ~/.ssh
+  #         chmod 700 ~/.ssh
+  #         ssh-keyscan github.com >> ~/.ssh/known_hosts
+  #         chmod 644 ~/.ssh/known_hosts
 
-      - name: Check and Update Repository
-        run: |
-          if [ -d "${{ env.REPO_PATH }}" ]; then
-            cd ${{ env.REPO_PATH }}
-            git fetch origin main
-            git reset --hard origin/main
+  #     - name: Check and Update Repository
+  #       run: |
+  #         if [ -d "${{ env.REPO_PATH }}" ]; then
+  #           cd ${{ env.REPO_PATH }}
+  #           git fetch origin main
+  #           git reset --hard origin/main
 
-            sudo chown -R sysops:users ${{ env.REPO_PATH }}/docker/ 2>/dev/null || true
+  #           sudo chown -R sysops:users ${{ env.REPO_PATH }}/docker/ 2>/dev/null || true
 
-            git clean -fd docker/ --exclude=docker/.traefik_hash
-          else
-            git clone git@github.com:${{ env.GITHUB_USERNAME }}/homelab-media-stack.git ${{ env.REPO_PATH }}
-          fi
-          cd ${{ env.REPO_PATH }}
+  #           git clean -fd docker/ --exclude=docker/.traefik_hash
+  #         else
+  #           git clone git@github.com:${{ env.GITHUB_USERNAME }}/homelab-media-stack.git ${{ env.REPO_PATH }}
+  #         fi
+  #         cd ${{ env.REPO_PATH }}
 
-      - name: Setup Doppler
-        run: |
-          doppler configure set token ${{ secrets.DOPPLER_TOKEN }}
-          doppler configure set project ${{ secrets.DOPPLER_PROJECT }}
-          doppler configure set config ${{ secrets.DOPPLER_CONFIG }}
+  #     - name: Setup Doppler
+  #       run: |
+  #         doppler configure set token ${{ secrets.DOPPLER_TOKEN }}
+  #         doppler configure set project ${{ secrets.DOPPLER_PROJECT }}
+  #         doppler configure set config ${{ secrets.DOPPLER_CONFIG }}
 
-      - name: Create required directories and files
-        run: |
-          mkdir -p /data/homelab/{traefik,komodo}
-          mkdir -p /data/homelab/traefik/{logs,certs}
-          mkdir -p /data/homelab/komodo/{repos,compose}
+  #     - name: Create required directories and files
+  #       run: |
+  #         mkdir -p /data/homelab/{traefik,komodo}
+  #         mkdir -p /data/homelab/traefik/{logs,certs}
+  #         mkdir -p /data/homelab/komodo/{repos,compose}
 
-          if [ ! -f /data/homelab/traefik/acme.json ]; then
-            touch /data/homelab/traefik/acme.json
-            chmod 600 /data/homelab/traefik/acme.json
-          fi
+  #         if [ ! -f /data/homelab/traefik/acme.json ]; then
+  #           touch /data/homelab/traefik/acme.json
+  #           chmod 600 /data/homelab/traefik/acme.json
+  #         fi
 
-      - name: Setup environment variables for secrets script
-        run: |
-          TRAEFIK_DASHBOARD_USERPASS_VAL="$(doppler secrets get TRAEFIK_DASHBOARD_USERPASS --plain)"
-          export TRAEFIK_DASHBOARD_USERPASS="$TRAEFIK_DASHBOARD_USERPASS_VAL"
+  #     - name: Setup environment variables for secrets script
+  #       run: |
+  #         TRAEFIK_DASHBOARD_USERPASS_VAL="$(doppler secrets get TRAEFIK_DASHBOARD_USERPASS --plain)"
+  #         export TRAEFIK_DASHBOARD_USERPASS="$TRAEFIK_DASHBOARD_USERPASS_VAL"
 
-          export CLOUDFLARE_API_KEY="${{ secrets.CLOUDFLARE_API_KEY }}"
-          export CLOUDFLARE_EMAIL="${{ secrets.CLOUDFLARE_EMAIL }}"
-          export MEDIA_DOMAIN="${{ secrets.MEDIA_DOMAIN }}"
-          export PUSHOVER_APP_TOKEN="${{ secrets.PUSHOVER_APP_TOKEN }}"
-          export PUSHOVER_USER_TOKEN="${{ secrets.PUSHOVER_USER_TOKEN }}"
+  #         export CLOUDFLARE_API_KEY="${{ secrets.CLOUDFLARE_API_KEY }}"
+  #         export CLOUDFLARE_EMAIL="${{ secrets.CLOUDFLARE_EMAIL }}"
+  #         export MEDIA_DOMAIN="${{ secrets.MEDIA_DOMAIN }}"
+  #         export PUSHOVER_APP_TOKEN="${{ secrets.PUSHOVER_APP_TOKEN }}"
+  #         export PUSHOVER_USER_TOKEN="${{ secrets.PUSHOVER_USER_TOKEN }}"
 
-          export KOMODO_JWT_SECRET="${{ secrets.KOMODO_JWT_SECRET }}"
-          export KOMODO_WEBHOOK_SECRET="${{ secrets.KOMODO_WEBHOOK_SECRET }}"
-          export KOMODO_PASSKEY="${{ secrets.KOMODO_PASSKEY }}"
-          export MONGO_USERNAME="${{ secrets.MONGO_USERNAME }}"
-          export MONGO_PASSWORD="${{ secrets.MONGO_PASSWORD }}"
-          export PERIPHERY_PASSKEYS="${{ secrets.KOMODO_PASSKEY }}"
+  #         export KOMODO_JWT_SECRET="${{ secrets.KOMODO_JWT_SECRET }}"
+  #         export KOMODO_WEBHOOK_SECRET="${{ secrets.KOMODO_WEBHOOK_SECRET }}"
+  #         export KOMODO_PASSKEY="${{ secrets.KOMODO_PASSKEY }}"
+  #         export MONGO_USERNAME="${{ secrets.MONGO_USERNAME }}"
+  #         export MONGO_PASSWORD="${{ secrets.MONGO_PASSWORD }}"
+  #         export PERIPHERY_PASSKEYS="${{ secrets.KOMODO_PASSKEY }}"
 
-          export OPENVPN_USER="${{ secrets.OPENVPN_USER }}"
-          export OPENVPN_PASSWORD="${{ secrets.OPENVPN_PASSWORD }}"
-          export QBITTORRENT_USER="${{ secrets.QBITTORRENT_USER }}"
-          export QBITTORRENT_PASS="${{ secrets.QBITTORRENT_PASS }}"
-          export FLOOD_OPTION_qbuser="${{ secrets.QBITTORRENT_USER }}"
-          export FLOOD_OPTION_qbpass="${{ secrets.QBITTORRENT_PASS }}"
-          export RADARR_API_KEY="${{ secrets.RADARR_API_KEY }}"
-          export SONARR_API_KEY="${{ secrets.SONARR_API_KEY }}"
-          export GLUETUN_API_KEY="${{ secrets.GLUETUN_API_KEY }}"
-          export SABNZBD_API_KEY="${{ secrets.SABNZBD_API_KEY }}"
-          export PROWLARR_API_KEY="${{ secrets.PROWLARR_API_KEY }}"
-          export WHISPARR_API_KEY="${{ secrets.WHISPARR_API_KEY }}"
-          export POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"
+  #         export OPENVPN_USER="${{ secrets.OPENVPN_USER }}"
+  #         export OPENVPN_PASSWORD="${{ secrets.OPENVPN_PASSWORD }}"
+  #         export QBITTORRENT_USER="${{ secrets.QBITTORRENT_USER }}"
+  #         export QBITTORRENT_PASS="${{ secrets.QBITTORRENT_PASS }}"
+  #         export FLOOD_OPTION_qbuser="${{ secrets.QBITTORRENT_USER }}"
+  #         export FLOOD_OPTION_qbpass="${{ secrets.QBITTORRENT_PASS }}"
+  #         export RADARR_API_KEY="${{ secrets.RADARR_API_KEY }}"
+  #         export SONARR_API_KEY="${{ secrets.SONARR_API_KEY }}"
+  #         export GLUETUN_API_KEY="${{ secrets.GLUETUN_API_KEY }}"
+  #         export SABNZBD_API_KEY="${{ secrets.SABNZBD_API_KEY }}"
+  #         export PROWLARR_API_KEY="${{ secrets.PROWLARR_API_KEY }}"
+  #         export WHISPARR_API_KEY="${{ secrets.WHISPARR_API_KEY }}"
+  #         export POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}"
 
-          export HOMEPAGE_VAR_RADARR_API_KEY="${{ secrets.RADARR_API_KEY }}"
-          export HOMEPAGE_VAR_SONARR_API_KEY="${{ secrets.SONARR_API_KEY }}"
-          export HOMEPAGE_VAR_WHISPARR_API_KEY="${{ secrets.WHISPARR_API_KEY }}"
-          export HOMEPAGE_VAR_BAZARR_API_KEY="${{ secrets.BAZARR_API_KEY }}"
-          export HOMEPAGE_VAR_PROWLARR_API_KEY="${{ secrets.PROWLARR_API_KEY }}"
-          export HOMEPAGE_VAR_SABNZBD_API_KEY="${{ secrets.SABNZBD_API_KEY }}"
-          export HOMEPAGE_VAR_QBITTORRENT_USER="${{ secrets.QBITTORRENT_USER }}"
-          export HOMEPAGE_VAR_QBITTORRENT_PASS="${{ secrets.QBITTORRENT_PASS }}"
-          export HOMEPAGE_VAR_NZBGET_USER="${{ secrets.NZBGET_USER }}"
-          export HOMEPAGE_VAR_NZBGET_PASS="${{ secrets.NZBGET_PASS }}"
-          export HOMEPAGE_VAR_MEDIA_DOMAIN="${{ secrets.MEDIA_DOMAIN }}"
-          export HOMEPAGE_VAR_KOMODO_API_KEY="${{ secrets.KOMODO_API_KEY }}"
-          export HOMEPAGE_VAR_KOMODO_API_SECRET="${{ secrets.KOMODO_API_SECRET }}"
-          export HOMEPAGE_VAR_GLUETUN_API_KEY="${{ secrets.GLUETUN_API_KEY }}"
+  #         export HOMEPAGE_VAR_RADARR_API_KEY="${{ secrets.RADARR_API_KEY }}"
+  #         export HOMEPAGE_VAR_SONARR_API_KEY="${{ secrets.SONARR_API_KEY }}"
+  #         export HOMEPAGE_VAR_WHISPARR_API_KEY="${{ secrets.WHISPARR_API_KEY }}"
+  #         export HOMEPAGE_VAR_BAZARR_API_KEY="${{ secrets.BAZARR_API_KEY }}"
+  #         export HOMEPAGE_VAR_PROWLARR_API_KEY="${{ secrets.PROWLARR_API_KEY }}"
+  #         export HOMEPAGE_VAR_SABNZBD_API_KEY="${{ secrets.SABNZBD_API_KEY }}"
+  #         export HOMEPAGE_VAR_QBITTORRENT_USER="${{ secrets.QBITTORRENT_USER }}"
+  #         export HOMEPAGE_VAR_QBITTORRENT_PASS="${{ secrets.QBITTORRENT_PASS }}"
+  #         export HOMEPAGE_VAR_NZBGET_USER="${{ secrets.NZBGET_USER }}"
+  #         export HOMEPAGE_VAR_NZBGET_PASS="${{ secrets.NZBGET_PASS }}"
+  #         export HOMEPAGE_VAR_MEDIA_DOMAIN="${{ secrets.MEDIA_DOMAIN }}"
+  #         export HOMEPAGE_VAR_KOMODO_API_KEY="${{ secrets.KOMODO_API_KEY }}"
+  #         export HOMEPAGE_VAR_KOMODO_API_SECRET="${{ secrets.KOMODO_API_SECRET }}"
+  #         export HOMEPAGE_VAR_GLUETUN_API_KEY="${{ secrets.GLUETUN_API_KEY }}"
 
-          export PERSISTENT_TOKENS_KEY="${{ secrets.PERSISTENT_TOKENS_KEY }}"
-          export FILEBROWSER_ADMIN_PASSWORD="${{ secrets.FILEBROWSER_ADMIN_PASSWORD }}"
+  #         export PERSISTENT_TOKENS_KEY="${{ secrets.PERSISTENT_TOKENS_KEY }}"
+  #         export FILEBROWSER_ADMIN_PASSWORD="${{ secrets.FILEBROWSER_ADMIN_PASSWORD }}"
 
-          bash .github/scripts/setup-secrets.sh "${{ env.REPO_PATH }}"
+  #         bash .github/scripts/setup-secrets.sh "${{ env.REPO_PATH }}"
 
-      - name: Create required Docker networks
-        run: |
-          cd ${{ env.REPO_PATH }}
+  #     - name: Create required Docker networks
+  #       run: |
+  #         cd ${{ env.REPO_PATH }}
 
-          echo "Checking and creating required Docker networks..."
+  #         echo "Checking and creating required Docker networks..."
 
-          # Function to create network if it doesn't exist
-          create_network() {
-            local network_name=$1
-            local driver=${2:-bridge}
-            local subnet=$3
-            local gateway=$4
+  #         # Function to create network if it doesn't exist
+  #         create_network() {
+  #           local network_name=$1
+  #           local driver=${2:-bridge}
+  #           local subnet=$3
+  #           local gateway=$4
 
-            if docker network ls --format "{{.Name}}" | grep -q "^${network_name}$"; then
-              echo "✓ ${network_name} network already exists"
+  #           if docker network ls --format "{{.Name}}" | grep -q "^${network_name}$"; then
+  #             echo "✓ ${network_name} network already exists"
 
-              local existing_driver
-              existing_driver=$(docker network inspect "${network_name}" --format "{{.Driver}}" 2>/dev/null || echo "unknown")
-              if [ "$existing_driver" != "$driver" ]; then
-                echo "⚠ Warning: ${network_name} network exists but uses driver '${existing_driver}' instead of '${driver}'"
-                echo "   This may cause issues. Consider removing the network manually if problems occur."
-              fi
-            else
-              echo "Creating ${network_name} network with ${driver} driver..."
-              local create_cmd="docker network create ${network_name} --driver ${driver}"
+  #             local existing_driver
+  #             existing_driver=$(docker network inspect "${network_name}" --format "{{.Driver}}" 2>/dev/null || echo "unknown")
+  #             if [ "$existing_driver" != "$driver" ]; then
+  #               echo "⚠ Warning: ${network_name} network exists but uses driver '${existing_driver}' instead of '${driver}'"
+  #               echo "   This may cause issues. Consider removing the network manually if problems occur."
+  #             fi
+  #           else
+  #             echo "Creating ${network_name} network with ${driver} driver..."
+  #             local create_cmd="docker network create ${network_name} --driver ${driver}"
 
-              if [ -n "$subnet" ] && [ -n "$gateway" ]; then
-                create_cmd="${create_cmd} --subnet ${subnet} --gateway ${gateway}"
-                echo "  Subnet: ${subnet}"
-                echo "  Gateway: ${gateway}"
-              fi
+  #             if [ -n "$subnet" ] && [ -n "$gateway" ]; then
+  #               create_cmd="${create_cmd} --subnet ${subnet} --gateway ${gateway}"
+  #               echo "  Subnet: ${subnet}"
+  #               echo "  Gateway: ${gateway}"
+  #             fi
 
-              if eval "$create_cmd"; then
-                echo "✓ Successfully created ${network_name} network"
-              else
-                echo "✗ Failed to create ${network_name} network"
-                exit 1
-              fi
-            fi
-          }
+  #             if eval "$create_cmd"; then
+  #               echo "✓ Successfully created ${network_name} network"
+  #             else
+  #               echo "✗ Failed to create ${network_name} network"
+  #               exit 1
+  #             fi
+  #           fi
+  #         }
 
-          create_network "proxy" "bridge" "172.18.0.0/16" "172.18.0.1"
+  #         create_network "proxy" "bridge" "172.18.0.0/16" "172.18.0.1"
 
-          echo "All required networks are ready"
+  #         echo "All required networks are ready"
 
-      - name: Deploy Traefik Stack
-        uses: ./.github/actions/deploy-stack
-        with:
-          repo_path: ${{ env.REPO_PATH }}
-          stack_name: traefik
-          force_recreate: "true"
+  #     - name: Deploy Traefik Stack
+  #       uses: ./.github/actions/deploy-stack
+  #       with:
+  #         repo_path: ${{ env.REPO_PATH }}
+  #         stack_name: traefik
+  #         force_recreate: "true"
 
-      - name: Deploy Komodo Stack
-        uses: ./.github/actions/deploy-stack
-        with:
-          repo_path: ${{ env.REPO_PATH }}
-          stack_name: komodo
-          force_recreate: "true"
+  #     - name: Deploy Komodo Stack
+  #       uses: ./.github/actions/deploy-stack
+  #       with:
+  #         repo_path: ${{ env.REPO_PATH }}
+  #         stack_name: komodo
+  #         force_recreate: "true"
 
-      - name: Deployment Summary
-        run: |
-          echo ""
-          echo "============================================"
-          echo "Deployment Summary"
-          echo "============================================"
-          echo ""
-          echo "Deployed stacks:"
-          echo "  ✓ Traefik (reverse proxy & SSL)"
-          echo "  ✓ Komodo (infrastructure management)"
-          echo ""
-          docker compose -f ${{ env.REPO_PATH }}/docker/traefik/docker-compose.yml ps
-          echo ""
-          docker compose -f ${{ env.REPO_PATH }}/docker/komodo/docker-compose.yml ps
-          echo ""
-          echo "Deployment completed successfully!"
+  #     - name: Deployment Summary
+  #       run: |
+  #         echo ""
+  #         echo "============================================"
+  #         echo "Deployment Summary"
+  #         echo "============================================"
+  #         echo ""
+  #         echo "Deployed stacks:"
+  #         echo "  ✓ Traefik (reverse proxy & SSL)"
+  #         echo "  ✓ Komodo (infrastructure management)"
+  #         echo ""
+  #         docker compose -f ${{ env.REPO_PATH }}/docker/traefik/docker-compose.yml ps
+  #         echo ""
+  #         docker compose -f ${{ env.REPO_PATH }}/docker/komodo/docker-compose.yml ps
+  #         echo ""
+  #         echo "Deployment completed successfully!"
