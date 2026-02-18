@@ -36,7 +36,7 @@
     append: yes
   tags: [github_runner]
 
-- name: "Configure passwordless sudo for github-runner"
+- name: "Configure passwordless sudo for github-runner"  # pragma: allowlist secret
   ansible.builtin.copy:
     content: "{{ github_runner_user }} ALL=(ALL) NOPASSWD: ALL\n"
     dest: "/etc/sudoers.d/{{ github_runner_user }}"
