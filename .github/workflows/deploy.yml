@@ -85,7 +85,6 @@ jobs:
     runs-on: [self-hosted, homelab]
     environment: production
     env:
-      GITHUB_USERNAME: ${{ secrets.GIT_USERNAME }}
       DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
     steps:
@@ -103,18 +102,22 @@ jobs:
 
       - name: Check and Update Repository
         run: |
-          if [ -d "${{ env.REPO_PATH }}" ]; then
-            cd ${{ env.REPO_PATH }}
+          REPO_URL="${{ vars.GH_RUNNER_REPO_URL }}"
+          REPO_PATH="${{ env.REPO_PATH }}"
+          OWNER=$(echo "$REPO_URL" | sed -E 's|https?://github.com/([^/]+)/.*|\1|')
+          REPO=$(echo "$REPO_URL" | sed -E 's|https?://github.com/([^/]+)/([^/]+)(\.git)?|\2|')
+
+          if [ -d "$REPO_PATH" ]; then
+            cd "$REPO_PATH"
             git fetch origin main
             git reset --hard origin/main
-
-            sudo chown -R sysops:users ${{ env.REPO_PATH }}/docker/ 2>/dev/null || true
-
+            sudo chown -R fs:fs "$REPO_PATH/docker/" 2>/dev/null || true
             git clean -fd docker/ --exclude=docker/.traefik_hash
           else
-            git clone git@github.com:${{ env.GITHUB_USERNAME }}/homelab-media-stack.git ${{ env.REPO_PATH }}
+            mkdir -p "$(dirname "$REPO_PATH")"
+            git clone "git@github.com:$OWNER/$REPO.git" "$REPO_PATH"
           fi
-          cd ${{ env.REPO_PATH }}
+          cd "$REPO_PATH"
 
       - name: Setup Doppler
         run: |
