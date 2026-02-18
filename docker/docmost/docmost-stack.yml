@@ -64,7 +64,7 @@ services:
       - POSTGRES_PASSWORD=${DOCMOST_POSTGRES_PASSWORD}
       - TZ=${TZ}
     volumes:
-      - /mnt/cephfs/docker-shared-data/docmost/postgres:/var/lib/postgresql/data
+      - /mnt/cephfs/docker-shared-data/docmost/postgres:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U docmost -d docmost"]
       interval: 30s

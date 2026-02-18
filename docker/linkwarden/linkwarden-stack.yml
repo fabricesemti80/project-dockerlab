@@ -67,7 +67,7 @@ services:
       - meilisearch
 
   postgres:
-    image: postgres:18-alpine
+    image: postgres:16-alpine
     environment:
       - TZ=${TZ}
       - POSTGRES_USER=postgres

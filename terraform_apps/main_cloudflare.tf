@@ -142,9 +142,9 @@ locals {
       auto_redirect_to_identity = false
       policies = [
         {
-          name     = "Allow Everyone"
+          name     = "Bypass - Linkwarden has built-in auth"
           decision = "bypass"
-          include  = local.bypass_anywhere
+          include  = local.bypass_everyone
         }
       ]
     }
@@ -156,35 +156,9 @@ locals {
       auto_redirect_to_identity = false
       policies = [
         {
-          name     = "Allow Admin"
-          decision = "allow"
-          include = [
-            for email in local.access_allowed_emails : {
-              email = {
-                email = email
-              }
-            }
-          ]
-        },
-        {
-          name     = "Bypass from Local"
+          name     = "Bypass - Immich has built-in auth"
           decision = "bypass"
-          include  = local.bypass_local_networks
-        }
-      ]
-    }
-    # Immich API bypass for mobile app authentication
-    immich_api = {
-      name                      = "${var.domain} - Immich API bypass"
-      domain                    = "photos.${var.domain}/api/*"
-      type                      = "self_hosted"
-      session_duration          = "720h"
-      auto_redirect_to_identity = false
-      policies = [
-        {
-          name     = "Bypass API for mobile app"
-          decision = "bypass"
-          include  = local.bypass_anywhere
+          include  = local.bypass_everyone
         }
       ]
     }

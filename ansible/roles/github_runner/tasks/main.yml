@@ -138,7 +138,7 @@
     chdir: "{{ github_runner_dir }}"
   become_user: "{{ github_runner_user }}"
   when:
-    - github_runner_token | length > 0
+    - (github_runner_token | default('')) | length > 0
     - not runner_configured.stat.exists or github_runner_force_reconfigure | default(false) | bool
   notify: "restart github runner"
   tags: [github_runner]
@@ -170,6 +170,12 @@
     - runner_config_result.rc != 0
   tags: [github_runner]
 
+- name: "Check if GitHub Actions runner service is already installed"
+  ansible.builtin.stat:
+    path: "/etc/systemd/system/actions.runner.{{ github_runner_service_name }}.service"
+  register: runner_service_file
+  tags: [github_runner]
+
 - name: "Install GitHub Actions runner service"
   ansible.builtin.command: "./svc.sh install {{ github_runner_user }}"
   args:
@@ -177,6 +183,7 @@
   become: yes
   when:
     - runner_configured_check.stat.exists
+    - not runner_service_file.stat.exists
   tags: [github_runner]
 
 - name: "Enable and start GitHub Actions runner service"
