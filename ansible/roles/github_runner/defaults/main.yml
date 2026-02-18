@@ -38,8 +38,9 @@ github_runner_labels:
   - "x64"
   - "homelab"
 
-# Service name derived from repository
-github_runner_service_name: "{{ github_runner_repo_url | regex_replace('^.*/', '') | regex_replace('\\.git$', '') }}"
+# Service name format: actions.runner.{owner}-{repo}.{runner-name}
+# The svc.sh script creates services with this naming pattern
+github_runner_service_name: "{{ github_runner_repo_url | regex_replace('^https?://github.com/', '') | regex_replace('/', '-') | regex_replace('\\.git$', '') }}.{{ github_runner_name }}"
 
 # Force reconfiguration of the runner
 github_runner_force_reconfigure: false
