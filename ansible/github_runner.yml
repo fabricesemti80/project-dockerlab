@@ -10,6 +10,7 @@
     # GitHub Runner Configuration
     github_runner_repo_url: "{{ lookup('env', 'GITHUB_RUNNER_REPO_URL') }}"
     github_runner_token: "{{ lookup('env', 'GITHUB_RUNNER_TOKEN') }}"
+    github_pat_token: "{{ lookup('env', 'GITHUB_PAT_TOKEN') }}"
 
   pre_tasks:
     - name: "Ensure Docker is installed (required for runner)"
@@ -23,4 +24,4 @@
       tags: [github_runner]
       when:
         - github_runner_repo_url | length > 0
-        - github_runner_token | length > 0
+        - (github_runner_token | length > 0) or (github_pat_token | length > 0)
