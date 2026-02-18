@@ -46,6 +46,8 @@ The following secrets are stored in Doppler:
 | `LINKWARDEN_POSTGRES_PASSWORD` | Linkwarden PostgreSQL database password | Docker Stack |
 | `LINKWARDEN_NEXTAUTH_SECRET` | Linkwarden NextAuth secret | Docker Stack |
 | `LINKWARDEN_MEILI_KEY` | Linkwarden Meilisearch master key | Docker Stack |
+| `GITHUB_RUNNER_REPO_URL` | GitHub repository URL for self-hosted runner | Ansible |
+| `GITHUB_RUNNER_TOKEN` | GitHub Actions runner registration token | Ansible |
 
 ## Setup
 
@@ -211,3 +213,44 @@ For GitHub Actions or other CI/CD:
   env:
     DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 ```
+
+## GitHub Actions Runner Secrets
+
+For the self-hosted GitHub Actions runner (gh-runner-1), you need to configure:
+
+### Required Secrets
+
+| Secret | Description | How to Obtain |
+|--------|-------------|---------------|
+| `GITHUB_RUNNER_REPO_URL` | Full URL to your GitHub repository | Repository page (e.g., `https://github.com/username/project-dockerlab`) |
+| `GITHUB_RUNNER_TOKEN` | Registration token for the runner | GitHub → Repository Settings → Actions → Runners → New self-hosted runner |
+
+### Obtaining the Runner Token
+
+1. Go to your GitHub repository
+2. Navigate to **Settings** → **Actions** → **Runners**
+3. Click **New self-hosted runner**
+4. Select **Linux** and architecture **x64**
+5. Copy the token from the "Configure" section
+6. **Important**: Tokens expire after ~1 hour, so add to Doppler promptly
+
+### Setting the Secrets
+
+```bash
+# Set the repository URL
+doppler secrets set GITHUB_RUNNER_REPO_URL="https://github.com/yourusername/project-dockerlab"
+
+# Set the registration token (get this from GitHub)
+doppler secrets set GITHUB_RUNNER_TOKEN="YOUR_TOKEN_HERE"
+```
+
+### Deploying the Runner
+
+After setting the secrets:
+
+```bash
+# Run Ansible to configure the runner
+task ansible:site:apply
+```
+
+The runner will automatically register with GitHub and appear in your repository's Actions settings.

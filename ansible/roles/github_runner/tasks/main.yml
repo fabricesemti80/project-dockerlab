@@ -1,0 +1,162 @@
+---
+# GitHub Actions Runner installation and configuration
+# This role installs and configures a self-hosted GitHub Actions runner
+
+- name: "Validate GitHub runner configuration"
+  ansible.builtin.fail:
+    msg: "GITHUB_RUNNER_REPO_URL environment variable is not set. Please configure it in Doppler."
+  when: github_runner_repo_url | length == 0
+  tags: [github_runner]
+
+- name: "Validate GitHub runner token"
+  ansible.builtin.fail:
+    msg: "GITHUB_RUNNER_TOKEN environment variable is not set. Please configure it in Doppler."
+  when: github_runner_token | length == 0
+  tags: [github_runner]
+
+- name: "Create github-runner user"
+  ansible.builtin.user:
+    name: "{{ github_runner_user }}"
+    system: yes
+    shell: /bin/bash
+    home: "/home/{{ github_runner_user }}"
+    create_home: yes
+  tags: [github_runner]
+
+- name: "Add github-runner user to docker group"
+  ansible.builtin.user:
+    name: "{{ github_runner_user }}"
+    groups: docker
+    append: yes
+  tags: [github_runner]
+
+- name: "Create GitHub Actions runner directory"
+  ansible.builtin.file:
+    path: "{{ github_runner_dir }}"
+    state: directory
+    owner: "{{ github_runner_user }}"
+    group: "{{ github_runner_user }}"
+    mode: '0755'
+  tags: [github_runner]
+
+- name: "Check if GitHub Actions runner is already installed"
+  ansible.builtin.stat:
+    path: "{{ github_runner_dir }}/config.sh"
+  register: runner_installed
+  tags: [github_runner]
+
+- name: "Check if runner is already configured"
+  ansible.builtin.stat:
+    path: "{{ github_runner_dir }}/.runner"
+  register: runner_configured
+  tags: [github_runner]
+
+- name: "Download GitHub Actions runner"
+  ansible.builtin.get_url:
+    url: "https://github.com/actions/runner/releases/download/v{{ github_runner_version }}/actions-runner-linux-x64-{{ github_runner_version }}.tar.gz"
+    dest: "/tmp/actions-runner-linux-x64-{{ github_runner_version }}.tar.gz"
+    mode: '0644'
+  when: not runner_installed.stat.exists
+  tags: [github_runner]
+
+- name: "Extract GitHub Actions runner"
+  ansible.builtin.unarchive:
+    src: "/tmp/actions-runner-linux-x64-{{ github_runner_version }}.tar.gz"
+    dest: "{{ github_runner_dir }}"
+    remote_src: yes
+    owner: "{{ github_runner_user }}"
+    group: "{{ github_runner_user }}"
+  when: not runner_installed.stat.exists
+  tags: [github_runner]
+
+- name: "Install GitHub Actions runner dependencies"
+  ansible.builtin.command: "./bin/installdependencies.sh"
+  args:
+    chdir: "{{ github_runner_dir }}"
+  when: not runner_installed.stat.exists
+  become: yes
+  tags: [github_runner]
+
+- name: "Configure GitHub Actions runner"
+  ansible.builtin.command: >
+    ./config.sh
+    --url {{ github_runner_repo_url }}
+    --token {{ github_runner_token }}
+    --name {{ github_runner_name }}
+    --labels {{ github_runner_labels | join(',') }}
+    --unattended
+    --replace
+  args:
+    chdir: "{{ github_runner_dir }}"
+  become_user: "{{ github_runner_user }}"
+  when:
+    - github_runner_token | length > 0
+    - not runner_configured.stat.exists or github_runner_force_reconfigure | default(false) | bool
+  notify: "restart github runner"
+  tags: [github_runner]
+  register: runner_config_result
+  changed_when: runner_config_result.rc == 0
+  ignore_errors: true
+
+- name: "Debug configuration result"
+  ansible.builtin.debug:
+    msg:
+      - "Configuration exit code: {{ runner_config_result.rc | default('N/A') }}"
+      - "Configuration stdout: {{ runner_config_result.stdout | default('N/A') }}"
+      - "Configuration stderr: {{ runner_config_result.stderr | default('N/A') }}"
+  when: runner_config_result is defined
+  tags: [github_runner]
+
+- name: "Check if runner was configured successfully"
+  ansible.builtin.stat:
+    path: "{{ github_runner_dir }}/.runner"
+  register: runner_configured_check
+  tags: [github_runner]
+
+- name: "Fail if runner configuration failed"
+  ansible.builtin.fail:
+    msg: "GitHub Actions runner configuration failed. Check the error message above. Common causes: expired token, invalid repo URL, or network issues."
+  when:
+    - runner_config_result is defined
+    - runner_config_result.rc is defined
+    - runner_config_result.rc != 0
+  tags: [github_runner]
+
+- name: "Install GitHub Actions runner service"
+  ansible.builtin.command: "./svc.sh install {{ github_runner_user }}"
+  args:
+    chdir: "{{ github_runner_dir }}"
+  become: yes
+  when:
+    - runner_configured_check.stat.exists
+  tags: [github_runner]
+
+- name: "Enable and start GitHub Actions runner service"
+  ansible.builtin.systemd:
+    name: "actions.runner.{{ github_runner_service_name }}.service"
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  when:
+    - runner_configured_check.stat.exists
+  tags: [github_runner]
+
+- name: "Check GitHub Actions runner service status"
+  ansible.builtin.systemd:
+    name: "actions.runner.{{ github_runner_service_name }}.service"
+  register: runner_service_status
+  tags: [github_runner]
+
+- name: "Display GitHub Actions runner status"
+  ansible.builtin.debug:
+    msg:
+      - "============================================================"
+      - "GITHUB ACTIONS RUNNER CONFIGURATION"
+      - "============================================================"
+      - "Runner Name: {{ github_runner_name }}"
+      - "Repository: {{ github_runner_repo_url }}"
+      - "Labels: {{ github_runner_labels | join(', ') }}"
+      - "Service Status: {{ runner_service_status.status.ActiveState | default('Unknown') }}"
+      - "Install Directory: {{ github_runner_dir }}"
+      - "============================================================"
+  tags: [github_runner, summary]

@@ -1,0 +1,15 @@
+# GitHub Actions Runner specific configuration
+# These runners only need base OS setup and Docker, not Swarm/Portainer
+
+# Disable Swarm features
+install_swarm: false
+install_portainer: false
+
+# Keep storage features enabled
+install_storage: true
+install_cephfs: false
+
+# Keep base features
+install_docker: true
+install_zsh: true
+install_ssh_banner: true

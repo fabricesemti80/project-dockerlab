@@ -1,0 +1,35 @@
+---
+# Default variables for github_runner role
+
+# GitHub Actions Runner version
+github_runner_version: "2.322.0"
+
+# Installation directory
+github_runner_dir: "/opt/github-runner"
+
+# User to run the GitHub Actions runner
+github_runner_user: "github-runner"
+
+# GitHub repository URL (e.g., https://github.com/owner/repo)
+# This should be set via Doppler: GITHUB_RUNNER_REPO_URL
+github_runner_repo_url: "{{ lookup('env', 'GITHUB_RUNNER_REPO_URL') }}"
+
+# Registration token from GitHub
+# Get this from: Repository Settings > Actions > Runners > New self-hosted runner
+github_runner_token: "{{ lookup('env', 'GITHUB_RUNNER_TOKEN') }}"
+
+# Runner name (defaults to hostname)
+github_runner_name: "{{ ansible_hostname }}"
+
+# Runner labels
+github_runner_labels:
+  - "self-hosted"
+  - "linux"
+  - "x64"
+  - "homelab"
+
+# Service name derived from repository
+github_runner_service_name: "{{ github_runner_repo_url | regex_replace('^.*/', '') | regex_replace('\\.git$', '') }}"
+
+# Force reconfiguration of the runner
+github_runner_force_reconfigure: false
