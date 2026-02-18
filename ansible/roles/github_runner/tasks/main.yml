@@ -4,20 +4,14 @@
 
 - name: "Validate GitHub runner configuration"
   ansible.builtin.fail:
-    msg: "GITHUB_RUNNER_REPO_URL environment variable is not set. Please configure it in Doppler."
+    msg: "GH_RUNNER_REPO_URL environment variable is not set. Please configure it in Doppler."
   when: github_runner_repo_url | length == 0
   tags: [github_runner]
 
-- name: "Validate GitHub runner token"
+- name: "Validate GitHub runner PAT token"
   ansible.builtin.fail:
-    msg: >
-      Neither GITHUB_RUNNER_TOKEN nor GITHUB_PAT_TOKEN is set.
-      Please configure one of them in Doppler:
-      - GITHUB_RUNNER_TOKEN: One-time registration token (expires in 1 hour)
-      - GITHUB_PAT_TOKEN: Personal Access Token with 'repo' scope (generates tokens automatically)
-  when:
-    - github_runner_token | length == 0
-    - github_pat_token | length == 0
+    msg: "GH_PAT_TOKEN environment variable is not set. Please configure it in Doppler with a Personal Access Token with 'repo' scope."
+  when: github_pat_token | length == 0
   tags: [github_runner]
 
 - name: "Create github-runner user"
@@ -110,7 +104,6 @@
   register: registration_token_response
   when:
     - github_pat_token | length > 0
-    - github_runner_token | length == 0
     - not runner_configured.stat.exists or github_runner_force_reconfigure | default(false) | bool
   tags: [github_runner]
   no_log: true

@@ -19,28 +19,12 @@ The role performs the following actions:
 
 ## Required Doppler Secrets
 
-You have two options for authentication. **Option 2 (PAT) is recommended** as it doesn't expire:
-
-### Option 1: Registration Token (Expires in 1 hour)
+### Personal Access Token (Required)
 
 | Secret | Description | Where to Get |
 |--------|-------------|--------------|
-| `GITHUB_RUNNER_REPO_URL` | Full URL to the GitHub repository | Repository page (e.g., `https://github.com/username/repo`) |
-| `GITHUB_RUNNER_TOKEN` | Registration token for the runner | GitHub Repository → Settings → Actions → Runners → New self-hosted runner |
-
-**This token expires after ~1 hour**, so you must run Ansible immediately.
-
-### Option 2: Personal Access Token (Recommended - No Expiration)
-
-| Secret | Description | Where to Get |
-|--------|-------------|--------------|
-| `GITHUB_RUNNER_REPO_URL` | Full URL to the GitHub repository | Repository page |
-| `GITHUB_PAT_TOKEN` | Personal Access Token with `repo` scope | GitHub Settings → Developer settings → Personal access tokens |
-
-**Advantages:**
-- No expiration (or you control the expiration)
-- Ansible can generate registration tokens automatically
-- No rush to run Ansible after getting the token
+| `GH_RUNNER_REPO_URL` | Full URL to the GitHub repository | Repository page |
+| `GH_PAT_TOKEN` | Personal Access Token with `repo` scope | GitHub Settings → Developer settings → Personal access tokens |
 
 **Creating a PAT:**
 1. Go to GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
@@ -53,15 +37,14 @@ You have two options for authentication. **Option 2 (PAT) is recommended** as it
 
 **Set in Doppler:**
 ```bash
-doppler secrets set GITHUB_RUNNER_REPO_URL="https://github.com/yourusername/repo"
-doppler secrets set GITHUB_PAT_TOKEN="ghp_xxxxxxxxxxxx"
+doppler secrets set GH_RUNNER_REPO_URL="https://github.com/yourusername/repo"
+doppler secrets set GH_PAT_TOKEN="ghp_xxxxxxxxxxxx"
 ```
 
 ### Alternative: Organization-Level Runners
 
 For organization-level runners, use:
-- `GITHUB_RUNNER_REPO_URL`: Organization URL (e.g., `https://github.com/my-org`)
-- Token from: Organization Settings → Actions → Runners
+- `GH_RUNNER_REPO_URL`: Organization URL (e.g., `https://github.com/my-org`)
 
 ## Role Variables
 

@@ -56,10 +56,10 @@ The runner uses a **GitHub Personal Access Token (PAT)** for automatic registrat
 
 ```bash
 # Set the repository URL
-doppler secrets set GITHUB_RUNNER_REPO_URL="https://github.com/fabricesemti80/project-dockerlab"
+doppler secrets set GH_RUNNER_REPO_URL="https://github.com/fabricesemti80/project-dockerlab"
 
 # Set the PAT token
-doppler secrets set GITHUB_PAT_TOKEN="ghp_YOUR_TOKEN_HERE"
+doppler secrets set GH_PAT_TOKEN="ghp_YOUR_TOKEN_HERE"
 ```
 
 ## Deployment
@@ -96,7 +96,7 @@ Check runner status in GitHub:
 
 Or via API:
 ```bash
-curl -H "Authorization: token $GITHUB_PAT_TOKEN" \
+curl -H "Authorization: token $GH_PAT_TOKEN" \
   https://api.github.com/repos/fabricesemti80/project-dockerlab/actions/runners
 ```
 

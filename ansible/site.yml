@@ -76,12 +76,12 @@
   become: true
   vars:
     # GitHub Runner Configuration
-    github_runner_repo_url: "{{ lookup('env', 'GITHUB_RUNNER_REPO_URL') }}"
-    github_runner_token: "{{ lookup('env', 'GITHUB_RUNNER_TOKEN') }}"
+    github_runner_repo_url: "{{ lookup('env', 'GH_RUNNER_REPO_URL') }}"
+    github_pat_token: "{{ lookup('env', 'GH_PAT_TOKEN') }}"
 
   roles:
     - role: github_runner
       tags: [github_runner]
       when:
         - github_runner_repo_url | length > 0
-        - github_runner_token | length > 0
+        - github_pat_token | length > 0
