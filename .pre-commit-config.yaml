@@ -33,3 +33,4 @@ repos:
     rev: v1.7.1
     hooks:
       - id: actionlint-docker
+        args: [-ignore, "label .* is unknown"]
