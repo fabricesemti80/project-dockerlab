@@ -79,20 +79,20 @@ jobs:
         with:
           extra_args: --log-level=2 --results=verified,unknown
 
-  # deploy:
-  #   needs: [lint-and-test, security-scan]
-  #   if: github.event_name == 'push' || (github.event.pull_request.merged == true)
-  #   runs-on: [self-hosted, homelab]
-  #   environment: production
-  #   env:
-  #     GITHUB_USERNAME: ${{ secrets.GIT_USERNAME }}
-  #     DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+  deploy:
+    needs: [lint-and-test, security-scan]
+    if: github.event_name == 'push' || (github.event.pull_request.merged == true)
+    runs-on: [self-hosted, homelab]
+    environment: production
+    env:
+      GITHUB_USERNAME: ${{ secrets.GIT_USERNAME }}
+      DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
-  #   steps:
-  #     - name: Setup SSH
-  #       uses: webfactory/ssh-agent@v0.9.0
-  #       with:
-  #         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    steps:
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
   #     - name: Add GitHub to known hosts
   #       run: |
