@@ -88,9 +88,15 @@ jobs:
       DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
     steps:
+      - name: Setup Doppler
+        run: |
+          doppler configure set token ${{ secrets.DOPPLER_TOKEN }}
+          doppler configure set project ${{ secrets.DOPPLER_PROJECT }}
+          doppler configure set config ${{ secrets.DOPPLER_CONFIG }}
+
       - name: Check and Update Repository
         run: |
-          REPO_URL="${{ vars.GH_RUNNER_REPO_URL }}"
+          REPO_URL="$(doppler secrets get GH_RUNNER_REPO_URL --plain)"
           REPO_PATH="${{ env.REPO_PATH }}"
 
           if [ -d "$REPO_PATH" ]; then
@@ -103,12 +109,6 @@ jobs:
             git clone "$REPO_URL" "$REPO_PATH"
           fi
           cd "$REPO_PATH"
-
-      - name: Setup Doppler
-        run: |
-          doppler configure set token ${{ secrets.DOPPLER_TOKEN }}
-          doppler configure set project ${{ secrets.DOPPLER_PROJECT }}
-          doppler configure set config ${{ secrets.DOPPLER_CONFIG }}
 
   #     - name: Create required directories and files
   #       run: |
