@@ -9,7 +9,7 @@ name: CI & Deploy Homelab
     branches: [main]
 
 env:
-  REPO_PATH: /home/sysops/homelab
+  REPO_PATH: /home/fs/homelab
 
 jobs:
   lint-and-test:
