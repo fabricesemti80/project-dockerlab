@@ -1,0 +1,26 @@
+---
+# GitHub Actions Runner Setup
+# This playbook configures only the GitHub Actions runner on gh-runner-1
+# Use this when you need to (re)configure the runner without running the full site
+
+- name: Configure GitHub Actions Runners
+  hosts: github_runners
+  become: true
+  vars:
+    # GitHub Runner Configuration
+    github_runner_repo_url: "{{ lookup('env', 'GITHUB_RUNNER_REPO_URL') }}"
+    github_runner_token: "{{ lookup('env', 'GITHUB_RUNNER_TOKEN') }}"
+
+  pre_tasks:
+    - name: "Ensure Docker is installed (required for runner)"
+      ansible.builtin.include_role:
+        name: geerlingguy.docker
+      when: install_docker | default(true) | bool
+      tags: [docker]
+
+  roles:
+    - role: github_runner
+      tags: [github_runner]
+      when:
+        - github_runner_repo_url | length > 0
+        - github_runner_token | length > 0

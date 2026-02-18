@@ -37,3 +37,21 @@ tasks:
     dir: ansible
     cmds:
       - doppler run -- ansible swarm_workers -a "{{.CMD}}" {{.CLI_ARGS}}
+
+  runner:apply:
+    desc: "Apply configuration to GitHub Actions runners only"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook github_runner.yml {{.CLI_ARGS}}
+
+  runner:reconfigure:
+    desc: "Force reconfiguration of GitHub Actions runner (use when token expired)"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible-playbook github_runner.yml -e "github_runner_force_reconfigure=true" {{.CLI_ARGS}}
+
+  cmd:runner:
+    desc: "Run ad-hoc Ansible command on GitHub Actions runners (use CMD=<command>)"
+    dir: ansible
+    cmds:
+      - doppler run -- ansible github_runners -a "{{.CMD}}" {{.CLI_ARGS}}
