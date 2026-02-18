@@ -19,11 +19,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Install Python and pre-commit
+      - name: Install uv and pre-commit
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3 python3-pip
-          pip3 install --user pre-commit
+          sudo apt-get install -y python3
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          . "$HOME/.local/bin/env"
+          uv tool install pre-commit
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Cache pre-commit
