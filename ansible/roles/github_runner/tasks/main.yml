@@ -10,8 +10,14 @@
 
 - name: "Validate GitHub runner token"
   ansible.builtin.fail:
-    msg: "GITHUB_RUNNER_TOKEN environment variable is not set. Please configure it in Doppler."
-  when: github_runner_token | length == 0
+    msg: >
+      Neither GITHUB_RUNNER_TOKEN nor GITHUB_PAT_TOKEN is set.
+      Please configure one of them in Doppler:
+      - GITHUB_RUNNER_TOKEN: One-time registration token (expires in 1 hour)
+      - GITHUB_PAT_TOKEN: Personal Access Token with 'repo' scope (generates tokens automatically)
+  when:
+    - github_runner_token | length == 0
+    - github_pat_token | length == 0
   tags: [github_runner]
 
 - name: "Create github-runner user"
@@ -76,6 +82,32 @@
   when: not runner_installed.stat.exists
   become: yes
   tags: [github_runner]
+
+- name: "Generate registration token from PAT (repository runner)"
+  ansible.builtin.uri:
+    url: "{{ github_api_url }}/repos/{{ github_runner_repo_url | regex_replace('^https?://github.com/', '') | regex_replace('\\.git$', '') }}/actions/runners/registration-token"
+    method: POST
+    headers:
+      Authorization: "token {{ github_pat_token }}"
+      Accept: "application/vnd.github.v3+json"
+    status_code: 201
+  register: registration_token_response
+  when:
+    - github_pat_token | length > 0
+    - github_runner_token | length == 0
+    - not runner_configured.stat.exists or github_runner_force_reconfigure | default(false) | bool
+  tags: [github_runner]
+  no_log: true
+
+- name: "Set registration token from PAT response"
+  ansible.builtin.set_fact:
+    github_runner_token: "{{ registration_token_response.json.token }}"
+  when:
+    - registration_token_response is defined
+    - registration_token_response.json is defined
+    - registration_token_response.json.token is defined
+  tags: [github_runner]
+  no_log: true
 
 - name: "Configure GitHub Actions runner"
   ansible.builtin.command: >

@@ -16,7 +16,16 @@ github_runner_repo_url: "{{ lookup('env', 'GITHUB_RUNNER_REPO_URL') }}"
 
 # Registration token from GitHub
 # Get this from: Repository Settings > Actions > Runners > New self-hosted runner
+# OR use GITHUB_PAT_TOKEN to generate this automatically
 github_runner_token: "{{ lookup('env', 'GITHUB_RUNNER_TOKEN') }}"
+
+# Personal Access Token (alternative to GITHUB_RUNNER_TOKEN)
+# This can generate registration tokens automatically via GitHub API
+# Requires 'repo' scope for repository runners or 'admin:org' for organization runners
+github_pat_token: "{{ lookup('env', 'GITHUB_PAT_TOKEN') }}"
+
+# GitHub API URL
+github_api_url: "https://api.github.com"
 
 # Runner name (defaults to hostname)
 github_runner_name: "{{ ansible_hostname }}"

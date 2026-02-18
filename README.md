@@ -348,7 +348,8 @@ Metrics and logs collector for Grafana Cloud. Runs globally on all swarm nodes.
 | `LINKWARDEN_NEXTAUTH_SECRET` | NextAuth session secret for Linkwarden |
 | `LINKWARDEN_MEILI_KEY` | Meilisearch master key for Linkwarden |
 | `GITHUB_RUNNER_REPO_URL` | GitHub repository URL for self-hosted runner (e.g., `https://github.com/owner/repo`) |
-| `GITHUB_RUNNER_TOKEN` | GitHub Actions runner registration token (from GitHub Repository Settings > Actions > Runners) |
+| `GITHUB_RUNNER_TOKEN` | (Optional) GitHub Actions runner registration token - use if not using PAT |
+| `GITHUB_PAT_TOKEN` | (Recommended) Personal Access Token with `repo` scope to auto-generate runner tokens |
 
 ## 🔄 Container Image Updates
 

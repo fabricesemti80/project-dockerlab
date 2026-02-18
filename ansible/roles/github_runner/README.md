@@ -19,29 +19,42 @@ The role performs the following actions:
 
 ## Required Doppler Secrets
 
-Add these secrets to your Doppler project:
+You have two options for authentication. **Option 2 (PAT) is recommended** as it doesn't expire:
+
+### Option 1: Registration Token (Expires in 1 hour)
 
 | Secret | Description | Where to Get |
 |--------|-------------|--------------|
 | `GITHUB_RUNNER_REPO_URL` | Full URL to the GitHub repository | Repository page (e.g., `https://github.com/username/repo`) |
 | `GITHUB_RUNNER_TOKEN` | Registration token for the runner | GitHub Repository → Settings → Actions → Runners → New self-hosted runner |
 
-### Getting the GitHub Runner Token
+**This token expires after ~1 hour**, so you must run Ansible immediately.
 
-1. Go to your GitHub repository
-2. Navigate to **Settings** → **Actions** → **Runners**
-3. Click **New self-hosted runner**
-4. Select **Linux** and architecture **x64**
-5. Copy the token from the "Configure" section (looks like `AADZ3W3J7D2L4EXAMPLE`)
+### Option 2: Personal Access Token (Recommended - No Expiration)
 
-**IMPORTANT**: The token expires after approximately **1 hour**. You must run Ansible within this window:
+| Secret | Description | Where to Get |
+|--------|-------------|--------------|
+| `GITHUB_RUNNER_REPO_URL` | Full URL to the GitHub repository | Repository page |
+| `GITHUB_PAT_TOKEN` | Personal Access Token with `repo` scope | GitHub Settings → Developer settings → Personal access tokens |
 
+**Advantages:**
+- No expiration (or you control the expiration)
+- Ansible can generate registration tokens automatically
+- No rush to run Ansible after getting the token
+
+**Creating a PAT:**
+1. Go to GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+2. Click **Generate new token (classic)**
+3. Give it a name like "Self-hosted runner management"
+4. Select scope: **`repo`** (full control of private repositories)
+5. For organization runners, also select: **`admin:org`**
+6. Set expiration as needed (recommend at least 90 days)
+7. Generate and copy the token
+
+**Set in Doppler:**
 ```bash
-# Set the token in Doppler first
-doppler secrets set GITHUB_RUNNER_TOKEN="YOUR_TOKEN_HERE"
-
-# Run Ansible immediately while token is still valid
-task ansible:site:apply
+doppler secrets set GITHUB_RUNNER_REPO_URL="https://github.com/yourusername/repo"
+doppler secrets set GITHUB_PAT_TOKEN="ghp_xxxxxxxxxxxx"
 ```
 
 ### Alternative: Organization-Level Runners

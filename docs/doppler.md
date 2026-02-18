@@ -216,40 +216,51 @@ For GitHub Actions or other CI/CD:
 
 ## GitHub Actions Runner Secrets
 
-For the self-hosted GitHub Actions runner (gh-runner-1), you need to configure:
+For the self-hosted GitHub Actions runner (gh-runner-1), you have two authentication options:
 
-### Required Secrets
+### Option 1: Personal Access Token (Recommended)
+
+Use a PAT to automatically generate registration tokens. This is the **recommended approach** as PATs don't expire quickly.
 
 | Secret | Description | How to Obtain |
 |--------|-------------|---------------|
-| `GITHUB_RUNNER_REPO_URL` | Full URL to your GitHub repository | Repository page (e.g., `https://github.com/username/project-dockerlab`) |
-| `GITHUB_RUNNER_TOKEN` | Registration token for the runner | GitHub → Repository Settings → Actions → Runners → New self-hosted runner |
+| `GITHUB_RUNNER_REPO_URL` | Full URL to your GitHub repository | Repository page |
+| `GITHUB_PAT_TOKEN` | Personal Access Token with `repo` scope | GitHub Settings → Developer settings → Tokens (classic) |
 
-### Obtaining the Runner Token
+**Creating a PAT:**
+1. Go to GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+2. Click **Generate new token (classic)**
+3. Name: "Self-hosted runner management"
+4. Select scope: **`repo`** (for repository runners)
+5. Set expiration: 90 days or as needed
+6. Generate and copy the token
 
-1. Go to your GitHub repository
-2. Navigate to **Settings** → **Actions** → **Runners**
-3. Click **New self-hosted runner**
-4. Select **Linux** and architecture **x64**
-5. Copy the token from the "Configure" section
-6. **Important**: Tokens expire after ~1 hour, so add to Doppler promptly
-
-### Setting the Secrets
-
+**Set in Doppler:**
 ```bash
-# Set the repository URL
 doppler secrets set GITHUB_RUNNER_REPO_URL="https://github.com/yourusername/project-dockerlab"
-
-# Set the registration token (get this from GitHub)
-doppler secrets set GITHUB_RUNNER_TOKEN="YOUR_TOKEN_HERE"
+doppler secrets set GITHUB_PAT_TOKEN="ghp_xxxxxxxxxxxx"
 ```
+
+### Option 2: Registration Token (One-time use, expires in 1 hour)
+
+If you prefer not to use a PAT, you can use the traditional registration token:
+
+| Secret | Description | How to Obtain |
+|--------|-------------|---------------|
+| `GITHUB_RUNNER_REPO_URL` | Full URL to your GitHub repository | Repository page |
+| `GITHUB_RUNNER_TOKEN` | Registration token | GitHub → Repository Settings → Actions → Runners → New self-hosted runner |
+
+**Important**: This token expires after ~1 hour, so run Ansible immediately after setting it.
 
 ### Deploying the Runner
 
-After setting the secrets:
+After configuring secrets in Doppler:
 
 ```bash
 # Run Ansible to configure the runner
+task ansible:runner:apply
+
+# Or use the full site deployment
 task ansible:site:apply
 ```
 
