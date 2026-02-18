@@ -42,6 +42,7 @@ jobs:
         with:
           reporter: github-pr-check
           fail_level: error
+          actionlint_flags: -ignore 'label "homelab" is unknown'
 
   # security-scan:
   #   runs-on: hl-media
