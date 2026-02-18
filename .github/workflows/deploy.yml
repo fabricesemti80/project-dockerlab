@@ -9,7 +9,7 @@ name: CI & Deploy Homelab
     branches: [main]
 
 env:
-  REPO_PATH: /home/fs/homelab
+  REPO_PATH: /tmp/homelab
 
 jobs:
   lint-and-test:
@@ -111,7 +111,6 @@ jobs:
             cd "$REPO_PATH"
             git fetch origin main
             git reset --hard origin/main
-            sudo chown -R fs:fs "$REPO_PATH/docker/" 2>/dev/null || true
             git clean -fd docker/ --exclude=docker/.traefik_hash
           else
             mkdir -p "$(dirname "$REPO_PATH")"
