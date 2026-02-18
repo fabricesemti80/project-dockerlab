@@ -73,7 +73,8 @@ project-dockerlab/
 │   ├── ansible.md           # Ansible documentation
 │   ├── terraform.md         # Terraform documentation
 │   ├── doppler.md           # Doppler documentation
-│   └── taskfile.md          # Taskfile documentation
+│   ├── taskfile.md          # Taskfile documentation
+│   └── github_runner.md     # GitHub Actions runner documentation
 ├── archive/                 # Deprecated/backup files
 ├── taskfile/                # Task definitions
 └── Taskfile.yml             # Main task runner config
@@ -188,6 +189,7 @@ Detailed documentation for each component:
 | [Terraform](docs/terraform.md) | Infrastructure provisioning |
 | [Doppler](docs/doppler.md) | Secrets management |
 | [Taskfile](docs/taskfile.md) | Task runner commands |
+| [GitHub Actions Runner](docs/github_runner.md) | Self-hosted CI/CD runner setup |
 | [Cloudflare Tunnel Setup](docker/cloudflared/setup.md) | Secure remote access without opening external ports |
 | [Dockpeek Setup](docker/dockpeek/setup.md) | Simple Docker container explorer |
 | [Glance Setup](docker/glance/setup.md) | Self-hosted dashboard |
