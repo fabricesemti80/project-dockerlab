@@ -75,7 +75,7 @@ jobs:
           restore-keys: trufflehog-
 
       - name: Secret Scanning with TruffleHog
-        uses: trufflesecurity/trufflehog@3.93.3
+        uses: trufflesecurity/trufflehog@main
         with:
           extra_args: --log-level=2 --results=verified,unknown
 
