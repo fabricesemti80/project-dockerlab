@@ -94,33 +94,33 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.GH_SSH_KEY }}
 
-  #     - name: Add GitHub to known hosts
-  #       run: |
-  #         mkdir -p ~/.ssh
-  #         chmod 700 ~/.ssh
-  #         ssh-keyscan github.com >> ~/.ssh/known_hosts
-  #         chmod 644 ~/.ssh/known_hosts
+      - name: Add GitHub to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
 
-  #     - name: Check and Update Repository
-  #       run: |
-  #         if [ -d "${{ env.REPO_PATH }}" ]; then
-  #           cd ${{ env.REPO_PATH }}
-  #           git fetch origin main
-  #           git reset --hard origin/main
+      - name: Check and Update Repository
+        run: |
+          if [ -d "${{ env.REPO_PATH }}" ]; then
+            cd ${{ env.REPO_PATH }}
+            git fetch origin main
+            git reset --hard origin/main
 
-  #           sudo chown -R sysops:users ${{ env.REPO_PATH }}/docker/ 2>/dev/null || true
+            sudo chown -R sysops:users ${{ env.REPO_PATH }}/docker/ 2>/dev/null || true
 
-  #           git clean -fd docker/ --exclude=docker/.traefik_hash
-  #         else
-  #           git clone git@github.com:${{ env.GITHUB_USERNAME }}/homelab-media-stack.git ${{ env.REPO_PATH }}
-  #         fi
-  #         cd ${{ env.REPO_PATH }}
+            git clean -fd docker/ --exclude=docker/.traefik_hash
+          else
+            git clone git@github.com:${{ env.GITHUB_USERNAME }}/homelab-media-stack.git ${{ env.REPO_PATH }}
+          fi
+          cd ${{ env.REPO_PATH }}
 
-  #     - name: Setup Doppler
-  #       run: |
-  #         doppler configure set token ${{ secrets.DOPPLER_TOKEN }}
-  #         doppler configure set project ${{ secrets.DOPPLER_PROJECT }}
-  #         doppler configure set config ${{ secrets.DOPPLER_CONFIG }}
+      - name: Setup Doppler
+        run: |
+          doppler configure set token ${{ secrets.DOPPLER_TOKEN }}
+          doppler configure set project ${{ secrets.DOPPLER_PROJECT }}
+          doppler configure set config ${{ secrets.DOPPLER_CONFIG }}
 
   #     - name: Create required directories and files
   #       run: |
