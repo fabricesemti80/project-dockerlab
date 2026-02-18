@@ -57,6 +57,14 @@
   register: runner_configured
   tags: [github_runner]
 
+- name: "Stop runner service before reconfiguration"
+  ansible.builtin.systemd:
+    name: "actions.runner.{{ github_runner_service_name }}.service"
+    state: stopped
+  ignore_errors: true
+  when: runner_configured.stat.exists and github_runner_force_reconfigure | default(false) | bool
+  tags: [github_runner]
+
 - name: "Download GitHub Actions runner"
   ansible.builtin.get_url:
     url: "https://github.com/actions/runner/releases/download/v{{ github_runner_version }}/actions-runner-linux-x64-{{ github_runner_version }}.tar.gz"
@@ -108,6 +116,13 @@
     - registration_token_response.json.token is defined
   tags: [github_runner]
   no_log: true
+
+- name: "Remove old runner configuration when forcing reconfigure"
+  ansible.builtin.file:
+    path: "{{ github_runner_dir }}/.runner"
+    state: absent
+  when: github_runner_force_reconfigure | default(false) | bool
+  tags: [github_runner]
 
 - name: "Configure GitHub Actions runner"
   ansible.builtin.command: >

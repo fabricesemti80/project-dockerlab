@@ -2,7 +2,8 @@
 # Default variables for github_runner role
 
 # GitHub Actions Runner version
-github_runner_version: "2.322.0"
+# Check latest at: https://github.com/actions/runner/releases
+github_runner_version: "2.331.0"
 
 # Installation directory
 github_runner_dir: "/opt/github-runner"
