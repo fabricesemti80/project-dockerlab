@@ -223,12 +223,6 @@ variable "grafana_cloud_api_key" {
   default     = ""
 }
 
-variable "tailscale_auth_key" {
-  description = "Tailscale auth key for login"
-  type        = string
-  sensitive   = true
-  default     = ""
-}
 variable "linkwarden_postgres_password" {
   description = "PostgreSQL password for Linkwarden database"
   type        = string

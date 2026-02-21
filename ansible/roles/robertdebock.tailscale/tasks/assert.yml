@@ -1,0 +1,37 @@
+---
+
+- name: assert | Test tailscale_exit_node
+  ansible.builtin.assert:
+    that:
+      - tailscale_exit_node is defined
+      - tailscale_exit_node is boolean
+    quiet: true
+
+- name: assert | Test tailscale_authkey
+  ansible.builtin.assert:
+    that:
+      - tailscale_authkey is defined
+      - tailscale_authkey is string
+      - tailscale_authkey is not none
+    quiet: true
+
+- name: assert | Test tailscale_advertise_routes
+  ansible.builtin.assert:
+    that:
+      - tailscale_advertise_routes is defined
+      - tailscale_advertise_routes is iterable
+    quiet: true
+
+- name: assert | Test tailscale_hostname
+  ansible.builtin.assert:
+    that:
+      - tailscale_hostname is defined
+      - tailscale_hostname is string
+    quiet: true
+
+- name: assert | Test tailscale_accept_dns
+  ansible.builtin.assert:
+    that:
+      - tailscale_accept_dns is defined
+      - tailscale_accept_dns is boolean
+    quiet: true

@@ -1,0 +1,8 @@
+---
+#
+# Ansible managed
+#
+repository:
+  description: Install and configure tailscale on your system.
+  homepage: https://robertdebock.nl/
+  topics: tailscale, network, vpn, networking, security, ansible, molecule, tox, playbook

@@ -18,6 +18,11 @@
     install_cephfs: true
     install_swarm: true
     install_portainer: true
+    install_tailscale: true
+
+    # Tailscale Configuration
+    tailscale_authkey: "{{ lookup('env', 'TAILSCALE_AUTH_KEY') }}"
+    tailscale_ssh: true
 
     # LVM Configuration
     lvm_volume_group_name: "data_vg"
@@ -48,11 +53,22 @@
       tags: [docker]
     - role: geerlingguy.pip
       tags: [python, pip]
+    - role: robertdebock.tailscale
+      tags: [tailscale]
+      when: install_tailscale | default(false) | bool
     - role: fresh_install
       tags: [fresh_install]
     - role: docker_swarm
       tags: [swarm]
       when: install_swarm | default(false) | bool
+
+  post_tasks:
+    - name: Ensure Tailscale SSH is enabled
+      ansible.builtin.command:
+        cmd: tailscale set --ssh
+      changed_when: false
+      tags: [tailscale]
+      when: install_tailscale | default(false) | bool
 
 - name: Post-Swarm Setup (Portainer)
   hosts: swarm_managers[0] # Run only on the swarm leader

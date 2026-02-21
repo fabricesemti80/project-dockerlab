@@ -1,0 +1,11 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Run tailscale --version
+      ansible.builtin.command:
+        cmd: tailscale --version
+      changed_when: false
