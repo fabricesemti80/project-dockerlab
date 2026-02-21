@@ -79,84 +79,84 @@ jobs:
         with:
           extra_args: --log-level=2 --results=verified,unknown
 
-  deploy:
-    needs: [lint-and-test, security-scan]
-    if: github.event_name == 'push' || (github.event.pull_request.merged == true)
-    runs-on: [self-hosted, homelab]
-    environment: production
-    env:
-      DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+  # deploy:
+  #   needs: [lint-and-test, security-scan]
+  #  if: github.event_name == 'push' || (github.event.pull_request.merged == true)
+  #   runs-on: [self-hosted, homelab]
+  #   environment: production
+  #   env:
+  #     DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
 
-    steps:
-      - name: Setup Doppler
-        run: |
-          doppler configure set token ${{ secrets.DOPPLER_TOKEN }}
-          doppler configure set project ${{ secrets.DOPPLER_PROJECT }}
-          doppler configure set config ${{ secrets.DOPPLER_CONFIG }}
+  #   steps:
+  #     - name: Setup Doppler
+  #       run: |
+  #         doppler configure set token ${{ secrets.DOPPLER_TOKEN }}
+  #         doppler configure set project ${{ secrets.DOPPLER_PROJECT }}
+  #         doppler configure set config ${{ secrets.DOPPLER_CONFIG }}
 
-      - name: Check and Update Repository
-        run: |
-          REPO_URL="$(doppler secrets get GH_RUNNER_REPO_URL --plain)"
-          REPO_PATH="${{ env.REPO_PATH }}"
+  #     - name: Check and Update Repository
+  #       run: |
+  #         REPO_URL="$(doppler secrets get GH_RUNNER_REPO_URL --plain)"
+  #         REPO_PATH="${{ env.REPO_PATH }}"
 
-          if [ -d "$REPO_PATH" ]; then
-            cd "$REPO_PATH"
-            git fetch origin main
-            git reset --hard origin/main
-            git clean -fd docker/ --exclude=docker/.traefik_hash
-          else
-            mkdir -p "$(dirname "$REPO_PATH")"
-            git clone "$REPO_URL" "$REPO_PATH"
-          fi
-          cd "$REPO_PATH"
+  #         if [ -d "$REPO_PATH" ]; then
+  #           cd "$REPO_PATH"
+  #           git fetch origin main
+  #           git reset --hard origin/main
+  #           git clean -fd docker/ --exclude=docker/.traefik_hash
+  #         else
+  #           mkdir -p "$(dirname "$REPO_PATH")"
+  #           git clone "$REPO_URL" "$REPO_PATH"
+  #         fi
+  #         cd "$REPO_PATH"
 
-      - name: Install Task CLI
-        run: |
-          sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -b /usr/local/bin
+      # - name: Install Task CLI
+      #   run: |
+      #     sudo sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -b /usr/local/bin
 
-      - name: Install Terraform
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget unzip
-          wget -q https://releases.hashicorp.com/terraform/1.7.5/terraform_1.7.5_linux_amd64.zip -O /tmp/terraform.zip
-          sudo unzip -o /tmp/terraform.zip -d /usr/local/bin/
-          rm /tmp/terraform.zip
+      # - name: Install Terraform
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y wget unzip
+      #     wget -q https://releases.hashicorp.com/terraform/1.7.5/terraform_1.7.5_linux_amd64.zip -O /tmp/terraform.zip
+      #     sudo unzip -o /tmp/terraform.zip -d /usr/local/bin/
+      #     rm /tmp/terraform.zip
 
-      - name: Install Ansible
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible
+      # - name: Install Ansible
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y ansible
 
-      - name: Terraform Init
-        run: |
-          cd "$REPO_PATH"
-          task tf:init
+      # - name: Terraform Init
+      #   run: |
+      #     cd "$REPO_PATH"
+      #     task tf:init
 
-      - name: Terraform Apply
-        run: |
-          cd "$REPO_PATH"
-          task tf:apply
+      # - name: Terraform Apply
+      #   run: |
+      #     cd "$REPO_PATH"
+      #     task tf:apply
 
-      - name: Ansible Init
-        run: |
-          cd "$REPO_PATH"
-          task ansible:init
+      # - name: Ansible Init
+      #   run: |
+      #     cd "$REPO_PATH"
+      #     task ansible:init
 
-      - name: Ansible Apply
-        run: |
-          cd "$REPO_PATH"
-          task ansible:apply
+      # - name: Ansible Apply
+      #   run: |
+      #     cd "$REPO_PATH"
+      #     task ansible:apply
 
-      - name: Terraform Apps Init
-        run: |
-          cd "$REPO_PATH"
-          task tfa:init
+      # - name: Terraform Apps Init
+      #   run: |
+      #     cd "$REPO_PATH"
+      #     task tfa:init
 
-      - name: Terraform Apps Apply
-        run: |
-          cd "$REPO_PATH"
-          task tfa:apply
+      # - name: Terraform Apps Apply
+      #   run: |
+      #     cd "$REPO_PATH"
+      #     task tfa:apply
 
-      - name: Deployment Summary
-        run: |
-          echo "Deployment completed successfully!"
+      # - name: Deployment Summary
+      #   run: |
+      #     echo "Deployment completed successfully!"
