@@ -55,7 +55,6 @@ No modules.
 | [portainer_stack.radarr](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
 | [portainer_stack.socket-proxy](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
 | [portainer_stack.sonarr](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
-| [portainer_stack.tailscale](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
 | [portainer_stack.traefik](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
 | [portainer_stack.wallos](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
 | [portainer_stack.whoami](https://registry.terraform.io/providers/portainer/portainer/1.24.0/docs/resources/stack) | resource |
@@ -118,7 +117,6 @@ No modules.
 | <a name="input_s3_access_key_id"></a> [s3\_access\_key\_id](#input\_s3\_access\_key\_id) | Access key for S3-compatible storage (Cloudflare R2, AWS S3, Wasabi, MinIO) | `string` | n/a | yes |
 | <a name="input_s3_secret_access_key"></a> [s3\_secret\_access\_key](#input\_s3\_secret\_access\_key) | Secret key for S3-compatible storage (Cloudflare R2, AWS S3, Wasabi, MinIO) | `string` | n/a | yes |
 | <a name="input_sonarr_api_key"></a> [sonarr\_api\_key](#input\_sonarr\_api\_key) | Sonarr API key for Homepage widget | `string` | `""` | no |
-| <a name="input_tailscale_auth_key"></a> [tailscale\_auth\_key](#input\_tailscale\_auth\_key) | Tailscale auth key for login | `string` | `""` | no |
 | <a name="input_tz"></a> [tz](#input\_tz) | The timezone | `string` | `"Europe/London"` | no |
 | <a name="input_wallos_api_key"></a> [wallos\_api\_key](#input\_wallos\_api\_key) | Wallos API key for Homepage widget | `string` | `""` | no |
 
