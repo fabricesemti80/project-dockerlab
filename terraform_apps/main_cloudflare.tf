@@ -191,7 +191,7 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "homelab" {
       # Immich - needs longer timeouts for photo/video uploads
       {
         hostname = "photos.${var.domain}"
-        service  = "https://traefik:443"
+        service  = "https://traefik_traefik:443"
         origin_request = {
           no_tls_verify            = true
           connect_timeout          = 30
@@ -200,15 +200,15 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "homelab" {
         }
       },
       {
-        hostname = "*.${var.domain}"     # Serves *.krapulax.net
-        service  = "https://traefik:443" # Point to Traefik service name on the 'proxy' network
+        hostname = "*.${var.domain}"             # Serves *.krapulax.net
+        service  = "https://traefik_traefik:443" # Point to Traefik service name on the 'proxy' network
         origin_request = {
           no_tls_verify = true
         }
       },
       {
-        hostname = var.domain            # Serves krapulax.net
-        service  = "https://traefik:443" # Point to Traefik service name
+        hostname = var.domain                    # Serves krapulax.net
+        service  = "https://traefik_traefik:443" # Point to Traefik service name
         origin_request = {
           no_tls_verify = true
         }
