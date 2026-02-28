@@ -2,7 +2,7 @@ terraform {
   required_providers {
     portainer = {
       source  = "portainer/portainer"
-      version = "1.25.1"
+      version = "1.25.2"
     }
     cloudflare = {
       source  = "cloudflare/cloudflare"
