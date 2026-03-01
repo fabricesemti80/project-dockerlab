@@ -23,9 +23,22 @@
     path: /mnt/media
     src: "{{ nfs_media_server }}:{{ nfs_media_path }}"
     fstype: nfs
-    opts: "rw,soft,intr,timeo=30,retrans=3,nfsvers=4"
+    opts: "rw,soft,intr,timeo=30,retrans=3,nfsvers=4,_netdev,auto,nofail"
     state: mounted
   when: install_nfs_mounts | default(false) | bool
+
+- name: Verify NFS media share is accessible
+  ansible.builtin.command: ls /mnt/media
+  register: nfs_check
+  changed_when: false
+  failed_when: nfs_check.rc != 0
+  when: install_nfs_mounts | default(false) | bool
+
+- name: Remount NFS if stale
+  ansible.builtin.shell: umount -l /mnt/media && mount /mnt/media
+  when:
+    - install_nfs_mounts | default(false) | bool
+    - nfs_check.rc != 0
 
 - name: Create /mnt/nfs directory for legacy symlink
   ansible.builtin.file:
