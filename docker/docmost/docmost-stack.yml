@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   docmost:
-    image: docmost/docmost:0.25.3
+    image: docmost/docmost:0.70.1
     networks:
       - proxy
       - docmost-net
