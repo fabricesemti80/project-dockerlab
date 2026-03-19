@@ -19,6 +19,7 @@
     install_swarm: true
     install_portainer: true
     install_tailscale: true
+    install_nfs_mounts: true
 
     # Tailscale Configuration
     tailscale_authkey: "{{ lookup('env', 'TAILSCALE_AUTH_KEY') }}"
@@ -48,9 +49,16 @@
     zsh_set_as_default: true
     enable_acl_permissions: false
 
+    # Docker Registry Authentication
+    docker_registry_auth_enabled: "{{ lookup('env', 'DOPPLER_CONFIG') | length > 0 }}"
+    docker_registry_username: "{{ lookup('env', 'DOCKERHUB_USER') }}"
+    docker_registry_password: "{{ lookup('env', 'DOCKERHUB_TOKEN') }}"
+
   roles:
     - role: geerlingguy.docker
       tags: [docker]
+    - role: docker_registry_auth
+      tags: [docker_auth]
     - role: geerlingguy.pip
       tags: [python, pip]
     - role: robertdebock.tailscale

@@ -1,0 +1,4 @@
+---
+docker_registry_url: "https://index.docker.io/v1/"
+docker_registry_username: "{{ lookup('env', 'DOCKERHUB_USER') }}"
+docker_registry_password: "{{ lookup('env', 'DOCKERHUB_TOKEN') }}"
