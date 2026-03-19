@@ -4,7 +4,7 @@ version: "3.9"
 
 services:
   hub:
-    image: henrygd/beszel:latest
+    image: henrygd/beszel:v0.9.1
     healthcheck:
       disable: true
     environment:
