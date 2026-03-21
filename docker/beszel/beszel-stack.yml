@@ -11,7 +11,7 @@ services:
       - TZ=${TZ}
       - AGENT_TIMEOUT=30
     volumes:
-      - /mnt/cephfs/docker-shared-data/beszel/data:/beszel_data
+      - beszel_data:/beszel_data
     networks:
       - proxy
     logging:
@@ -84,3 +84,7 @@ services:
 networks:
   proxy:
     external: true
+
+volumes:
+  beszel_data:
+    driver: local
