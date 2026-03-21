@@ -41,7 +41,7 @@ services:
         parallelism: 1
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.beszel.rule=Host(`beszel.krapulax.dev`)"
+        - "traefik.http.routers.beszel.rule=Host(`beszel.${DOMAIN}`)"
         - "traefik.http.routers.beszel.entrypoints=websecure"
         - "traefik.http.routers.beszel.tls.certresolver=cloudflare"
         - "traefik.http.services.beszel.loadbalancer.server.port=8090"
