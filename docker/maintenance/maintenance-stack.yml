@@ -52,10 +52,10 @@ services:
       mode: global
       resources:
         limits:
-          cpus: '0.25'
-          memory: 64M
+          cpus: '1'
+          memory: 512M
         reservations:
-          memory: 32M
+          memory: 128M
     environment:
       - TZ=${TZ}
 
