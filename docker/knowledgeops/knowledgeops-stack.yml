@@ -7,7 +7,6 @@ version: "3.9"
 services:
   postgres:
     image: pgvector/pgvector:pg16
-    pull_policy: if-not-present
     environment:
       POSTGRES_USER: ${DB_USER:-knowledgeops}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -24,7 +23,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == worker
+          - node.role == manager
       resources:
         limits:
           cpus: "1.0"
@@ -44,7 +43,6 @@ services:
 
   redis:
     image: redis:8-alpine
-    pull_policy: if-not-present
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-}
     volumes:
       - redis_data:/data
@@ -58,7 +56,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.role == worker
+          - node.role == manager
       resources:
         limits:
           cpus: "0.5"
@@ -78,7 +76,6 @@ services:
 
   api:
     image: ghcr.io/fabricesemti80/project-kops/api:latest
-    pull_policy: if-not-present
     environment:
       DATABASE_URL: postgresql+asyncpg://${DB_USER:-knowledgeops}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-knowledgeops}
       REDIS_URL: redis://:${REDIS_PASSWORD:-}@redis:6379/0
@@ -143,7 +140,6 @@ services:
 
   worker:
     image: ghcr.io/fabricesemti80/project-kops/api:latest
-    pull_policy: if-not-present
     command: celery -A app.celery_app worker --loglevel=info
     environment:
       DATABASE_URL: postgresql+asyncpg://${DB_USER:-knowledgeops}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-knowledgeops}
@@ -191,7 +187,6 @@ services:
 
   frontend:
     image: ghcr.io/fabricesemti80/project-kops/frontend:latest
-    pull_policy: if-not-present
     environment:
       API_URL: https://api.knowledgeops.${DOMAIN}
     networks:
