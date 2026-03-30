@@ -1,0 +1,254 @@
+---
+# KnowledgeOps Full Stack for Docker Swarm
+# Deploy with: docker stack deploy -c knowledgeops-stack.yml knowledgeops
+
+version: "3.9"
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${DB_USER:-knowledgeops}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-knowledgeops}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-knowledgeops}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    image: redis:8-alpine
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - internal
+    deploy:
+      placement:
+        constraints:
+          - node.role == worker
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  api:
+    image: ghcr.io/fabricesemti80/project-kops/api:latest
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${DB_USER:-knowledgeops}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-knowledgeops}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-}@redis:6379/0
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      PYTHONUNBUFFERED: "1"
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      LLM_PROVIDER: ${LLM_PROVIDER:-openai}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4o}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      FRONTEND_URL: https://knowledgeops.${DOMAIN}
+      BACKEND_URL: https://api.knowledgeops.${DOMAIN}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+      - proxy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      mode: replicated
+      replicas: ${API_REPLICAS:-1}
+      placement:
+        constraints:
+          - node.role == worker
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: start-first
+      rollback_config:
+        parallelism: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.services.knowledgeops-api.loadbalancer.server.port=8000"
+        - "traefik.http.routers.knowledgeops-api.rule=Host(`api.knowledgeops.${DOMAIN}`)"
+        - "traefik.http.routers.knowledgeops-api.entrypoints=websecure"
+        - "traefik.http.routers.knowledgeops-api.tls.certresolver=cloudflare"
+        - "traefik.http.routers.knowledgeops-api.middlewares=default-headers@file"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+  worker:
+    image: ghcr.io/fabricesemti80/project-kops/api:latest
+    command: celery -A app.celery_app worker --loglevel=info
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${DB_USER:-knowledgeops}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-knowledgeops}
+      REDIS_URL: redis://:${REDIS_PASSWORD:-}@redis:6379/0
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      PYTHONUNBUFFERED: "1"
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      LLM_PROVIDER: ${LLM_PROVIDER:-openai}
+      LLM_MODEL: ${LLM_MODEL:-gpt-4o}
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - internal
+    deploy:
+      mode: replicated
+      replicas: ${WORKER_REPLICAS:-1}
+      placement:
+        constraints:
+          - node.role == worker
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.5"
+          memory: 512M
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  frontend:
+    image: ghcr.io/fabricesemti80/project-kops/frontend:latest
+    environment:
+      API_URL: https://api.knowledgeops.${DOMAIN}
+    networks:
+      - proxy
+      - internal
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    deploy:
+      mode: replicated
+      replicas: ${FRONTEND_REPLICAS:-1}
+      placement:
+        constraints:
+          - node.role == worker
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+      update_config:
+        parallelism: 1
+        delay: 5s
+        failure_action: rollback
+        order: start-first
+      rollback_config:
+        parallelism: 1
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.services.knowledgeops-frontend.loadbalancer.server.port=3000"
+        - "traefik.http.routers.knowledgeops-frontend.rule=Host(`knowledgeops.${DOMAIN}`)"
+        - "traefik.http.routers.knowledgeops-frontend.entrypoints=websecure"
+        - "traefik.http.routers.knowledgeops-frontend.tls.certresolver=cloudflare"
+        - "traefik.http.routers.knowledgeops-frontend.middlewares=default-headers@file"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  proxy:
+    external: true
+  internal:
+    driver: overlay
+    driver_opts:
+      com.docker.network.driver.overlay.vxlanid: "4050"
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
