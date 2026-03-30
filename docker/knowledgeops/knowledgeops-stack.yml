@@ -6,7 +6,7 @@ version: "3.9"
 
 services:
   postgres:
-    image: timescaledb/timescaledb:latest-pg16
+    image: postgres:16-alpine
     environment:
       POSTGRES_USER: ${DB_USER:-knowledgeops}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
