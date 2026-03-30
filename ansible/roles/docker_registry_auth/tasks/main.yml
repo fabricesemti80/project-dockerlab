@@ -5,12 +5,16 @@
   changed_when: false
   failed_when: false
 
-- name: Login to Docker Hub
+- name: Login to Docker registries
   community.docker.docker_login:
-    registry_url: "{{ docker_registry_url }}"
-    username: "{{ docker_registry_username }}"
-    password: "{{ docker_registry_password }}"
+    registry_url: "{{ item.registry_url }}"
+    username: "{{ item.username }}"
+    password: "{{ item.password }}"
+  loop: "{{ docker_registry_configs }}"
+  loop_control:
+    label: "{{ item.registry_url }}"
   when:
     - docker_info_check.rc == 0
-    - docker_registry_username | length > 0
-    - docker_registry_password | length > 0
+    - item.username | length > 0
+    - item.password | length > 0
+  no_log: true

@@ -1,4 +1,9 @@
 ---
-docker_registry_url: "https://index.docker.io/v1/"
-docker_registry_username: "{{ lookup('env', 'DOCKERHUB_USER') }}"
-docker_registry_password: "{{ lookup('env', 'DOCKERHUB_TOKEN') }}"
+# Docker registry authentication configurations
+docker_registry_configs:
+  - registry_url: "https://index.docker.io/v1/"
+    username: "{{ lookup('env', 'DOCKERHUB_USER') }}"
+    password: "{{ lookup('env', 'DOCKERHUB_TOKEN') }}"
+  - registry_url: "ghcr.io"
+    username: "{{ lookup('env', 'GH_USERNAME') | default('faber80') }}"
+    password: "{{ lookup('env', 'GH_PAT_TOKEN') }}"
