@@ -90,10 +90,8 @@ services:
       FRONTEND_URL: https://knowledgeops.${DOMAIN}
       BACKEND_URL: https://api.knowledgeops.${DOMAIN}
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - postgres
+      - redis
     networks:
       - internal
       - proxy
@@ -156,10 +154,8 @@ services:
       GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - postgres
+      - redis
     networks:
       - internal
     deploy:
