@@ -1,5 +1,8 @@
 # NOTE: Docker stack deploy uses v3.x schema; 3.9 is the last version.
 #       The 'version' field is deprecated for compose v2, but kept here for Swarm clarity.
+#! ANSIBLE DEPENDENCY: ansible/roles/fresh_install/tasks/app_data_setup.yml
+#! - Creates /mnt/cephfs/docker-shared-data/beszel/data directory (owner: 1000:1000)
+
 version: "3.9"
 
 services:
@@ -13,7 +16,7 @@ services:
     ports:
       - "8090:8090"
     volumes:
-      - beszel_data:/beszel_data
+      - /mnt/cephfs/docker-shared-data/beszel/data:/beszel_data
     networks:
       - proxy
     logging:
@@ -86,7 +89,3 @@ services:
 networks:
   proxy:
     external: true
-
-volumes:
-  beszel_data:
-    driver: local

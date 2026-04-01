@@ -3,7 +3,7 @@
 terraform {
   required_providers {
     proxmox = {
-      source = "bpg/proxmox"
+      source  = "bpg/proxmox"
       version = "0.98.0"
     }
   }
@@ -26,7 +26,7 @@ resource "proxmox_virtual_environment_file" "user_data" {
   content_type = "snippets"
 
   source_raw {
-    data    = var.user_data
+    data      = var.user_data
     file_name = "${var.name}-user-data.yaml"
   }
 }
@@ -39,8 +39,8 @@ resource "proxmox_virtual_environment_vm" "vm" {
   vm_id       = var.vm_id
 
   clone {
-    vm_id = var.template_vm_id
-    full  = var.full_clone
+    vm_id     = var.template_vm_id
+    full      = var.full_clone
     node_name = var.template_node_name
   }
 
@@ -104,11 +104,9 @@ resource "proxmox_virtual_environment_vm" "vm" {
   dynamic "hostpci" {
     for_each = var.pci_devices
     content {
-      device  = hostpci.value.device
-      mapping = hostpci.value.mapping
-      pcie    = hostpci.value.pcie
-      mdev    = hostpci.value.mdev
-      rombar  = hostpci.value.rombar
+      device = hostpci.value.device
+      pcie   = try(hostpci.value.pcie, false)
+      rombar = try(hostpci.value.rombar, true)
     }
   }
 
@@ -171,7 +169,7 @@ resource "proxmox_virtual_environment_vm" "vm" {
       for_each = var.username == null && (var.ssh_public_key_rsa != "" || var.ssh_public_key_ed25519 != "") ? [1] : []
       content {
         username = "root"
-        keys     = compact([
+        keys = compact([
           var.ssh_public_key_rsa,
           var.ssh_public_key_ed25519
         ])
