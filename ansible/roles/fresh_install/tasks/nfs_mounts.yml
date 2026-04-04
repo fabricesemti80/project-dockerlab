@@ -49,15 +49,15 @@
     mode: '0755'
   when: install_nfs_mounts | default(false) | bool
 
-- name: Remove /mnt/nfs/media if it exists as a directory
-  ansible.builtin.file:
-    path: /mnt/nfs/media
-    state: absent
+- name: Unmount stale NFS if necessary
+  ansible.builtin.shell: umount -l /mnt/nfs/media 2>/dev/null || true
+  changed_when: false
   when: install_nfs_mounts | default(false) | bool
 
-- name: Create /mnt/nfs/media symlink to /mnt/media
+- name: Create /mnt/nfs/media symlink to /mnt/media (force)
   ansible.builtin.file:
     src: /mnt/media
     dest: /mnt/nfs/media
     state: link
+    force: yes
   when: install_nfs_mounts | default(false) | bool

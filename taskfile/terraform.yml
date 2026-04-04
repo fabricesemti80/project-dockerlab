@@ -6,14 +6,14 @@ tasks:
     desc: "Format and validate Infra Terraform"
     dir: terraform_infra
     cmds:
-      - doppler run -- terraform fmt
-      - doppler run -- terraform validate
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} -- terraform fmt
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} -- terraform validate
 
   init:
     desc: "Initialize Infra Terraform"
     dir: terraform_infra
     cmds:
-      - doppler run -- terraform init --upgrade {{.CLI_ARGS}}
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} -- terraform init --upgrade {{.CLI_ARGS}}
 
   plan:
     desc: "Create an Infra Terraform execution plan"
@@ -21,7 +21,7 @@ tasks:
     cmds:
       - task: fmt
       - task: init
-      - doppler run --name-transformer tf-var -- terraform plan {{.CLI_ARGS}} -out=tfplan
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} --name-transformer tf-var -- terraform plan {{.CLI_ARGS}} -out=tfplan
 
   apply:
     desc: "Apply the Infra Terraform plan"
@@ -29,10 +29,10 @@ tasks:
     cmds:
       - task: plan
         vars: { CLI_ARGS: "{{.CLI_ARGS}}" }
-      - doppler run --name-transformer tf-var -- terraform apply tfplan
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} --name-transformer tf-var -- terraform apply tfplan
 
   destroy:
     desc: "Destroy the Infra Terraform-managed infrastructure"
     dir: terraform_infra
     cmds:
-      - doppler run --name-transformer tf-var -- terraform destroy -auto-approve {{.CLI_ARGS}}
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} --name-transformer tf-var -- terraform destroy -auto-approve {{.CLI_ARGS}}

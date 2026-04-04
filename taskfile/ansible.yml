@@ -5,53 +5,53 @@ tasks:
     desc: "Install Ansible Galaxy roles and collections"
     dir: ansible
     cmds:
-      - doppler run -- ansible-galaxy install -r requirements.yml
-      - doppler run -- ansible-galaxy collection install -r requirements.yml
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} -- ansible-galaxy install -r requirements.yml
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} -- ansible-galaxy collection install -r requirements.yml
 
   plan:
     desc: "Dry run of the site configuration with check and diff"
     dir: ansible
     cmds:
-      - doppler run -- ansible-playbook site.yml --check --diff {{.CLI_ARGS}}
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} -- ansible-playbook site.yml --check --diff {{.CLI_ARGS}}
 
   apply:
     desc: "Apply the site configuration"
     dir: ansible
     cmds:
-      - doppler run -- ansible-playbook site.yml {{.CLI_ARGS}}
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} -- ansible-playbook site.yml {{.CLI_ARGS}}
 
   cmd:all:
     desc: "Run ad-hoc Ansible command on all hosts (use CMD=<command>)"
     dir: ansible
     cmds:
-      - doppler run -- ansible all -a "{{.CMD}}" {{.CLI_ARGS}}
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} -- ansible all -a "{{.CMD}}" {{.CLI_ARGS}}
 
   cmd:mgr:
     desc: "Run ad-hoc Ansible command on swarm managers (use CMD=<command>)"
     dir: ansible
     cmds:
-      - doppler run -- ansible swarm_managers -a "{{.CMD}}" {{.CLI_ARGS}}
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} -- ansible swarm_managers -a "{{.CMD}}" {{.CLI_ARGS}}
 
   cmd:wrkr:
     desc: "Run ad-hoc Ansible command on swarm workers (use CMD=<command>)"
     dir: ansible
     cmds:
-      - doppler run -- ansible swarm_workers -a "{{.CMD}}" {{.CLI_ARGS}}
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} -- ansible swarm_workers -a "{{.CMD}}" {{.CLI_ARGS}}
 
   runner:apply:
     desc: "Apply configuration to GitHub Actions runners only"
     dir: ansible
     cmds:
-      - doppler run -- ansible-playbook github_runner.yml {{.CLI_ARGS}}
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} -- ansible-playbook github_runner.yml {{.CLI_ARGS}}
 
   runner:reconfigure:
     desc: "Force reconfiguration of GitHub Actions runner (use when token expired)"
     dir: ansible
     cmds:
-      - doppler run -- ansible-playbook github_runner.yml -e "github_runner_force_reconfigure=true" {{.CLI_ARGS}}
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} -- ansible-playbook github_runner.yml -e "github_runner_force_reconfigure=true" {{.CLI_ARGS}}
 
   cmd:runner:
     desc: "Run ad-hoc Ansible command on GitHub Actions runners (use CMD=<command>)"
     dir: ansible
     cmds:
-      - doppler run -- ansible github_runners -a "{{.CMD}}" {{.CLI_ARGS}}
+      - doppler run --project={{.DOPPLER_PROJECT}} --config={{.DOPPLER_CONFIG}} -- ansible github_runners -a "{{.CMD}}" {{.CLI_ARGS}}
