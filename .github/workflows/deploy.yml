@@ -21,7 +21,14 @@ jobs:
 
       - name: Install uv and pre-commit
         run: |
-          sudo apt-get update
+          # Wait for any existing apt processes and acquire lock
+          for i in {1..30}; do
+            if sudo apt-get update 2>/dev/null; then
+              break
+            fi
+            echo "Waiting for apt lock... attempt $i/30"
+            sleep 2
+          done
           sudo apt-get install -y python3
           curl -LsSf https://astral.sh/uv/install.sh | sh
           . "$HOME/.local/bin/env"

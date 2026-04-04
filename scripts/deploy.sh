@@ -1,9 +1,13 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Deployment pipeline script
 # Runs the three stages sequentially with error checking
 
-set -e  # Exit on any error
+set -euo pipefail  # Exit on any error, undefined vars, or pipe failures
+
+# Doppler configuration
+DOPPLER_PROJECT="project-dockerlab"
+DOPPLER_CONFIG="${DOPPLER_CONFIG:-dev}"
 
 # Colors for terminal output
 RED='\033[0;31m'
@@ -47,7 +51,7 @@ echo ""
 print_stage_header "1" "TERRAFORM INFRASTRUCTURE" "📦"
 echo "Provisioning infrastructure with Terraform..."
 echo ""
-if task tf:apply; then
+if doppler run --project="${DOPPLER_PROJECT}" --config="${DOPPLER_CONFIG}" -- task tf:apply; then
     echo ""
     print_success "Infrastructure provisioning completed successfully."
 else
@@ -61,7 +65,7 @@ echo ""
 print_stage_header "2" "ANSIBLE CONFIGURATION" "🔧"
 echo "Configuring systems with Ansible..."
 echo ""
-if task ansible:apply; then
+if doppler run --project="${DOPPLER_PROJECT}" --config="${DOPPLER_CONFIG}" -- task ansible:apply; then
     echo ""
     print_success "System configuration completed successfully."
 else
@@ -75,7 +79,7 @@ echo ""
 print_stage_header "3" "TERRAFORM APP DEPLOYMENT" "🐳"
 echo "Deploying applications with Terraform..."
 echo ""
-if task tfa:apply; then
+if doppler run --project="${DOPPLER_PROJECT}" --config="${DOPPLER_CONFIG}" -- task tfa:apply; then
     echo ""
     print_success "Application deployment completed successfully."
 else
