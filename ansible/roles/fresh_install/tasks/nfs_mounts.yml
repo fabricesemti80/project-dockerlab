@@ -49,6 +49,12 @@
     mode: '0755'
   when: install_nfs_mounts | default(false) | bool
 
+- name: Remove /mnt/nfs/media if it exists as a directory
+  ansible.builtin.file:
+    path: /mnt/nfs/media
+    state: absent
+  when: install_nfs_mounts | default(false) | bool
+
 - name: Create /mnt/nfs/media symlink to /mnt/media
   ansible.builtin.file:
     src: /mnt/media
