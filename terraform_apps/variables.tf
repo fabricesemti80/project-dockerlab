@@ -330,3 +330,113 @@ variable "linkwarden_api_key" {
   sensitive   = true
   default     = ""
 }
+
+# ============================================================================
+# KnowledgeOps Stack Variables
+# ============================================================================
+
+# Infrastructure (project-dockerlab)
+variable "knowledgeops_domain" {
+  description = "KnowledgeOps domain (e.g., your-domain.com)"
+  type        = string
+}
+
+variable "knowledgeops_db_user" {
+  description = "KnowledgeOps database user"
+  type        = string
+  default     = "knowledgeops"
+}
+
+variable "knowledgeops_db_password" {
+  description = "KnowledgeOps database password"
+  type        = string
+  sensitive   = true
+}
+
+variable "knowledgeops_db_name" {
+  description = "KnowledgeOps database name"
+  type        = string
+  default     = "knowledgeops"
+}
+
+variable "knowledgeops_redis_password" {
+  description = "KnowledgeOps Redis password"
+  type        = string
+  sensitive   = true
+}
+
+variable "knowledgeops_environment" {
+  description = "KnowledgeOps environment (dev/staging/production)"
+  type        = string
+  default     = "production"
+}
+
+variable "knowledgeops_api_replicas" {
+  description = "Number of API service replicas"
+  type        = string
+  default     = "2"
+}
+
+variable "knowledgeops_worker_replicas" {
+  description = "Number of Worker service replicas"
+  type        = string
+  default     = "1"
+}
+
+variable "knowledgeops_frontend_replicas" {
+  description = "Number of Frontend service replicas"
+  type        = string
+  default     = "2"
+}
+
+# Application (from project-kops)
+variable "knowledgeops_openai_api_key" {
+  description = "OpenAI API key (from project-kops Doppler)"
+  type        = string
+  sensitive   = true
+}
+
+variable "knowledgeops_llm_provider" {
+  description = "LLM provider"
+  type        = string
+  default     = "openai"
+}
+
+variable "knowledgeops_llm_model" {
+  description = "LLM model"
+  type        = string
+  default     = "gpt-4o"
+}
+
+variable "knowledgeops_github_client_id" {
+  description = "GitHub OAuth Client ID (from project-kops Doppler)"
+  type        = string
+  default     = ""
+}
+
+variable "knowledgeops_github_client_secret" {
+  description = "GitHub OAuth Client Secret (from project-kops Doppler)"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "knowledgeops_jwt_secret_key" {
+  description = "JWT Secret Key (from project-kops Doppler)"
+  type        = string
+  sensitive   = true
+}
+
+variable "knowledgeops_slack_webhook_url" {
+  description = "Slack Webhook URL for notifications (from project-kops Doppler, optional)"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+# Docker
+variable "docker_users" {
+  description = "List of users to add to the docker group"
+  type        = list(string)
+  default     = ["fs"]
+}
