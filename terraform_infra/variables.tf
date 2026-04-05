@@ -9,7 +9,7 @@ variable "proxmox_ssh_private_key_file" {
 # --- Hetzner Cloud ---
 
 variable "hcloud_token" {
-  description = "Hetzner Cloud API Token"
+  description = "Hetzner API Token"
   type        = string
   sensitive   = true
 }
