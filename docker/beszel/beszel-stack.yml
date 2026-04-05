@@ -32,9 +32,9 @@ services:
       resources:
         limits:
           cpus: '1.0'
-          memory: 512M
+          memory: 1G
         reservations:
-          memory: 256M
+          memory: 512M
       update_config:
         parallelism: 1
         delay: 10s
