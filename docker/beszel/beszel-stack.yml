@@ -6,58 +6,6 @@
 version: "3.9"
 
 services:
-  hub:
-    image: henrygd/beszel:latest
-    healthcheck:
-      disable: true
-    environment:
-      - TZ=${TZ}
-      - AGENT_TIMEOUT=30
-    ports:
-      - "8090:8090"
-    volumes:
-      - /mnt/cephfs/docker-shared-data/beszel/data:/beszel_data
-    networks:
-      - proxy
-    logging:
-      driver: json-file
-      options:
-        max-size: "12m"
-        max-file: "5"
-    deploy:
-      replicas: 1
-      placement:
-        constraints:
-          - node.role == manager
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 1G
-        reservations:
-          memory: 512M
-      update_config:
-        parallelism: 1
-        delay: 10s
-        failure_action: rollback
-        order: start-first
-      rollback_config:
-        parallelism: 1
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.beszel.rule=Host(`beszel.${DOMAIN}`)"
-        - "traefik.http.routers.beszel.entrypoints=websecure"
-        - "traefik.http.routers.beszel.tls.certresolver=cloudflare"
-        - "traefik.http.services.beszel.loadbalancer.server.port=8090"
-
-        # Homepage Discovery
-        - "homepage.group=Monitoring"
-        - "homepage.name=Beszel"
-        - "homepage.icon=beszel.png"
-        - "homepage.href=https://beszel.${DOMAIN}"
-        - "homepage.description=Resource Monitor"
-        # - "homepage.widget.type=beszel"
-        # - "homepage.widget.url=https://beszel.${DOMAIN}"
-
   agent:
     image: henrygd/beszel-agent:latest
     environment:
