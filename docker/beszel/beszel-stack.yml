@@ -8,29 +8,15 @@ version: "3.9"
 services:
   hub:
     image: henrygd/beszel:latest
-    user: "1000:1000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8090/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
+      disable: true
     environment:
       - TZ=${TZ}
       - AGENT_TIMEOUT=30
-      - "BESZEL_SSH_PRIVATE=${BESZEL_SSH_PRIVATE}"
-      - "BESZEL_SSH_PUBLIC=${BESZEL_SSH_PUBLIC}"
+    ports:
+      - "8090:8090"
     volumes:
       - /mnt/cephfs/docker-shared-data/beszel/data:/beszel_data
-    command: >
-      sh -c "
-        echo \"$$BESZEL_SSH_PRIVATE\" > /beszel_data/id_ed25519 &&
-        echo \"$$BESZEL_SSH_PUBLIC\" > /beszel_data/id_ed25519.pub &&
-        chown 1000:1000 /beszel_data/id_ed25519* &&
-        chmod 600 /beszel_data/id_ed25519 &&
-        chmod 644 /beszel_data/id_ed25519.pub &&
-        beszel
-      "
     networks:
       - proxy
     logging:
@@ -77,8 +63,7 @@ services:
     environment:
       - TZ=${TZ}
       - LISTEN=45876
-      - "KEY=${BESZEL_SSH_PUBLIC}"
-      - "TOKEN=${BESZEL_AGENT_KEY}"
+      - "KEY=${BESZEL_AGENT_KEY}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /:/host:ro

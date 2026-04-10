@@ -7,7 +7,7 @@ services:
     environment:
       - TZ=${TZ}
       - LISTEN=45876
-      - "KEY=${BESZEL_SSH_PUBLIC}"
+      - "KEY=${BESZEL_AGENT_KEY}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /:/host:ro
