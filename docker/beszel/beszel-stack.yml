@@ -8,6 +8,7 @@ version: "3.9"
 services:
   hub:
     image: henrygd/beszel:latest
+    user: "1000:1000"
     healthcheck:
       disable: true
     environment:
