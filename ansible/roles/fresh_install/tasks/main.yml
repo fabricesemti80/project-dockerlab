@@ -54,6 +54,9 @@
   when: install_cephfs | default(false) | bool
 
 - name: NFS mount setup
-  include_tasks: nfs_mounts.yml
+  ansible.builtin.include_tasks:
+    file: nfs_mounts.yml
+    apply:
+      tags: [storage, nfs]
   tags: [storage, nfs]
   when: install_nfs_mounts | default(false) | bool

@@ -12,7 +12,7 @@ services:
       - NZBGET_PASS=${NZBGET_PASS}
     volumes:
       - /mnt/cephfs/docker-shared-data/nzbget/config:/config
-      - /mnt/cephfs/docker-shared-data/nzbget/downloads:/downloads
+      - /mnt/media/downloads:/downloads
       - /mnt/media:/media
     networks:
       - proxy

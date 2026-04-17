@@ -23,8 +23,9 @@
     path: /mnt/media
     src: "{{ nfs_media_server }}:{{ nfs_media_path }}"
     fstype: nfs
-    opts: "rw,soft,intr,timeo=30,retrans=3,nfsvers=4,_netdev,auto,nofail"
+    opts: "rw,soft,intr,timeo=30,retrans=3,nfsvers=4,x-systemd.requires=network-online.target,x-systemd.after=network-online.target,_netdev,auto,nofail"
     state: mounted
+    boot: true
   when: install_nfs_mounts | default(false) | bool
 
 - name: Verify NFS media share is accessible
@@ -34,11 +35,21 @@
   failed_when: nfs_check.rc != 0
   when: install_nfs_mounts | default(false) | bool
 
-- name: Remount NFS if stale
-  ansible.builtin.shell: umount -l /mnt/media && mount /mnt/media
-  when:
-    - install_nfs_mounts | default(false) | bool
-    - nfs_check.rc != 0
+- name: Ensure media library directories exist on NFS
+  ansible.builtin.file:
+    path: "/mnt/media/{{ item }}"
+    state: directory
+    owner: "{{ media_puid | default(default_puid) }}"
+    group: "{{ media_pgid | default(default_pgid) }}"
+    mode: '0775'
+  loop:
+    - tv
+    - movies
+    - downloads
+    - downloads/completed
+    - downloads/completed/sonarr
+    - downloads/completed/radarr
+  when: install_nfs_mounts | default(false) | bool
 
 - name: Create /mnt/nfs directory for legacy symlink
   ansible.builtin.file:
@@ -49,10 +60,21 @@
     mode: '0755'
   when: install_nfs_mounts | default(false) | bool
 
-- name: Unmount stale NFS if necessary
-  ansible.builtin.shell: umount -l /mnt/nfs/media 2>/dev/null || true
-  changed_when: false
+- name: Check legacy /mnt/nfs/media path
+  ansible.builtin.stat:
+    path: /mnt/nfs/media
+    follow: false
+  register: nfs_legacy_media
   when: install_nfs_mounts | default(false) | bool
+
+- name: Unmount stale legacy NFS mount if necessary
+  ansible.builtin.command: umount -l /mnt/nfs/media
+  changed_when: false
+  failed_when: false
+  when:
+    - install_nfs_mounts | default(false) | bool
+    - nfs_legacy_media.stat.exists | default(false)
+    - not nfs_legacy_media.stat.islnk | default(false)
 
 - name: Create /mnt/nfs/media symlink to /mnt/media (force)
   ansible.builtin.file:

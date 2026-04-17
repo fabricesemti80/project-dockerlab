@@ -10,7 +10,7 @@ services:
       - PGID=${PGID}
     volumes:
       - /mnt/cephfs/docker-shared-data/sonarr/config:/config
-      - /mnt/cephfs/docker-shared-data/nzbget/downloads:/downloads
+      - /mnt/media/downloads:/downloads
       - /mnt/media:/media
     networks:
       - proxy
