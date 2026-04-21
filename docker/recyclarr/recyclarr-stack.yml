@@ -1,0 +1,53 @@
+# Recyclarr - TRaSH Guide profile synchronization
+# https://recyclarr.dev/
+
+services:
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr:8
+    user: ${PUID:-0}:${PGID:-0}
+    environment:
+      - TZ=${TZ:-Europe/London}
+      - CRON_SCHEDULE=${RECYCLARR_CRON_SCHEDULE:-0 4 * * *}
+      - RADARR_URL=${RADARR_URL:-http://radarr_radarr:7878}
+      - RADARR_API_KEY=${RADARR_API_KEY}
+      - SONARR_URL=${SONARR_URL:-http://sonarr_sonarr:8989}
+      - SONARR_API_KEY=${SONARR_API_KEY}
+    volumes:
+      - /mnt/cephfs/docker-shared-data/recyclarr/config:/config
+    configs:
+      - source: recyclarr_config
+        target: /config/configs/recyclarr.yml
+        mode: 0444
+    networks:
+      - proxy
+    logging:
+      driver: json-file
+      options:
+        max-size: "12m"
+        max-file: "5"
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == worker
+      resources:
+        limits:
+          cpus: '${RECYCLARR_CPU_LIMIT:-0.5}'
+          memory: ${RECYCLARR_MEM_LIMIT:-512M}
+        reservations:
+          memory: ${RECYCLARR_MEM_RESERVATION:-128M}
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        order: stop-first
+      rollback_config:
+        parallelism: 1
+
+networks:
+  proxy:
+    external: true
+
+configs:
+  recyclarr_config:
+    file: ./config/recyclarr.yml
