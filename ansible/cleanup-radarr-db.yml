@@ -1,0 +1,15 @@
+---
+- name: Cleanup corrupted Radarr DB
+  hosts: dkr-wrkr-2
+  become: true
+  tasks:
+    - name: Remove corrupted Radarr DB
+      ansible.builtin.shell: |
+        rm -f /mnt/cephfs/docker-shared-data/radarr/radarr.db*
+        ls -la /mnt/cephfs/docker-shared-data/radarr/ | grep -E "(config|db)"
+      register: cleanup
+      changed_when: true
+
+    - name: Display cleanup result
+      ansible.builtin.debug:
+        msg: "{{ cleanup.stdout }}"

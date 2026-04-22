@@ -1,0 +1,40 @@
+---
+# Migrate downloads from CephFS to NFS
+- name: Migrate NZBGet downloads to NFS
+  hosts: swarm_workers
+  become: true
+  tasks:
+    - name: Check if source directory exists
+      ansible.builtin.stat:
+        path: /mnt/cephfs/docker-shared-data/nzbget/downloads
+      register: source_dir
+
+    - name: Copy files from CephFS to NFS
+      ansible.builtin.shell: |
+        if [ -d "/mnt/cephfs/docker-shared-data/nzbget/downloads" ]; then
+          mkdir -p /mnt/media/downloads
+          if [ "$(ls -A /mnt/cephfs/docker-shared-data/nzbget/downloads)" ]; then
+            echo "Copying files from CephFS to NFS..."
+            cp -rv /mnt/cephfs/docker-shared-data/nzbget/downloads/* /mnt/media/downloads/ 2>&1
+            echo "Copy complete"
+          else
+            echo "Source directory is empty"
+          fi
+        else
+          echo "Source directory doesn't exist"
+        fi
+      register: copy_result
+      changed_when: "'Copying' in copy_result.stdout or 'Copy complete' in copy_result.stdout"
+
+    - name: Display copy result
+      ansible.builtin.debug:
+        msg: "{{ copy_result.stdout }}"
+
+    - name: Fix permissions on NFS downloads
+      ansible.builtin.file:
+        path: /mnt/media/downloads
+        state: directory
+        owner: "{{ nzbget_uid | default(0) }}"
+        group: "{{ nzbget_gid | default(0) }}"
+        mode: '0755'
+        recurse: yes

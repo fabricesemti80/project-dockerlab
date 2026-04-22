@@ -1,0 +1,22 @@
+---
+- name: Reset Radarr root folders config
+  hosts: dkr-wrkr-2
+  become: true
+  tasks:
+    - name: Backup config.xml
+      ansible.builtin.copy:
+        src: /mnt/cephfs/docker-shared-data/radarr/config/config.xml
+        dest: /mnt/cephfs/docker-shared-data/radarr/config/config.xml.bak
+        remote_src: yes
+      ignore_errors: yes
+
+    - name: Remove RootFolders from config.xml
+      ansible.builtin.lineinfile:
+        path: /mnt/cephfs/docker-shared-data/radarr/config/config.xml
+        regexp: '<RootFolder>.*</RootFolder>'
+        state: absent
+      ignore_errors: yes
+
+    - name: Display backup created
+      ansible.builtin.debug:
+        msg: "Config backed up. Root folders cleared."

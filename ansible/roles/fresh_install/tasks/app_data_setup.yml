@@ -272,3 +272,48 @@
     group: "{{ immich_gid | default(default_pgid) }}"
     mode: '0755'
   when: install_cephfs | default(false) | bool
+
+- name: Ensure Gatus data directory exists
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/gatus"
+    state: directory
+    owner: "{{ gatus_uid | default(default_puid) }}"
+    group: "{{ gatus_gid | default(default_pgid) }}"
+    mode: '0755'
+  when: install_cephfs | default(false) | bool
+
+- name: Ensure Docmost subdirectories exist
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/docmost/{{ item }}"
+    state: directory
+    owner: "{{ docmost_uid | default(default_puid) }}"
+    group: "{{ docmost_gid | default(default_pgid) }}"
+    mode: '0755'
+  loop:
+    - storage
+  when: install_cephfs | default(false) | bool
+
+- name: Ensure Filebrowser config and data directories exist
+  ansible.builtin.file:
+    path: "{{ cephfs_mount_point }}/docker-shared-data/filebrowser/{{ item }}"
+    state: directory
+    owner: "{{ filebrowser_uid | default(default_puid) }}"
+    group: "{{ filebrowser_gid | default(default_pgid) }}"
+    mode: '0755'
+  loop:
+    - config
+    - data
+  when: install_cephfs | default(false) | bool
+
+- name: Ensure Immich NFS subdirectories and marker files exist
+  ansible.builtin.shell: |
+    # Only create if /mnt/media is a mount point (NFS mounted)
+    if mountpoint -q /mnt/media 2>/dev/null; then
+      for dir in upload encode library thumbs profile backups encoded-video; do
+        mkdir -p /mnt/media/immich/$dir
+        touch /mnt/media/immich/$dir/.immich
+      done
+      chown -R "{{ media_puid | default(1000) }}:{{ media_pgid | default(1000) }}" /mnt/media/immich
+    fi
+  changed_when: false
+  when: install_nfs_mounts | default(false) | bool
