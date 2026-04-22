@@ -43,15 +43,19 @@ sonarr:
       qualities:
         # MB/min caps. 22 MB/min targets about 1 GB for a 45-minute episode.
         - name: Bluray-1080p
+          min: 5
           max: 22
           preferred: 18
         - name: WEBDL-1080p
+          min: 5
           max: 22
           preferred: 18
         - name: WEBRip-1080p
+          min: 5
           max: 22
           preferred: 18
         - name: HDTV-1080p
+          min: 5
           max: 22
           preferred: 18
     quality_profiles:
