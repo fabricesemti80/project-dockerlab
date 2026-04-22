@@ -1,4 +1,4 @@
-#! WARNING: Service is pinned to dkr-wrkr-2 to distribute load across workers
+#! Service is pinned to dkr-srv-3 while converging workloads onto managers
 # Jellyfin - Media Server
 # https://jellyfin.org/
 
@@ -30,7 +30,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == dkr-wrkr-2
+          - node.hostname == dkr-srv-3
       resources:
         limits:
           cpus: '4.0'

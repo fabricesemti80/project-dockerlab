@@ -1,4 +1,4 @@
-#! WARNING: Services are pinned to dkr-wrkr-1 to avoid NFS I/O errors and DNS issues
+#! Services are pinned to dkr-srv-2 while converging workloads onto managers
 # Immich - Self-hosted Photo and Video Management
 # https://immich.app/
 
@@ -43,7 +43,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == dkr-wrkr-1
+          - node.hostname == dkr-srv-2
       resources:
         limits:
           cpus: '4.0'
@@ -183,7 +183,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == dkr-wrkr-1
+          - node.hostname == dkr-srv-2
       resources:
         limits:
           cpus: '1.0'

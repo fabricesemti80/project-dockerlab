@@ -72,6 +72,8 @@ locals {
     tpm_state_enabled = true
   }
 
+  swarm_manager_memory_dedicated = 12288
+
   # VM-specific configurations
   dkr_srv_1 = {
     name         = "dkr-srv-1"
@@ -214,7 +216,7 @@ module "dkr_srv_1" {
   agent_timeout = local.vm_common.agent_timeout
 
   # Hardware Configuration
-  memory_dedicated = local.vm_common.memory_dedicated
+  memory_dedicated = local.swarm_manager_memory_dedicated
   cpu_cores        = local.vm_common.cpu_cores
   cpu_sockets      = local.vm_common.cpu_sockets
   scsi_hardware    = local.vm_common.scsi_hardware
@@ -300,7 +302,7 @@ module "dkr_srv_2" {
   agent_timeout = local.vm_common.agent_timeout
 
   # Hardware Configuration
-  memory_dedicated = local.vm_common.memory_dedicated
+  memory_dedicated = local.swarm_manager_memory_dedicated
   cpu_cores        = local.vm_common.cpu_cores
   cpu_sockets      = local.vm_common.cpu_sockets
   scsi_hardware    = local.vm_common.scsi_hardware
@@ -365,7 +367,7 @@ module "dkr_srv_3" {
   agent_timeout = local.vm_common.agent_timeout
 
   # Hardware Configuration
-  memory_dedicated = local.vm_common.memory_dedicated
+  memory_dedicated = local.swarm_manager_memory_dedicated
   cpu_cores        = local.vm_common.cpu_cores
   cpu_sockets      = local.vm_common.cpu_sockets
   scsi_hardware    = local.vm_common.scsi_hardware

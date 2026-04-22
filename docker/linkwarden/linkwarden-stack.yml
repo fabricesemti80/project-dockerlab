@@ -1,4 +1,4 @@
-#! WARNING: Services are pinned to dkr-wrkr-3 to distribute load across workers
+#! Services are pinned to dkr-srv-1 while converging workloads onto managers
 # Linkwarden - Collaborative Bookmark Manager
 # https://docs.linkwarden.app/
 
@@ -32,7 +32,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == dkr-wrkr-3
+          - node.hostname == dkr-srv-1
       resources:
         limits:
           cpus: '1.0'
@@ -92,7 +92,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == dkr-wrkr-3
+          - node.hostname == dkr-srv-1
       resources:
         limits:
           cpus: '0.5'
@@ -131,7 +131,7 @@ services:
       replicas: 1
       placement:
         constraints:
-          - node.hostname == dkr-wrkr-3
+          - node.hostname == dkr-srv-1
       resources:
         limits:
           cpus: '0.5'
