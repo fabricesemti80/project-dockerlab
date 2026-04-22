@@ -15,7 +15,7 @@ services:
     volumes:
       - /mnt/cephfs/docker-shared-data/recyclarr/config:/config
     configs:
-      - source: recyclarr_config
+      - source: recyclarr_config_v20260422
         target: /config/configs/recyclarr.yml
         mode: 0444
     networks:
@@ -46,5 +46,5 @@ networks:
     external: true
 
 configs:
-  recyclarr_config:
+  recyclarr_config_v20260422:
     file: ./config/recyclarr.yml
