@@ -7,6 +7,7 @@ resource "portainer_stack" "recyclarr" {
   repository_url            = var.repo_url
   repository_reference_name = var.repo_branch
   file_path_in_repository   = "docker/recyclarr/recyclarr-stack.yml"
+  support_relative_path     = true
 
   force_update    = true
   pull_image      = true
