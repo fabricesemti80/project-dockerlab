@@ -27,9 +27,6 @@ services:
         max-file: "5"
     deploy:
       replicas: 1
-      placement:
-        constraints:
-          - node.role == worker
       resources:
         limits:
           cpus: '${RADARR_CPU_LIMIT:-2.0}'

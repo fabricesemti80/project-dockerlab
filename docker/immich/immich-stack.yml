@@ -109,9 +109,6 @@ services:
         max-file: "5"
     deploy:
       replicas: 1
-      placement:
-        constraints:
-          - node.role == worker
       resources:
         limits:
           cpus: '2.0'
@@ -146,9 +143,6 @@ services:
         max-file: "5"
     deploy:
       replicas: 1
-      placement:
-        constraints:
-          - node.role == worker
       resources:
         limits:
           cpus: '0.5'
