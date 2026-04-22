@@ -67,7 +67,7 @@ services:
       - meilisearch
 
   postgres:
-    image: postgres:16-alpine
+    image: postgres:16-alpine@sha256:93d55776e04376e19adb2733e3ccebb4392ee7dd86d8ff238503b30fe719c84f
     environment:
       - TZ=${TZ}
       - POSTGRES_USER=postgres
@@ -107,7 +107,7 @@ services:
         parallelism: 1
 
   meilisearch:
-    image: getmeili/meilisearch:v1.35.0
+    image: getmeili/meilisearch:v1.35.0@sha256:348ba1c1f61101130304370a9522cc5405e6906b64a426dc2fcd5c428a516a98
     environment:
       - TZ=${TZ}
       - MEILI_MASTER_KEY=${LINKWARDEN_MEILI_KEY}
