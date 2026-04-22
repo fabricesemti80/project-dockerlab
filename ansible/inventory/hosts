@@ -2,9 +2,6 @@
 dkr-srv-1 ansible_host=10.0.30.21
 dkr-srv-2 ansible_host=10.0.30.22
 dkr-srv-3 ansible_host=10.0.30.23
-dkr-wrkr-1 ansible_host=10.0.30.31
-dkr-wrkr-2 ansible_host=10.0.30.32
-dkr-wrkr-3 ansible_host=10.0.30.33
 gh-runner-1 ansible_host=10.0.30.40
 
 [swarm_servers]
@@ -13,9 +10,7 @@ dkr-srv-2
 dkr-srv-3
 
 [swarm_workers]
-dkr-wrkr-1
-dkr-wrkr-2
-dkr-wrkr-3
+# Workers intentionally removed from Terraform after Swarm manager convergence.
 
 [github_runners]
 gh-runner-1
