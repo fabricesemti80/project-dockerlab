@@ -69,7 +69,7 @@ services:
       - ghost-db
 
   ghost-db:
-    image: mysql:9.6
+    image: mysql:9.7
     hostname: ghost-db
     environment:
       - TZ=${TZ}
