@@ -107,7 +107,7 @@ services:
         parallelism: 1
 
   meilisearch:
-    image: getmeili/meilisearch:v1.35.0@sha256:348ba1c1f61101130304370a9522cc5405e6906b64a426dc2fcd5c428a516a98
+    image: getmeili/meilisearch:v1.53.1@sha256:8d6643d86d71fad6ad3cba92cde7ccfce9e4d6c384bda67598eb553571c32431
     environment:
       - TZ=${TZ}
       - MEILI_MASTER_KEY=${LINKWARDEN_MEILI_KEY}
