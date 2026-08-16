@@ -67,7 +67,7 @@ services:
       - meilisearch
 
   postgres:
-    image: postgres:16-alpine@sha256:93d55776e04376e19adb2733e3ccebb4392ee7dd86d8ff238503b30fe719c84f
+    image: postgres:18-alpine@sha256:d3e1620b530c944afa6e887d22eb899824da68e19c52024bf98f5220c88a65b2
     environment:
       - TZ=${TZ}
       - POSTGRES_USER=postgres
